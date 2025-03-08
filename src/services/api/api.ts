@@ -1,10 +1,10 @@
+import {Config} from '@config/index';
 import axios from 'axios';
 
-const BASE_URL = 'https://dummyjson.com/';
 const GENERAL_TIMEOUT = 15000;
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: Config.API_URL,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
