@@ -6,7 +6,7 @@ import CryptoJS from 'react-native-crypto-js';
  * @param value - The value to decrypt, or return if it is not encrypted.
  * @returns The decrypted value if it was encrypted, otherwise the original value.
  */
-function getEnvironmentVariable(value: string) {
+export function getEnvironmentVariable(value: string) {
   const secreteKey =
     'be5be17a84f4ed5d4fb780ea3784d1f93a833e851585f831599720ed4b0b8a0e';
   if (value.startsWith('encrypted:')) {
@@ -17,5 +17,3 @@ function getEnvironmentVariable(value: string) {
   }
   return value;
 }
-
-export default {getEnvironmentVariable};

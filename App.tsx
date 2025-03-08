@@ -1,7 +1,8 @@
 import React from 'react';
 import {Provider} from 'react-redux';
-import {MainNavigator} from './src/navigation';
+import {MainNavigator} from '@navigation/MainNavigator';
 import {store} from '@store/app/store';
+import '@services/localStorage';
 
 function App() {
   return (

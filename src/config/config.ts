@@ -1,4 +1,4 @@
-import Utils from '@utils/Utils';
 import Config from 'react-native-config';
+import {getEnvironmentVariable} from '@utils/Utils';
 
-export const API_URL = Utils.getEnvironmentVariable(Config.API_URL);
+export const API_URL = getEnvironmentVariable(Config.API_URL);
