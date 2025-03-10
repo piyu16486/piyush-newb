@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import {Scale} from '@utils/Scale';
-import {Colors, FontWeight} from '@constants/index';
+import {Colors, Fonts, FontWeight} from '@constants/index';
 
 export interface CustomButtonProps extends TouchableOpacityProps {
   buttonText: string;
@@ -63,8 +63,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: Colors.white,
-    fontFamily: 'Gilroy',
-    fontWeight: FontWeight.SemiBold,
+    fontFamily: Fonts.GilroyMedium,
     fontSize: Scale(16),
     lineHeight: Scale(20),
   },

@@ -1,5 +1,5 @@
-import {LogoImg} from '@assets/images';
-import { FontWeight } from '@constants/index';
+import {LogoImg} from '@assets/Images';
+import {Fonts, FontWeight} from '@constants/index';
 import {Scale} from '@utils/Scale';
 import React from 'react';
 import {Image, View, StyleSheet, Text} from 'react-native';
@@ -65,14 +65,15 @@ const styles = StyleSheet.create({
     color: '#332D2D',
     textAlign: 'left',
     fontWeight: FontWeight.Medium,
-    fontFamily: 'Gilroy',
+    fontFamily: Fonts.Gilroy,
     marginBottom: Scale(10),
   },
   subtitle: {
     fontSize: Scale(12),
     color: '#A6A6A6',
     textAlign: 'left',
-    fontFamily: 'gilroy-medium',
+    fontWeight: FontWeight.Medium,
+    fontFamily: Fonts.Gilroy,
     marginTop: 2,
   },
 });

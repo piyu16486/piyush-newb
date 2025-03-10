@@ -4,16 +4,16 @@ import React, {useEffect, useState} from 'react';
 import {AuthNavigator} from './AuthNavigator';
 
 export const MainNavigator = () => {
-  const [isInitilised, setIsIntilised] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
-      setIsIntilised(true);
+      setIsInitialized(true);
       clearTimeout(splashTimer);
     }, 2000);
   }, []);
 
-  if (!isInitilised) {
+  if (!isInitialized) {
     return <SplashScreen />;
   }
 

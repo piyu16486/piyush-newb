@@ -17,3 +17,15 @@ export function getEnvironmentVariable(value: string) {
   }
   return value;
 }
+
+/**
+ * Validates whether a given email address is in a proper format.
+ *
+ * @param email - The email address to validate.
+ * @returns True if the email address is valid, otherwise false.
+ */
+
+export function isValidEmail(email: string) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
