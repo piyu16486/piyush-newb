@@ -1,17 +1,25 @@
-import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Login} from '@screens/index';
-import {RootNavigatorType} from '@type/RootNavigatorTypes';
-
-const Stack = createNativeStackNavigator<RootNavigatorType>();
+import {SplashScreen} from '@screens/index';
+import React, {useEffect, useState} from 'react';
+import {AuthNavigator} from './AuthNavigator';
 
 export const MainNavigator = () => {
+  const [isInitilised, setIsIntilised] = useState(false);
+
+  useEffect(() => {
+    const splashTimer = setTimeout(() => {
+      setIsIntilised(true);
+      clearTimeout(splashTimer);
+    }, 2000);
+  }, []);
+
+  if (!isInitilised) {
+    return <SplashScreen />;
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Login" component={Login} />
-      </Stack.Navigator>
+      <AuthNavigator />
     </NavigationContainer>
   );
 };
