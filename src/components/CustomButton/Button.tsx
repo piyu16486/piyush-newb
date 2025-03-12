@@ -8,19 +8,19 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native';
-import {scaleFont, scaleWidth} from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 
 export interface CustomButtonProps extends TouchableOpacityProps {
   buttonText: string;
-  mode: 'contained' | 'outlined';
+  mode?: 'contained' | 'outlined';
   buttonTextStyle?: StyleProp<TextStyle>;
 }
 
 export const Button = forwardRef<View, CustomButtonProps>((props, ref) => {
   const {
     buttonText,
-    mode,
+    mode = 'contained',
     buttonTextStyle,
     disabled,
     style,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: scaleWidth(12),
+    padding: scaleHeight(10),
     borderWidth: 2,
     borderRadius: scaleWidth(4),
     borderColor: Colors.primaryColor,

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {forwardRef} from 'react';
 import Fonts from '@constants/Fonts';
-import {Scale} from '@utils/Scale';
+import { scaleFont, scaleHeight, scaleWidth } from '@utils/Scale';
 import {Colors} from '@constants/index';
 
 export interface InputProps extends TextInputProps {
@@ -58,26 +58,26 @@ export const Input = forwardRef<TextInput, InputProps>((props, ref) => {
 const styles = StyleSheet.create({
   label: {
     fontFamily: Fonts.GilroyMedium,
-    fontSize: Scale(14),
+    fontSize: scaleFont(14),
     color: Colors.gray,
-    marginBottom: Scale(12),
+    marginBottom: scaleHeight(12),
   },
   inputContainer: {
-    borderWidth: Scale(1.5),
-    borderRadius: Scale(4),
+    borderWidth: scaleWidth(1.5),
+    borderRadius: scaleWidth(4),
     borderColor: Colors.gray300,
-    paddingHorizontal: Scale(4),
+    paddingHorizontal: scaleWidth(4),
     flexDirection: 'row',
     alignItems: 'center',
   },
   inputStyle: {
     color: Colors.darkGray,
     fontFamily: Fonts.GilroyMedium,
-    fontSize: Scale(14),
+    fontSize: scaleFont(14),
     flex: 1,
   },
   rightContainerStyle: {
-    marginEnd: Scale(12),
-    padding: Scale(4),
+    marginEnd: scaleWidth(12),
+    padding: scaleWidth(4),
   },
 });

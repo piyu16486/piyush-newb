@@ -1,47 +1,24 @@
 import {LogoImg} from '@assets/Images';
-import {Fonts, FontWeight} from '@constants/index';
-import {Scale} from '@utils/Scale';
+import {Colors, Fonts} from '@constants/index';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Image, View, StyleSheet, Text} from 'react-native';
 
-export const Header = ({
-  title = 'Welcome to CashnTech',
-  showWelcomeText = true,
-  ShowPasswordalabel = false,
-  ShowPasswordalabel2 = false,
-  ShowPasswordalert = false,
-  showEligibility = false,
-}) => {
+export type HeaderProps = {
+  title?: string;
+  subtitle?: string;
+};
+
+export const Header: React.FC<HeaderProps> = ({title = '', subtitle = ''}) => {
   return (
     <View>
       <View style={styles.headerContainer}>
-        <Image
-          source={LogoImg}
-          style={styles.logo} // Apply responsive logo size
-        />
+        <Image source={LogoImg} style={styles.logo} />
       </View>
-
-      {showWelcomeText && <Text style={styles.welcomeText}>{title}</Text>}
-
-      {ShowPasswordalabel && (
-        <Text style={styles.welcomeText}>Re-Set your a Password</Text>
-      )}
-      {ShowPasswordalabel2 && (
-        <Text style={styles.welcomeText}>Create your Password</Text>
-      )}
-
-      {ShowPasswordalert && (
-        <Text style={styles.subtitle}>
-          <Text style={styles.subtitle}>
-            Your password must be at least 8 characters long and include
-          </Text>
-          <Text style={styles.subtitle}> 1 symbol and 1 number. </Text>
-        </Text>
-      )}
-
-      {showEligibility && (
-        <Text style={styles.subtitle}>Unlock your Eligibility now</Text>
-      )}
+      <View style={styles.subtitleContainer}>
+        {title.length > 0 && <Text style={styles.title}>{title}</Text>}
+        {subtitle.length > 0 && <Text style={styles.subtitle}>{subtitle}</Text>}
+      </View>
     </View>
   );
 };
@@ -51,29 +28,26 @@ const styles = StyleSheet.create({
   headerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: -3,
   },
   logo: {
     resizeMode: 'contain',
-    marginBottom: 35,
-    width: Scale(230),
-    height: Scale(40),
+    width: scaleWidth(110),
+    height: scaleHeight(28),
+    marginTop: scaleHeight(16),
   },
-  welcomeText: {
-    fontSize: Scale(16),
-    marginTop: Scale(35.3),
-    color: '#332D2D',
-    textAlign: 'left',
-    fontWeight: FontWeight.Medium,
-    fontFamily: Fonts.Gilroy,
-    marginBottom: Scale(10),
+  title: {
+    fontSize: scaleFont(16),
+    color: Colors.gray,
+    fontFamily: Fonts.GilroyMedium,
   },
   subtitle: {
-    fontSize: Scale(12),
-    color: '#A6A6A6',
-    textAlign: 'left',
-    fontWeight: FontWeight.Medium,
-    fontFamily: Fonts.Gilroy,
-    marginTop: 2,
+    marginTop: scaleHeight(8),
+    fontSize: scaleFont(12),
+    color: Colors.lightGray,
+    fontFamily: Fonts.GilroySemiBold,
+  },
+  subtitleContainer: {
+    marginTop: scaleHeight(75),
+    marginHorizontal: scaleWidth(32),
   },
 });

@@ -1,4 +1,4 @@
 export type AuthNavigatorType = {
-  EmailSignupScreen: undefined;
+  SignupScreen: undefined;
   Login: undefined;
 };
