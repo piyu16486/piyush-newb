@@ -18,6 +18,7 @@
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-config": "^1.5.5",
+    "react-native-country-picker-modal": "^2.0.0",
     "react-native-crypto-js": "^1.0.0",
     "react-native-gesture-handler": "^2.22.1",
     "react-native-mmkv": "^3.2.0",

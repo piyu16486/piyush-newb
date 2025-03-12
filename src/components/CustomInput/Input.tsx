@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {forwardRef} from 'react';
 import Fonts from '@constants/Fonts';
-import { scaleFont, scaleHeight, scaleWidth } from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors} from '@constants/index';
 
 export interface InputProps extends TextInputProps {
@@ -21,6 +21,9 @@ export interface InputProps extends TextInputProps {
   renderRightIcon?: React.ReactNode;
   onPressRightIcon?: () => void;
   rightIconStyle?: StyleProp<ViewStyle>;
+  renderLeftIcon?: React.ReactNode;
+  leftIconStyle?: StyleProp<ViewStyle>;
+  onPressLeftIcon?: () => void;
 }
 
 export const Input = forwardRef<TextInput, InputProps>((props, ref) => {
@@ -31,6 +34,9 @@ export const Input = forwardRef<TextInput, InputProps>((props, ref) => {
     renderRightIcon,
     onPressRightIcon,
     rightIconStyle,
+    renderLeftIcon,
+    onPressLeftIcon,
+    leftIconStyle,
     style,
     ...rest
   } = props;
@@ -40,6 +46,13 @@ export const Input = forwardRef<TextInput, InputProps>((props, ref) => {
         <Text style={[styles.label, labelStyle]}>{label}</Text>
       )}
       <View style={[styles.inputContainer]}>
+        {renderLeftIcon && (
+          <TouchableOpacity
+            style={leftIconStyle}
+            onPress={() => onPressLeftIcon?.()}>
+            {renderLeftIcon}
+          </TouchableOpacity>
+        )}
         <TextInput ref={ref} {...rest} style={[styles.inputStyle, style]} />
         {renderRightIcon && (
           <TouchableOpacity

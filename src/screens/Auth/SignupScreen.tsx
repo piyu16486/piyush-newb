@@ -1,10 +1,22 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Container, Header, Input} from '@components/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
-
+import CountryPicker, {Country} from 'react-native-country-picker-modal';
 export const SignupScreen = () => {
+  const [signupMode, setSignupMode] = useState<'email' | 'mobile'>('email');
+  const [showCountryModal, setShowCountryModal] = useState(false);
+  const [country, setCountry] = useState<Country>({
+    cca2: 'IN',
+    currency: ['INR'],
+    callingCode: ['91'],
+    region: 'Asia',
+    subregion: 'Southern Asia',
+    flag: 'flag-in',
+    name: 'India',
+  });
+
   return (
     <Container>
       <View style={styles.flex1}>
@@ -13,9 +25,45 @@ export const SignupScreen = () => {
           subtitle="Unlock your Eligibility now"
         />
         <View style={styles.inputContainer}>
-          <Input label="Enter your Email Address" />
+          <Input
+            label={
+              signupMode === 'email'
+                ? 'Enter your Email Address'
+                : 'Enter your Mobile Number'
+            }
+            renderLeftIcon={
+              signupMode === 'email' ? undefined : (
+                <View style={styles.countryCodeContainer}>
+                  <CountryPicker
+                    visible={showCountryModal}
+                    countryCode={country.cca2}
+                    onSelect={item => {
+                      setShowCountryModal(false);
+                      setCountry(item);
+                    }}
+                    withEmoji
+                    withFlag
+                    withCallingCode
+                    withAlphaFilter
+                    withFilter
+                    withFlagButton
+                    withCallingCodeButton
+                  />
+                </View>
+              )
+            }
+            leftIconStyle={styles.leftIcon}
+            onPressLeftIcon={() => {
+              setShowCountryModal(prv => !prv);
+            }}
+            keyboardType={
+              signupMode === 'email' ? 'email-address' : 'number-pad'
+            }
+          />
           <Button
-            buttonText="Get Verification Code"
+            buttonText={
+              signupMode === 'email' ? 'Get Verification Code' : 'Get OTP'
+            }
             style={{marginTop: scaleHeight(35)}}
           />
           <View style={styles.dividerContainer}>
@@ -25,9 +73,20 @@ export const SignupScreen = () => {
           </View>
 
           <Button
-            buttonText="Continue with Mobile No."
+            buttonText={
+              signupMode === 'email'
+                ? 'Continue with Mobile No.'
+                : 'Continue with Email ID'
+            }
             mode="outlined"
             style={{marginTop: scaleHeight(24)}}
+            onPress={() => {
+              if (signupMode === 'email') {
+                setSignupMode('mobile');
+              } else {
+                setSignupMode('email');
+              }
+            }}
           />
 
           <View style={styles.accountContainer}>
@@ -116,5 +175,16 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     margin: scaleHeight(4),
     fontSize: scaleFont(10),
+  },
+  countryCodeContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginEnd: scaleWidth(4),
+  },
+  leftIcon: {
+    borderRightWidth: scaleWidth(1.5),
+    borderColor: Colors.gray300,
+    height: '100%',
+    flexDirection: 'row',
   },
 });
