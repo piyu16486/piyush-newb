@@ -1,9 +1,13 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
-import {Button, Container, Header, Input} from '@components/index';
+import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
+import {useNavigation} from '@react-navigation/native';
+import {AuthNavigatorType} from '@type/NavigatorTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
 export const SignupScreen = () => {
   const [signupMode, setSignupMode] = useState<'email' | 'mobile'>('email');
   const [showCountryModal, setShowCountryModal] = useState(false);
@@ -16,6 +20,9 @@ export const SignupScreen = () => {
     flag: 'flag-in',
     name: 'India',
   });
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
 
   return (
     <Container>
@@ -99,21 +106,7 @@ export const SignupScreen = () => {
           </View>
         </View>
       </View>
-      <View>
-        <View style={styles.copyRightContainer}>
-          <Text style={styles.termConText}>
-            By signing in, you agree to our
-          </Text>
-          <Text style={styles.termConText}>
-            <Text style={styles.termConLinkText}>Privacy Policy</Text>
-            {' and '}
-            <Text style={styles.termConLinkText}>Terms of Service</Text>
-          </Text>
-        </View>
-        <Text style={styles.copyRightText}>
-          Copyright 2024, CashnTech Pvt Ltd., All Rights Reserved
-        </Text>
-      </View>
+      <TnCFooter navigation={navigation} />
     </Container>
   );
 };
@@ -156,25 +149,6 @@ const styles = StyleSheet.create({
   accountLinkText: {
     color: Colors.primaryColor,
     textDecorationLine: 'underline',
-  },
-  copyRightContainer: {alignItems: 'center', marginBottom: scaleHeight(24)},
-  termConText: {
-    color: Colors.lightGray,
-    fontFamily: Fonts.GilroyRegular,
-    fontSize: scaleFont(14),
-  },
-  termConLinkText: {
-    fontSize: scaleFont(14),
-    color: Colors.tertiaryColor,
-    fontFamily: Fonts.GilroySemiBold,
-    textDecorationLine: 'underline',
-  },
-  copyRightText: {
-    textAlign: 'center',
-    color: Colors.gray200,
-    fontFamily: Fonts.GilroyMedium,
-    margin: scaleHeight(4),
-    fontSize: scaleFont(10),
   },
   countryCodeContainer: {
     justifyContent: 'center',
