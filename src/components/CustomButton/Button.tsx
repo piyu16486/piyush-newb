@@ -8,8 +8,8 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native';
-import {Scale} from '@utils/Scale';
-import {Colors, Fonts, FontWeight} from '@constants/index';
+import {scaleFont, scaleWidth} from '@utils/Scale';
+import {Colors, Fonts} from '@constants/index';
 
 export interface CustomButtonProps extends TouchableOpacityProps {
   buttonText: string;
@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Scale(12),
-    borderWidth: Scale(2),
-    borderRadius: Scale(4),
+    padding: scaleWidth(12),
+    borderWidth: 2,
+    borderRadius: scaleWidth(4),
     borderColor: Colors.primaryColor,
   },
   buttonOutline: {
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
   buttonTextStyle: {
     color: Colors.white,
     fontFamily: Fonts.GilroyMedium,
-    fontSize: Scale(16),
-    lineHeight: Scale(20),
+    fontSize: scaleFont(16),
+    lineHeight: scaleFont(20),
   },
   outlinedButtonText: {
     color: Colors.primaryColor,

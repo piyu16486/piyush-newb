@@ -1,5 +1,11 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, ViewProps} from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  ViewProps,
+} from 'react-native';
 import {Colors} from '@constants/index';
 
 export const Container: React.FC<React.PropsWithChildren<ViewProps>> = ({
@@ -24,6 +30,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    marginTop: StatusBar.currentHeight,
+    paddingTop:
+      parseInt(`${Platform.Version}`, 10) >= 35 ? StatusBar.currentHeight : 0,
   },
 });
