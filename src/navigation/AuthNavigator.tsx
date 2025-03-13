@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {SignupScreen, TermsOfService} from '@screens/index';
+import {OTPInputScreen, SignupScreen, TermsOfService} from '@screens/index';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import React from 'react';
 
@@ -9,6 +9,7 @@ export const AuthNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
       <AuthStack.Screen name="SignupScreen" component={SignupScreen} />
+      <AuthStack.Screen name="OTPInputScreen" component={OTPInputScreen} />
       <AuthStack.Screen name="TermsOfService" component={TermsOfService} />
     </AuthStack.Navigator>
   );

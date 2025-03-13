@@ -1,14 +1,21 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {isValidEmail, isValidMobile} from '@utils/Utils';
+import Toast from 'react-native-toast-message';
 
 export const SignupScreen = () => {
+  // Hooks
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+  const {params} = useRoute<RouteProp<AuthNavigatorType, 'SignupScreen'>>();
+  // States
   const [signupMode, setSignupMode] = useState<'email' | 'mobile'>('email');
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [country, setCountry] = useState<Country>({
@@ -20,9 +27,92 @@ export const SignupScreen = () => {
     flag: 'flag-in',
     name: 'India',
   });
+  const [contactInfo, setContactInfo] = useState('');
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+  useEffect(() => {
+    if (params?.signupMode) {
+      setSignupMode(params.signupMode);
+      if (params.signupMode === 'mobile') {
+        setContactInfo(params.mobile ?? '');
+        setCountry(params.country ?? country);
+      } else {
+        setContactInfo(params.email ?? '');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
+  // Functions
+  const handleEmailVerification = () => {
+    if (!contactInfo.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Email is required',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    if (!isValidEmail(contactInfo.trim())) {
+      Toast.show({
+        type: 'error',
+        text1: 'Email is not valid',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    Toast.show({
+      type: 'success',
+      text1: 'OTP sent to your email',
+      visibilityTime: 2000,
+    });
+    return true;
+  };
+
+  const handleMobileVerification = () => {
+    if (!contactInfo.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Mobile no. is required',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    if (!isValidMobile(contactInfo.trim(), country.callingCode[0])) {
+      Toast.show({
+        type: 'error',
+        text1: 'Mobile no. is not valid',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    Toast.show({
+      type: 'success',
+      text1: 'OTP sent to your mobile no.',
+      visibilityTime: 2000,
+    });
+    return true;
+  };
+
+  const onPressVerify = () => {
+    if (signupMode === 'email') {
+      const isEmailValid = handleEmailVerification();
+      if (isEmailValid) {
+        navigation.replace('OTPInputScreen', {
+          signupMode: 'email',
+          email: contactInfo,
+        });
+      }
+    } else {
+      const isMobileValid = handleMobileVerification();
+      if (isMobileValid) {
+        navigation.replace('OTPInputScreen', {
+          signupMode: 'mobile',
+          mobile: contactInfo,
+          country: country,
+        });
+      }
+    }
+  };
 
   return (
     <Container>
@@ -63,6 +153,9 @@ export const SignupScreen = () => {
             onPressLeftIcon={() => {
               setShowCountryModal(prv => !prv);
             }}
+            maxLength={32}
+            value={contactInfo}
+            onChangeText={setContactInfo}
             keyboardType={
               signupMode === 'email' ? 'email-address' : 'number-pad'
             }
@@ -72,6 +165,7 @@ export const SignupScreen = () => {
               signupMode === 'email' ? 'Get Verification Code' : 'Get OTP'
             }
             style={{marginTop: scaleHeight(35)}}
+            onPress={onPressVerify}
           />
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
@@ -93,6 +187,7 @@ export const SignupScreen = () => {
               } else {
                 setSignupMode('email');
               }
+              setContactInfo('');
             }}
           />
 

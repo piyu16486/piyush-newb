@@ -7,9 +7,14 @@ import {Image, View, StyleSheet, Text} from 'react-native';
 export type HeaderProps = {
   title?: string;
   subtitle?: string;
+  customSubtitle?: React.ReactNode;
 };
 
-export const Header: React.FC<HeaderProps> = ({title = '', subtitle = ''}) => {
+export const Header: React.FC<HeaderProps> = ({
+  title = '',
+  subtitle = '',
+  customSubtitle,
+}) => {
   return (
     <View>
       <View style={styles.headerContainer}>
@@ -17,7 +22,10 @@ export const Header: React.FC<HeaderProps> = ({title = '', subtitle = ''}) => {
       </View>
       <View style={styles.subtitleContainer}>
         {title.length > 0 && <Text style={styles.title}>{title}</Text>}
-        {subtitle.length > 0 && <Text style={styles.subtitle}>{subtitle}</Text>}
+        {!customSubtitle && subtitle.length > 0 && (
+          <Text style={styles.subtitle}>{subtitle}</Text>
+        )}
+        {customSubtitle}
       </View>
     </View>
   );
