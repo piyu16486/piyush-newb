@@ -13,7 +13,7 @@ import Toast from 'react-native-toast-message';
 const OTP_TIMER = 60;
 
 export const OTPInputScreen = () => {
-  const [_, setOtp] = useState('');
+  const [otp, setOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(OTP_TIMER);
   const timerInterval = useRef<NodeJS.Timeout>(null);
 
@@ -70,6 +70,23 @@ export const OTPInputScreen = () => {
       clearInterval(timerInterval.current);
     }
     startTimer();
+  };
+
+  const onPressVerifyOTP = () => {
+    if (otp.length < 6) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid OTP',
+        visibilityTime: 2000,
+      });
+      return;
+    }
+    Toast.show({
+      type: 'success',
+      text1: 'OTP verified successfully',
+      visibilityTime: 2000,
+    });
+    navigation.replace('PasswordScreen');
   };
 
   return (
@@ -139,6 +156,7 @@ export const OTPInputScreen = () => {
                 : 'Verify Mobile no.'
             }
             style={{marginTop: scaleHeight(20)}}
+            onPress={onPressVerifyOTP}
           />
         </View>
         <View style={styles.resendContainer}>

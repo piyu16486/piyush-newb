@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.6.0",
     "awesome-phonenumber": "^7.4.0",
     "axios": "^1.8.2",
+    "lottie-react-native": "^7.2.2",
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-config": "^1.5.5",
