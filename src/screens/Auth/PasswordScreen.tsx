@@ -30,7 +30,7 @@ export const PasswordScreen = () => {
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       error.symbolError = true;
     }
-    if (!/[0-9]/.test(password)) {
+    if (!/\d/.test(password)) {
       error.numberError = true;
     }
     return error;

@@ -39,7 +39,6 @@ export const SignupScreen = () => {
         setContactInfo(params.email ?? '');
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Functions
@@ -97,21 +96,38 @@ export const SignupScreen = () => {
     if (signupMode === 'email') {
       const isEmailValid = handleEmailVerification();
       if (isEmailValid) {
-        navigation.replace('OTPInputScreen', {
-          signupMode: 'email',
-          email: contactInfo,
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'OTPInputScreen',
+              params: {signupMode: 'email', email: contactInfo},
+            },
+          ],
         });
       }
     } else {
       const isMobileValid = handleMobileVerification();
       if (isMobileValid) {
-        navigation.replace('OTPInputScreen', {
-          signupMode: 'mobile',
-          mobile: contactInfo,
-          country: country,
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'OTPInputScreen',
+              params: {
+                signupMode: 'mobile',
+                mobile: contactInfo,
+                country: country,
+              },
+            },
+          ],
         });
       }
     }
+  };
+
+  const onPressLogin = () => {
+    navigation.replace('SigninScreen');
   };
 
   return (
@@ -193,7 +209,7 @@ export const SignupScreen = () => {
 
           <View style={styles.accountContainer}>
             <Text style={styles.accountText}>Already have an account?</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPressLogin}>
               <Text style={[styles.accountText, styles.accountLinkText]}>
                 Log in
               </Text>
