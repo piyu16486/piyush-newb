@@ -39,6 +39,7 @@ export const SignupScreen = () => {
         setContactInfo(params.email ?? '');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Functions
@@ -101,7 +102,11 @@ export const SignupScreen = () => {
           routes: [
             {
               name: 'OTPInputScreen',
-              params: {signupMode: 'email', email: contactInfo},
+              params: {
+                signupMode: 'email',
+                email: contactInfo,
+                showCreatePass: true,
+              },
             },
           ],
         });
@@ -118,6 +123,7 @@ export const SignupScreen = () => {
                 signupMode: 'mobile',
                 mobile: contactInfo,
                 country: country,
+                showCreatePass: true,
               },
             },
           ],

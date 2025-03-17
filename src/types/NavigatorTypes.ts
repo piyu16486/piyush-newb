@@ -5,9 +5,13 @@ export type AuthNavigatorType = {
   SignupScreen: SignupScreenParams;
   OTPInputScreen: OTPInputScreenParams;
   SigninScreen: undefined;
-  PasswordScreen: undefined;
+  PasswordScreen: {
+    screenMode: 'forgotPass' | 'createPass';
+  };
   TermsOfService: undefined;
-  SuccessScreen: undefined;
+  SuccessScreen: {
+    authMode: 'signin' | 'signup' | 'password';
+  };
   Login: undefined;
 };
 
@@ -27,9 +31,11 @@ export type OTPInputScreenParams =
   | {
       signupMode: 'email';
       email: string;
+      showCreatePass: boolean;
     }
   | {
       signupMode: 'mobile';
       mobile: string;
       country: Country;
+      showCreatePass: boolean;
     };

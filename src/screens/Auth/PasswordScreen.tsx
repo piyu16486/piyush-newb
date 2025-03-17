@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {StyleSheet, Text, View} from 'react-native';
@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 export const PasswordScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+  const {params} = useRoute<RouteProp<AuthNavigatorType, 'PasswordScreen'>>();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -57,13 +58,21 @@ export const PasswordScreen = () => {
       });
       return;
     }
-    navigation.replace('SuccessScreen');
+    if (params.screenMode === 'createPass') {
+      navigation.replace('SuccessScreen', {authMode: 'signup'});
+    } else {
+      navigation.replace('SuccessScreen', {authMode: 'password'});
+    }
   };
 
   return (
     <Container>
       <Header
-        title={'Create your password'}
+        title={
+          params.screenMode === 'createPass'
+            ? 'Create your password'
+            : 'Re-set your Password'
+        }
         subtitle={
           'Your password must be at least 8 characters long and \ninclude 1 symbol and 1 number.'
         }
@@ -125,7 +134,11 @@ export const PasswordScreen = () => {
           </View>
         </View>
         <Button
-          buttonText="Create Password"
+          buttonText={
+            params.screenMode === 'createPass'
+              ? 'Create Password'
+              : 'Update Password'
+          }
           style={styles.buttonStyle}
           onPress={onPressCreatePassword}
         />

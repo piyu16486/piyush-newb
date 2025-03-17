@@ -86,7 +86,11 @@ export const OTPInputScreen = () => {
       text1: 'OTP verified successfully',
       visibilityTime: 2000,
     });
-    navigation.replace('PasswordScreen');
+    if (params.showCreatePass) {
+      navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
+    } else {
+      navigation.replace('SuccessScreen', {authMode: 'signin'});
+    }
   };
 
   return (
