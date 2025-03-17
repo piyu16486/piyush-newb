@@ -5,3 +5,4 @@ export * from './EyeOpen';
 export * from './EyeClose';
 export * from './EditIcon';
 export * from './CircleCheck';
+export * from './MenuIcon';
