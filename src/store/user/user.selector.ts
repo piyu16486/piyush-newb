@@ -5,4 +5,6 @@ const _selectState = (state: RootState) => state.user;
 
 const getUserType = createSelector(_selectState, fstate => fstate.userType);
 
-export default {getUserType};
+const getUserInfo = createSelector(_selectState, fstate => fstate.userInfo);
+
+export default {getUserType, getUserInfo};

@@ -2,9 +2,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {SplashScreen} from '@screens/index';
 import React, {useEffect, useState} from 'react';
 import {AuthNavigator} from './AuthNavigator';
+import {useSelector} from 'react-redux';
+import {userSelector} from '@store/user';
+import {HomeNavigator} from './HomeNavigator';
 
 export const MainNavigator = () => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const userInfo = useSelector(userSelector.getUserInfo);
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
@@ -19,7 +23,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      <AuthNavigator />
+      {userInfo ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

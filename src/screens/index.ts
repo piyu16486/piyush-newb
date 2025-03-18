@@ -5,3 +5,4 @@ export * from './Auth/PasswordScreen';
 export * from './Auth/SuccessScreen';
 export * from './Auth/SigninScreen';
 export * from './TermsOfService/TermsOfService';
+export * from './ClientInfo/ClientInfo';

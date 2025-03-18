@@ -12,6 +12,8 @@ import React from 'react';
 import {Colors, Fonts} from '@constants/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {MenuIcon} from '@assets/Icons';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {HomeNavigatorType} from '@type/NavigatorTypes';
 
 export type AppBarProps = {
   title?: string;
@@ -23,7 +25,7 @@ export type AppBarProps = {
   leftIconProps?: TouchableOpacityProps;
   leftIconContainerStyle?: StyleProp<ViewStyle>;
 
-  navigation: any; // TODO add type
+  navigation?: DrawerNavigationProp<HomeNavigatorType>;
 };
 
 export const AppBar: React.FC<AppBarProps> = ({
@@ -34,6 +36,7 @@ export const AppBar: React.FC<AppBarProps> = ({
   renderLeftIcon,
   leftIconProps,
   titleTextStyle,
+  navigation,
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
@@ -42,7 +45,7 @@ export const AppBar: React.FC<AppBarProps> = ({
           if (onPressLeftIcon) {
             onPressLeftIcon();
           } else {
-            // openDrawer(); TODO add drawer function
+            navigation?.openDrawer();
           }
         }}
         style={[leftIconContainerStyle]}

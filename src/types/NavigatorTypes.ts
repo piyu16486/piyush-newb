@@ -39,3 +39,7 @@ export type OTPInputScreenParams =
       country: Country;
       showCreatePass: boolean;
     };
+
+export type HomeNavigatorType = {
+  ClientInfo: undefined;
+};
