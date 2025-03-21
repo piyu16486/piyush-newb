@@ -1,3 +1,4 @@
+import {parsePhoneNumber} from 'awesome-phonenumber';
 import CryptoJS from 'react-native-crypto-js';
 
 /**
@@ -16,4 +17,31 @@ export function getEnvironmentVariable(value: string) {
     return originalText;
   }
   return value;
+}
+
+/**
+ * Validates whether a given email address is in a proper format.
+ *
+ * @param email - The email address to validate.
+ * @returns True if the email address is valid, otherwise false.
+ */
+
+export function isValidEmail(email: string) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
+ * Validates whether a given mobile number is in a proper format.
+ *
+ * @param mobile - The mobile number to validate.
+ * @param countryCode - The country code of the mobile number.
+ * @returns True if the mobile number is valid, otherwise false.
+ */
+export function isValidMobile(mobile: string, countryCode: string) {
+  if (countryCode === '91') {
+    return /[6-9]\d{9}/.test(mobile);
+  } else {
+    return parsePhoneNumber(`+${countryCode}${mobile}`).valid;
+  }
 }

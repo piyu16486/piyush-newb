@@ -1,12 +1,32 @@
 import {Dimensions} from 'react-native';
 
-const SCREEN_HEIGHT = 736;
-const SCREEN_WIDTH = 414;
+const {width, height} = Dimensions.get('window');
 
-const {height, width} = Dimensions.get('window');
+// Base design dimensions
+const BASE_WIDTH = 414;
+const BASE_HEIGHT = 736;
 
-const Scale = (units = 1) => (width / SCREEN_WIDTH) * units;
+/**
+ * Scale width proportionally to the screen size
+ * @param {number} size - The value to scale
+ * @returns {number} - Scaled value
+ */
+export const scaleWidth = (size: number = 0): number =>
+  (width / BASE_WIDTH) * size;
 
-const verticalScale = (size = 1) => (height / SCREEN_HEIGHT) * size;
+/**
+ * Scale height proportionally to the screen size
+ * @param {number} size - The value to scale
+ * @returns {number} - Scaled value
+ */
+export const scaleHeight = (size: number = 0): number =>
+  (height / BASE_HEIGHT) * size;
 
-export {verticalScale, Scale};
+/**
+ * Normalize font size to be consistent across devices
+ * @param {number} size - The font size
+ * @param {number} factor - Adjustment factor (default is 0.5)
+ * @returns {number} - Scaled font size
+ */
+export const scaleFont = (size = 0, factor = 0.5): number =>
+  size + (scaleWidth(size) - size) * factor;
