@@ -9,6 +9,13 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface SignUpPayload {
+  country_code: string;
+  mobile_number: string;
+  is_internal: boolean;
+  is_client: boolean;
+}
+
 export interface IUser {
   id: number;
   username: string;
