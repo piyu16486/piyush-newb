@@ -5,3 +5,4 @@ export * from './Container/Container';
 export * from './Drawer/DrawerContent';
 export * from './Input/Input';
 export * from './Footer/TnCFooter';
+export * from './ClientCard/ClientCard';

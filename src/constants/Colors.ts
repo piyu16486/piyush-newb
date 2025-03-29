@@ -10,7 +10,11 @@ const lightColors = {
   gray500: '#564C4C',
   gray600: '#2E2E33',
   lightGray: '#A6A6A6',
+  LimeGray: '#FAFAFA',
   darkGray: '#191D23',
+  darkblack: '#515151',
+  lightPink: '#FFE9E9',
+  SteelGray: '#84919ABD',
 } as const;
 
 export default lightColors;

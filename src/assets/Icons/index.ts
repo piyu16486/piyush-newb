@@ -6,3 +6,8 @@ export * from './EyeClose';
 export * from './EditIcon';
 export * from './CircleCheck';
 export * from './MenuIcon';
+export * from './LeadManagment';
+export * from './ClientMaster';
+export * from './Logout';
+export * from './Search';
+export * from './Filter';

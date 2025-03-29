@@ -9,7 +9,12 @@ const Drawer = createDrawerNavigator<HomeNavigatorType>();
 export const HomeNavigator = () => {
   return (
     <Drawer.Navigator
-      screenOptions={{headerShown: false}}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          width: 264, // Set your desired width
+        },
+      }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientInfo" component={ClientInfo} />
     </Drawer.Navigator>

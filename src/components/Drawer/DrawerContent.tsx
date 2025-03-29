@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 import {
   View,
   Text,
@@ -12,7 +14,14 @@ import React from 'react';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {UserImg} from '@assets/Images';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {LeftChevron, SalesPipeline, UpChevron} from '@assets/Icons';
+import {
+  ClientMaster,
+  LeftChevron,
+  SalesPipeline,
+  UpChevron,
+  LeadManagment,
+  Logout,
+} from '@assets/Icons';
 import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
@@ -26,6 +35,7 @@ if (Platform.OS === 'android') {
 
 export const DrawerContent = (props: DrawerContentComponentProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [DisOpen, setDIsOpen] = React.useState(false);
   const {navigation} = props;
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={styles.rootView}>
@@ -52,14 +62,38 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Login')}>
-            <SalesPipeline height={scaleHeight(24)} width={scaleWidth(24)} />
-            <Text style={styles.buttonText}>Sales Pipeline</Text>
-          </TouchableOpacity>
-
           <View style={{flex: 1}}>
+            <TouchableOpacity
+              style={[styles.button, {backgroundColor: '#E9EBE9'}]}
+              onPress={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+                setDIsOpen(!DisOpen);
+              }}>
+              <View style={styles.rowCenter}>
+                <ClientMaster height={scaleHeight(24)} width={scaleWidth(24)} />
+                <Text style={styles.buttonText}>Client Information Master</Text>
+              </View>
+              <UpChevron rotation={DisOpen ? 0 : 180} />
+            </TouchableOpacity>
+            {DisOpen && (
+              <View style={{marginLeft: scaleWidth(24)}}>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Client Information</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Soft Sanction</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Lead Progres</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Report</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+
+          <View style={{flex: 1, marginTop: 2}}>
             <TouchableOpacity
               style={[styles.button, {backgroundColor: '#E9EBE9'}]}
               onPress={() => {
@@ -67,7 +101,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                 setIsOpen(!isOpen);
               }}>
               <View style={styles.rowCenter}>
-                <SalesPipeline
+                <LeadManagment
                   height={scaleHeight(24)}
                   width={scaleWidth(24)}
                 />
@@ -78,13 +112,35 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
             {isOpen && (
               <View style={{marginLeft: scaleWidth(24)}}>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Lead Management</Text>
+                  <Text style={styles.buttonText}>Recording of Lead</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Lead Management</Text>
+                  <Text style={styles.buttonText}>Profiling of Lead</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Follow up Action</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>KYC Document</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Document Validation</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Pre Screening</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText}>Bank Fitment</Text>
                 </TouchableOpacity>
               </View>
             )}
+          </View>
+        </View>
+        {/* Logout Button*/}
+        <View style={styles.lotout}>
+          <View style={styles.rowCenter}>
+            <Logout height={scaleHeight(24)} width={scaleWidth(24)} />
+            <Text style={styles.buttonText}>Log Out</Text>
           </View>
         </View>
       </SafeAreaView>
@@ -161,5 +217,9 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     fontSize: scaleFont(16),
     marginStart: scaleWidth(16),
+  },
+  lotout: {
+    marginTop: scaleHeight(400),
+    marginHorizontal: scaleWidth(16),
   },
 });
