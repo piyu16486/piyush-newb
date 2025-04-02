@@ -42,6 +42,18 @@ const clientsData = [
     financier: '10-02-2023',
     status: 'Warm',
   },
+  // {
+  //   id: '0001',
+  //   name: 'S D Verma',
+  //   location: 'Delhi',
+  //   initiator: 'Delhi',
+  //   source: 'Source D',
+  //   referenceDetails: '9898923222',
+  //   monthlyTurnover: '20,00,000',
+  //   sanctionRequested: '25,00,000',
+  //   financier: '10-02-2023',
+  //   status: 'Warm',
+  // },
   // Add more client data here...
 ];
 
@@ -85,7 +97,9 @@ export const ClientInfo = () => {
           renderItem={({item}) => <ClientCard {...item} />}
         />
       </View>
-      <TouchableOpacity style={styles.plusButton}>
+      <TouchableOpacity
+        style={styles.plusButton}
+        onPress={() => navigation.navigate('FormSelectionScreen')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

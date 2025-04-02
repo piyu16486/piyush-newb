@@ -47,9 +47,13 @@ export const FormSelectionScreen: React.FC = () => {
       <AppBar title="Client Information Master" navigation={navigation} />
 
       {/* Subheader Section */}
-      <View style={styles.subcontainer}>
-        <LeftChevronCircle height={26} width={26} />
-        <Text style={styles.subheader}>Collect Lead Information</Text>
+      <View>
+        <TouchableOpacity
+          style={styles.subcontainer}
+          onPress={navigation.goBack}>
+          <LeftChevronCircle height={26} width={26} />
+          <Text style={styles.subheader}>Collect Lead Information</Text>
+        </TouchableOpacity>
       </View>
 
       {/* List Section */}
@@ -104,5 +108,3 @@ const styles = StyleSheet.create({
     color: Colors.gray500,
   },
 });
-
-export default FormSelectionScreen;

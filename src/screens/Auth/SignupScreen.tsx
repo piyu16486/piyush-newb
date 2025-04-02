@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   flex1: {flex: 1},
   inputContainer: {
     marginHorizontal: scaleWidth(43),
-    marginTop: scaleHeight(64),
+    marginTop: scaleHeight(50),
   },
   // dividerContainer: {
   //   flexDirection: 'row',
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   //   fontFamily: Fonts.GilroyMedium,
   // },
   accountContainer: {
-    marginTop: scaleHeight(24),
+    marginTop: scaleHeight(32),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

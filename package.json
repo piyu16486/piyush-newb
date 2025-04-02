@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@react-navigation/drawer": "^7.1.1",
-    "@react-navigation/native": "^7.0.15",
-    "@react-navigation/native-stack": "^7.2.1",
+    "@react-navigation/native": "^7.1.0",
+    "@react-navigation/native-stack": "^7.3.4",
     "@reduxjs/toolkit": "^2.6.0",
     "awesome-phonenumber": "^7.4.0",
     "axios": "^1.8.2",

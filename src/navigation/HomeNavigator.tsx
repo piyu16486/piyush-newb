@@ -6,6 +6,7 @@ import {HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Dimensions} from 'react-native';
+import {HomeStackNavigator} from './HomeStackNavigator';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
 
@@ -22,7 +23,7 @@ export const HomeNavigator = () => {
       }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientInfo" component={ClientInfo} />
-      {/* <Drawer.Screen name="ClientInfo" component={FormSelectionScreen} /> */}
+      {/* <Drawer.Screen name="HomeStack" component={HomeStackNavigator} /> */}
     </Drawer.Navigator>
   );
 };
