@@ -11,3 +11,6 @@ export * from './ClientMaster';
 export * from './Logout';
 export * from './Search';
 export * from './Filter';
+export * from './Plus';
+export * from './LeftChevronCircle';
+export * from './RightChevron';

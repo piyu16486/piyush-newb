@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import {
   View,
@@ -12,7 +11,7 @@ import {AppBar, Container} from '@components/index';
 import {useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {HomeNavigatorType} from '@type/NavigatorTypes';
-import {Search, Filter} from '@assets/Icons'; // Import your search and filter icons
+import {Search, Filter, Plus} from '@assets/Icons'; // Import your search and filter icons
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import {Colors} from '@constants/index';
@@ -86,6 +85,9 @@ export const ClientInfo = () => {
           renderItem={({item}) => <ClientCard {...item} />}
         />
       </View>
+      <TouchableOpacity style={styles.plusButton}>
+        <Plus height={24} width={24} />
+      </TouchableOpacity>
     </Container>
   );
 };
@@ -157,5 +159,16 @@ const styles = StyleSheet.create({
   Cardlist: {
     padding: 16,
     marginTop: 20,
+  },
+  plusButton: {
+    position: 'absolute',
+    bottom: 70,
+    right: 30,
+    backgroundColor: Colors.tertiaryBlue,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

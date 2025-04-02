@@ -28,6 +28,9 @@ export const SignupScreen = () => {
     name: 'India',
   });
   const [contactInfo, setContactInfo] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
 
   useEffect(() => {
     if (params?.signupMode) {
@@ -44,6 +47,14 @@ export const SignupScreen = () => {
 
   // Functions
   const handleEmailVerification = () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'First and Last Name are required',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
     if (!contactInfo.trim()) {
       Toast.show({
         type: 'error',
@@ -145,6 +156,17 @@ export const SignupScreen = () => {
         />
         <View style={styles.inputContainer}>
           <Input
+            label="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <Input
+            label="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            containerStyle={{marginTop: scaleHeight(8)}}
+          />
+          <Input
             label={
               signupMode === 'email'
                 ? 'Enter your Email Address'
@@ -181,6 +203,36 @@ export const SignupScreen = () => {
             keyboardType={
               signupMode === 'email' ? 'email-address' : 'number-pad'
             }
+            containerStyle={{marginTop: scaleHeight(8)}}
+          />
+          <Input
+            label="Enter Mobile No."
+            renderLeftIcon={
+              <View style={styles.countryCodeContainer}>
+                <CountryPicker
+                  visible={showCountryModal}
+                  countryCode={country.cca2}
+                  onSelect={item => {
+                    setShowCountryModal(false);
+                    setCountry(item);
+                  }}
+                  withEmoji
+                  withFlag
+                  withCallingCode
+                  withAlphaFilter
+                  withFilter
+                  withFlagButton
+                  withCallingCodeButton
+                />
+              </View>
+            }
+            leftIconStyle={styles.leftIcon}
+            onPressLeftIcon={() => setShowCountryModal(prv => !prv)}
+            maxLength={15}
+            value={mobileNumber}
+            onChangeText={setMobileNumber}
+            keyboardType="number-pad"
+            containerStyle={{marginTop: scaleHeight(8)}}
           />
           <Button
             buttonText={
@@ -189,13 +241,13 @@ export const SignupScreen = () => {
             style={{marginTop: scaleHeight(35)}}
             onPress={onPressVerify}
           />
-          <View style={styles.dividerContainer}>
+          {/* <View style={styles.dividerContainer}>
             <View style={styles.divider} />
             <Text style={styles.dividerText}>or</Text>
             <View style={styles.divider} />
-          </View>
+          </View> */}
 
-          <Button
+          {/* <Button
             buttonText={
               signupMode === 'email'
                 ? 'Continue with Mobile No.'
@@ -211,10 +263,10 @@ export const SignupScreen = () => {
               }
               setContactInfo('');
             }}
-          />
+          /> */}
 
           <View style={styles.accountContainer}>
-            <Text style={styles.accountText}>Already have an account?</Text>
+            <Text style={styles.accountText}>Already have an account? </Text>
             <TouchableOpacity onPress={onPressLogin}>
               <Text style={[styles.accountText, styles.accountLinkText]}>
                 Log in
@@ -234,26 +286,26 @@ const styles = StyleSheet.create({
     marginHorizontal: scaleWidth(43),
     marginTop: scaleHeight(64),
   },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: scaleHeight(35),
-  },
-  divider: {
-    flex: 1,
-    height: scaleHeight(2),
-    backgroundColor: '#CED0CE',
-    borderRadius: 10,
-  },
-  dividerText: {
-    marginHorizontal: scaleWidth(10),
-    color: Colors.lightGray,
-    lineHeight: scaleFont(14),
-    fontSize: scaleFont(14),
-    fontFamily: Fonts.GilroyMedium,
-  },
+  // dividerContainer: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   marginTop: scaleHeight(35),
+  // },
+  // divider: {
+  //   flex: 1,
+  //   height: scaleHeight(2),
+  //   backgroundColor: '#CED0CE',
+  //   borderRadius: 10,
+  // },
+  // dividerText: {
+  //   marginHorizontal: scaleWidth(10),
+  //   color: Colors.lightGray,
+  //   lineHeight: scaleFont(14),
+  //   fontSize: scaleFont(14),
+  //   fontFamily: Fonts.GilroyMedium,
+  // },
   accountContainer: {
-    marginTop: scaleHeight(93),
+    marginTop: scaleHeight(24),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

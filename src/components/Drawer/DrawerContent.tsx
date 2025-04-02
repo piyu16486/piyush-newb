@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 import {
   View,
@@ -9,23 +8,21 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  Dimensions,
+  ScrollView,
 } from 'react-native';
 import React from 'react';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {UserImg} from '@assets/Images';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   ClientMaster,
   LeftChevron,
-  SalesPipeline,
   UpChevron,
   LeadManagment,
   Logout,
 } from '@assets/Icons';
-import {
-  DrawerContentScrollView,
-  DrawerContentComponentProps,
-} from '@react-navigation/drawer';
+import {DrawerContentComponentProps} from '@react-navigation/drawer';
 import {Colors, Fonts} from '@constants/index';
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -37,9 +34,10 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [DisOpen, setDIsOpen] = React.useState(false);
   const {navigation} = props;
+  const {top, bottom} = useSafeAreaInsets();
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.rootView}>
-      <SafeAreaView style={styles.container}>
+    <View style={styles.rootView}>
+      <View style={[styles.container, {marginTop: top, marginBottom: bottom}]}>
         {/* Header */}
         <View style={styles.headerContainer}>
           <View style={styles.rowCenter}>
@@ -62,89 +60,96 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <View style={{flex: 1}}>
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: '#E9EBE9'}]}
-              onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-                setDIsOpen(!DisOpen);
-              }}>
-              <View style={styles.rowCenter}>
-                <ClientMaster height={scaleHeight(24)} width={scaleWidth(24)} />
-                <Text style={styles.buttonText}>Client Information Master</Text>
-              </View>
-              <UpChevron rotation={DisOpen ? 0 : 180} />
-            </TouchableOpacity>
-            {DisOpen && (
-              <View style={{marginLeft: scaleWidth(24)}}>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Client Information</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Soft Sanction</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Lead Progres</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Report</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: '#E9EBE9'}]}
+                onPress={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+                  setDIsOpen(!DisOpen);
+                }}>
+                <View style={styles.rowCenter}>
+                  <ClientMaster
+                    height={scaleHeight(24)}
+                    width={scaleWidth(24)}
+                  />
+                  <Text style={styles.buttonText}>
+                    Client Information Master
+                  </Text>
+                </View>
+                <UpChevron rotation={DisOpen ? 0 : 180} />
+              </TouchableOpacity>
+              {DisOpen && (
+                <View style={{marginLeft: scaleWidth(24)}}>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Client Information</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Soft Sanction</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Lead Progress</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Report</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
 
-          <View style={{flex: 1, marginTop: 2}}>
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: '#E9EBE9'}]}
-              onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-                setIsOpen(!isOpen);
-              }}>
-              <View style={styles.rowCenter}>
-                <LeadManagment
-                  height={scaleHeight(24)}
-                  width={scaleWidth(24)}
-                />
-                <Text style={styles.buttonText}>Lead Management</Text>
-              </View>
-              <UpChevron rotation={isOpen ? 0 : 180} />
-            </TouchableOpacity>
-            {isOpen && (
-              <View style={{marginLeft: scaleWidth(24)}}>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Recording of Lead</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Profiling of Lead</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Follow up Action</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>KYC Document</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Document Validation</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Pre Screening</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Bank Fitment</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+            <View>
+              <TouchableOpacity
+                style={[styles.button, {backgroundColor: '#E9EBE9'}]}
+                onPress={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+                  setIsOpen(!isOpen);
+                }}>
+                <View style={styles.rowCenter}>
+                  <LeadManagment
+                    height={scaleHeight(24)}
+                    width={scaleWidth(24)}
+                  />
+                  <Text style={styles.buttonText}>Lead Management</Text>
+                </View>
+                <UpChevron rotation={isOpen ? 0 : 180} />
+              </TouchableOpacity>
+              {isOpen && (
+                <View style={{marginLeft: scaleWidth(24)}}>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Recording of Lead</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Profiling of Lead</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Follow up Action</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>KYC Document</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Document Validation</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Pre Screening</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Bank Fitment</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </ScrollView>
         </View>
         {/* Logout Button*/}
-        <View style={styles.lotout}>
-          <View style={styles.rowCenter}>
+        <View style={styles.logOut}>
+          <View style={styles.row}>
             <Logout height={scaleHeight(24)} width={scaleWidth(24)} />
             <Text style={styles.buttonText}>Log Out</Text>
           </View>
         </View>
-      </SafeAreaView>
-    </DrawerContentScrollView>
+      </View>
+    </View>
   );
 };
 
@@ -154,13 +159,15 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingStart: 0,
     paddingEnd: 0,
+    width: Dimensions.get('window').width * 0.7,
+    height: Dimensions.get('screen').height,
   },
   container: {
     flex: 1,
   },
+  row: {flexDirection: 'row', alignItems: 'center'},
   rowCenter: {flexDirection: 'row', flex: 1, alignItems: 'center'},
   headerContainer: {
-    flex: 1,
     padding: scaleWidth(16),
     paddingBottom: scaleHeight(26),
     backgroundColor: '#FFE9E9',
@@ -189,24 +196,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    flex: 1,
     fontSize: scaleFont(18),
     fontFamily: 'Gilroy-SemiBold',
     color: Colors.primaryColor,
   },
   subTitle: {
-    flex: 1,
     fontSize: scaleFont(12),
     fontFamily: Fonts.GilroyMedium,
     color: '#95969C',
   },
   buttonContainer: {
+    flex: 1,
     marginTop: scaleHeight(24),
     marginHorizontal: scaleWidth(16),
   },
   button: {
     flexDirection: 'row',
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     padding: scaleWidth(8),
     marginBottom: scaleHeight(12),
@@ -218,8 +224,8 @@ const styles = StyleSheet.create({
     fontSize: scaleFont(16),
     marginStart: scaleWidth(16),
   },
-  lotout: {
-    marginTop: scaleHeight(400),
+  logOut: {
     marginHorizontal: scaleWidth(16),
+    marginBottom: scaleHeight(16),
   },
 });

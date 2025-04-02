@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {DrawerContent} from '@components/index';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {ClientInfo} from '@screens/index';
+import {ClientInfo, FormSelectionScreen} from '@screens/index';
 import {HomeNavigatorType} from '@type/NavigatorTypes';
+import {scaleWidth} from '@utils/Scale';
 import React from 'react';
+import {Dimensions} from 'react-native';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
 
@@ -12,11 +15,14 @@ export const HomeNavigator = () => {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width: 264, // Set your desired width
+          borderTopRightRadius: scaleWidth(8),
+          borderBottomRightRadius: scaleWidth(8),
+          width: Dimensions.get('window').width * 0.7,
         },
       }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientInfo" component={ClientInfo} />
+      {/* <Drawer.Screen name="ClientInfo" component={FormSelectionScreen} /> */}
     </Drawer.Navigator>
   );
 };
