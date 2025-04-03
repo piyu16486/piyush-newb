@@ -23,7 +23,6 @@ export const HomeNavigator = () => {
       }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientInfo" component={ClientInfo} />
-      {/* <Drawer.Screen name="HomeStack" component={HomeStackNavigator} /> */}
     </Drawer.Navigator>
   );
 };

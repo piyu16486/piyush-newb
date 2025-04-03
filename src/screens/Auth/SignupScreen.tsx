@@ -164,7 +164,7 @@ export const SignupScreen = () => {
             label="Last Name"
             value={lastName}
             onChangeText={setLastName}
-            containerStyle={{marginTop: scaleHeight(8)}}
+            containerStyle={{marginTop: scaleHeight(20)}}
           />
           <Input
             label={
@@ -203,7 +203,7 @@ export const SignupScreen = () => {
             keyboardType={
               signupMode === 'email' ? 'email-address' : 'number-pad'
             }
-            containerStyle={{marginTop: scaleHeight(8)}}
+            containerStyle={{marginTop: scaleHeight(20)}}
           />
           <Input
             label="Enter Mobile No."
@@ -232,7 +232,7 @@ export const SignupScreen = () => {
             value={mobileNumber}
             onChangeText={setMobileNumber}
             keyboardType="number-pad"
-            containerStyle={{marginTop: scaleHeight(8)}}
+            containerStyle={{marginTop: scaleHeight(20)}}
           />
           <Button
             buttonText={
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   //   fontFamily: Fonts.GilroyMedium,
   // },
   accountContainer: {
-    marginTop: scaleHeight(32),
+    marginTop: scaleHeight(21),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

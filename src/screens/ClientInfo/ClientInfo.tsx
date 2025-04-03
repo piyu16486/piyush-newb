@@ -31,7 +31,7 @@ const clientsData = [
     status: 'Warm',
   },
   {
-    id: '0001',
+    id: '0002',
     name: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
@@ -42,18 +42,30 @@ const clientsData = [
     financier: '10-02-2023',
     status: 'Warm',
   },
-  // {
-  //   id: '0001',
-  //   name: 'S D Verma',
-  //   location: 'Delhi',
-  //   initiator: 'Delhi',
-  //   source: 'Source D',
-  //   referenceDetails: '9898923222',
-  //   monthlyTurnover: '20,00,000',
-  //   sanctionRequested: '25,00,000',
-  //   financier: '10-02-2023',
-  //   status: 'Warm',
-  // },
+  {
+    id: '0003',
+    name: 'S D Verma',
+    location: 'Delhi',
+    initiator: 'Delhi',
+    source: 'Source D',
+    referenceDetails: '9898923222',
+    monthlyTurnover: '20,00,000',
+    sanctionRequested: '25,00,000',
+    financier: '10-02-2023',
+    status: 'Warm',
+  },
+  {
+    id: '0004',
+    name: 'S D Verma',
+    location: 'Delhi',
+    initiator: 'Delhi',
+    source: 'Source D',
+    referenceDetails: '9898923222',
+    monthlyTurnover: '20,00,000',
+    sanctionRequested: '25,00,000',
+    financier: '10-02-2023',
+    status: 'Warm',
+  },
   // Add more client data here...
 ];
 
@@ -95,6 +107,7 @@ export const ClientInfo = () => {
           data={clientsData}
           keyExtractor={item => item.id}
           renderItem={({item}) => <ClientCard {...item} />}
+          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing
         />
       </View>
       <TouchableOpacity
@@ -108,19 +121,21 @@ export const ClientInfo = () => {
 
 const styles = StyleSheet.create({
   Subcontainer: {
-    flex: 1,
     backgroundColor: '#fff',
   },
   Subheader: {
+    width: '100%', // ✅ Ensures full width
     padding: 16,
     fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
     backgroundColor: Colors.LimeGray,
   },
   RowContainer: {
+    marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap', // ✅ Ensures proper wrapping if needed
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
@@ -145,7 +160,7 @@ const styles = StyleSheet.create({
   Searchbox: {
     flex: 1,
     flexDirection: 'row',
-    width: scaleWidth(80),
+    // width: scaleWidth(80),
     height: scaleHeight(29),
     marginLeft: 5,
     marginTop: 2,
@@ -164,19 +179,19 @@ const styles = StyleSheet.create({
     width: scaleWidth(32),
     height: scaleHeight(30),
     backgroundColor: Colors.primaryColor,
-    marginLeft: 12,
+    marginLeft: scaleWidth(8),
     padding: 10,
     borderRadius: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },
   Cardlist: {
+    flexGrow: 1,
     padding: 16,
-    marginTop: 20,
   },
   plusButton: {
     position: 'absolute',
-    bottom: 70,
+    bottom: scaleHeight(60),
     right: 30,
     backgroundColor: Colors.tertiaryBlue,
     width: 56,

@@ -6,7 +6,7 @@ import {HomeNavigatorType} from '@type/NavigatorTypes';
 import React from 'react';
 import {View, Text} from 'react-native';
 
-export default function InputField() {
+export default function InputFormField() {
   const navigation =
     useNavigation<DrawerNavigationProp<HomeNavigatorType, 'ClientInfo'>>();
 

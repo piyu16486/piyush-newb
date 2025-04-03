@@ -7,3 +7,4 @@ export * from './Auth/SigninScreen';
 export * from './TermsOfService/TermsOfService';
 export * from './ClientInfo/ClientInfo';
 export * from './FormSelectionScreen/FormSelectionScreen';
+export * from './InputFields/InputFormField';
