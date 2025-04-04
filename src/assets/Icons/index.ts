@@ -14,3 +14,4 @@ export * from './Filter';
 export * from './Plus';
 export * from './LeftChevronCircle';
 export * from './RightChevron';
+export * from './RightChevronCircle';

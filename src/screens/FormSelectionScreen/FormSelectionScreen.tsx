@@ -17,10 +17,10 @@ type ListItemProps = {
 
 // Sample Data Array
 const DATA: ListItemProps[] = [
-  {title: 'Basic Details', screen: 'BasicDetailsScreen'},
-  {title: 'Client & Firm Details', screen: 'ClientFirmScreen'},
-  {title: 'Vendor Details', screen: 'VendorScreen'},
-  {title: 'Visit Details', screen: 'VisitScreen'},
+  {title: 'Basic Details', screen: 'ClientInfo'},
+  // {title: 'Client & Firm Details', screen: 'ClientFirmScreen'},
+  // {title: 'Vendor Details', screen: 'VendorScreen'},
+  // {title: 'Visit Details', screen: 'VisitScreen'},
 ];
 
 // Reusable List Item Component (Optimized with React.memo)
