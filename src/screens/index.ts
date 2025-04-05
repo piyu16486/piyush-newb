@@ -8,3 +8,4 @@ export * from './TermsOfService/TermsOfService';
 export * from './ClientInfo/ClientInfo';
 export * from './FormSelectionScreen/FormSelectionScreen';
 export * from './InputFields/InputFormField';
+export * from './ClientDetailsScreen/ClientDetailsScreen';

@@ -17,6 +17,7 @@ const lightColors = {
   SteelGray: '#84919ABD',
   tertiaryBlue: '#0681E3',
   blueGray700: '#455A64',
+  green: '#028D3E',
 } as const;
 
 export default lightColors;

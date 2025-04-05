@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
-export default function InputFormField() {
+export const InputFormField = () => {
   const navigation =
     useNavigation<DrawerNavigationProp<HomeNavigatorType, 'ClientInfo'>>();
 
@@ -89,7 +89,7 @@ export default function InputFormField() {
       </ScrollView>
     </Container>
   );
-}
+};
 
 const styles = StyleSheet.create({
   subcontainer: {
@@ -152,5 +152,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAEAEA',
     borderRadius: 50,
     padding: 8,
+  },
+  wrappercontainer: {
+    marginTop: 16,
+    alignItems: 'flex-start', // Align button to the left
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: Colors.lightGray,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  text: {
+    fontSize: 16,
+    color: Colors.darkGray,
+    fontWeight: '500',
   },
 });

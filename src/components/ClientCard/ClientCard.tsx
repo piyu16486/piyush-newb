@@ -1,5 +1,6 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
+import {Colors} from '@constants/index';
 
 interface ClientCardProps {
   id: string;
@@ -60,6 +61,10 @@ export const ClientCard: React.FC<ClientCardProps> = ({
       <Text style={styles.label}>
         <Text style={styles.bold}>Financier :</Text> {financier}
       </Text>
+      {/* "Read More" Button */}
+      <TouchableOpacity style={styles.readMoreButton}>
+        <Text style={styles.readMoreText}>Read more</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -74,7 +79,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
   },
   statusBadge: {
     backgroundColor: '#FFC107',
@@ -95,6 +99,16 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   bold: {
+    fontWeight: 'bold',
+  },
+  readMoreButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  readMoreText: {
+    color: Colors.tertiaryBlue,
+    textDecorationLine: 'underline',
     fontWeight: 'bold',
   },
 });
