@@ -30,14 +30,33 @@ const formInputDetails = {
     {label: 'File By'},
   ],
   ClientFirmScreen: [
-    {label: 'Client Name'},
+    {label: 'Name of Client'},
     {label: 'Firm Name'},
+    {label: 'Contact number'},
+    {label: 'Type of Firm'},
+    {label: 'Business Vintage'},
+    {label: 'Sector'},
+    {label: 'Bank Name'},
     {label: 'CIBIL Score'},
     {label: 'Facility Type'},
-    {label: 'Business Vintage'},
+    {label: 'Existing Funding Sanctioned Amt'},
+    {label: 'Estimated Funding Required'},
+    {label: 'Credit Period Offer'},
   ],
-  VendorScreen: [{label: 'Vendor Name'}, {label: 'Vendor Address'}],
-  VisitScreen: [{label: 'Visit Date'}, {label: 'Visit Time'}],
+  VendorScreen: [
+    {label: 'Product'},
+    {label: 'Vendor Name'},
+    {label: 'Vendor Contact number'},
+    {label: 'Vendor Contact Email'},
+    {label: 'Monthly Sales Value'},
+  ],
+  VisitScreen: [
+    {label: 'Intent'},
+    {label: 'Visit Remarks'},
+    {label: 'Date of Next Visit'},
+    {label: 'Reason for Not Interested'},
+    {label: 'Are you interested for?'},
+  ],
 };
 
 const Forms = Object.keys(formInputDetails) as Array<

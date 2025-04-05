@@ -4,7 +4,6 @@ import {HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import {ClientDetailsScreen, ClientInfo, InputFormField} from '@screens/index';
 import {ClientNavigator} from './ClientNavigator';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
