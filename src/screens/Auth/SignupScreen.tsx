@@ -9,6 +9,9 @@ import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
 import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {signupRequest} from '@store/auth/auth.slice';
+import {userSelector} from '@store/user';
 
 export const SignupScreen = () => {
   // Hooks
@@ -30,6 +33,9 @@ export const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
+
+  const dispatch = useDispatch();
+  const userType = useSelector(userSelector.getUserType);
 
   useEffect(() => {
     if (params) {
@@ -100,33 +106,59 @@ export const SignupScreen = () => {
     return true;
   };
 
+  const onSuccessSignup = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'OTP sent to your mobile no.',
+      visibilityTime: 2000,
+    });
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'OTPInputScreen',
+          params: {
+            mobile: mobileNumber,
+            showCreatePass: true,
+            email,
+            country,
+            firstName,
+            lastName,
+          },
+        },
+      ],
+    });
+  };
+
+  const onErrorSignup = (errorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: errorMessage,
+      visibilityTime: 2000,
+    });
+  };
+
   const onPressVerify = () => {
     const isMobileValid = handleMobileVerification();
     const isEmailValid = handleEmailVerification();
     const isNameValid = handleNameVerifications();
     if (isEmailValid && isMobileValid && isNameValid) {
-      Toast.show({
-        type: 'success',
-        text1: 'OTP sent to your mobile no.',
-        visibilityTime: 2000,
-      });
-
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'OTPInputScreen',
-            params: {
-              mobile: mobileNumber,
-              showCreatePass: true,
-              email,
-              country,
-              firstName,
-              lastName,
-            },
+      dispatch(
+        signupRequest({
+          payload: {
+            country_code: country.callingCode[0],
+            mobile_number: mobileNumber,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            is_client: userType === 'client',
+            is_internal: userType === 'internal',
           },
-        ],
-      });
+          callbackSuccess: onSuccessSignup,
+          callbackError: onErrorSignup,
+        }),
+      );
     }
   };
 

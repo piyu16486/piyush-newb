@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {Api} from '.';
-import {IUser, LoginPayload, SignUpPayload} from '@store/auth';
+import {ISignupResponse, SignUpPayload} from '@store/auth';
 
-const apiLogin = async (payload: SignUpPayload): Promise<IUser> => {
-  const response = await Api.post('/user/login', payload);
+const apiSignup = async (payload: SignUpPayload): Promise<ISignupResponse> => {
+  const response = await Api.post('/auth/signup', payload);
   return response.data;
 };
 
 export default {
-  apiLogin,
+  apiSignup,
 };
