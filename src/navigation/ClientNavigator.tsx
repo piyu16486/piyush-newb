@@ -1,11 +1,11 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ClientInfo from '@screens/ClientInfo';
-import {FormSelectionScreen} from '@screens/index';
+import {ClientInfo, FormSelectionScreen, InputFormField} from '@screens/index';
+import {ClientNavigatorType} from '@type/NavigatorTypes';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<ClientNavigatorType>();
 
-export const HomeStackNavigator = () => {
+export const ClientNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="ClientInfo" component={ClientInfo} />
@@ -13,6 +13,7 @@ export const HomeStackNavigator = () => {
         name="FormSelectionScreen"
         component={FormSelectionScreen}
       />
+      <Stack.Screen name="InputFormField" component={InputFormField} />
     </Stack.Navigator>
   );
 };

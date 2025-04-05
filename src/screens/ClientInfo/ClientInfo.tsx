@@ -7,15 +7,16 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {AppBar, Container} from '@components/index';
-import {useNavigation} from '@react-navigation/native';
+import {AppBar, ClientCard, Container} from '@components/index';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {HomeNavigatorType} from '@type/NavigatorTypes';
+import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {Search, Filter, Plus} from '@assets/Icons'; // Import your search and filter icons
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import {Colors} from '@constants/index';
-import {ClientCard} from '@components/index';
+
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const clientsData = [
   {
@@ -40,7 +41,7 @@ const clientsData = [
     monthlyTurnover: '20,00,000',
     sanctionRequested: '25,00,000',
     financier: '10-02-2023',
-    status: 'Warm',
+    status: 'Hot',
   },
   {
     id: '0003',
@@ -64,14 +65,18 @@ const clientsData = [
     monthlyTurnover: '20,00,000',
     sanctionRequested: '25,00,000',
     financier: '10-02-2023',
-    status: 'Warm',
+    status: 'Cold',
   },
   // Add more client data here...
-];
+] as const;
+
+type ClientInfoNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<ClientNavigatorType>
+>;
 
 export const ClientInfo = () => {
-  const navigation =
-    useNavigation<DrawerNavigationProp<HomeNavigatorType, 'ClientInfo'>>();
+  const navigation = useNavigation<ClientInfoNavigationType>();
 
   return (
     <Container>
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Cardlist: {
-    flexGrow: 1,
+    flex: 1,
     padding: 16,
   },
   plusButton: {

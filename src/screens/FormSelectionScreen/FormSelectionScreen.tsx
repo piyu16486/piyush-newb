@@ -1,45 +1,40 @@
 import React from 'react';
 import {AppBar, Container} from '@components/index';
-import {useNavigation} from '@react-navigation/native';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {HomeNavigatorType} from '@type/NavigatorTypes';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {scaleFont} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import Colors from '@constants/Colors';
 import {LeftChevronCircle, RightChevron} from '@assets/Icons';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 // Type Definition for Navigation and Data
 type ListItemProps = {
-  title: string;
-  screen: keyof HomeNavigatorType;
+  title:
+    | 'Basic Details'
+    | 'Client & Firm Details'
+    | 'Vendor Details'
+    | 'Visit Details';
+  screen: 'BasicDetails' | 'ClientFirmScreen' | 'VendorScreen' | 'VisitScreen';
 };
 
 // Sample Data Array
 const DATA: ListItemProps[] = [
-  {title: 'Basic Details', screen: 'ClientInfo'},
-  // {title: 'Client & Firm Details', screen: 'ClientFirmScreen'},
-  // {title: 'Vendor Details', screen: 'VendorScreen'},
-  // {title: 'Visit Details', screen: 'VisitScreen'},
+  {title: 'Basic Details', screen: 'BasicDetails'},
+  {title: 'Client & Firm Details', screen: 'ClientFirmScreen'},
+  {title: 'Vendor Details', screen: 'VendorScreen'},
+  {title: 'Visit Details', screen: 'VisitScreen'},
 ];
 
-// Reusable List Item Component (Optimized with React.memo)
-const ListItem = React.memo(({title, screen}: ListItemProps) => {
-  const navigation = useNavigation<DrawerNavigationProp<HomeNavigatorType>>();
-
-  return (
-    <TouchableOpacity
-      style={styles.item}
-      onPress={() => navigation.navigate(screen)}>
-      <Text style={styles.text}>{title}</Text>
-      <RightChevron height={17} width={20} />
-    </TouchableOpacity>
-  );
-});
+type NavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<ClientNavigatorType, 'FormSelectionScreen'>
+>;
 
 export const FormSelectionScreen: React.FC = () => {
-  const navigation =
-    useNavigation<DrawerNavigationProp<HomeNavigatorType, 'ClientInfo'>>();
+  const navigation = useNavigation<NavigationType>();
 
   return (
     <Container>
@@ -58,12 +53,20 @@ export const FormSelectionScreen: React.FC = () => {
 
       {/* List Section */}
       <View style={styles.container}>
-        <FlatList
-          data={DATA}
-          keyExtractor={item => item.screen}
-          renderItem={({item}) => <ListItem {...item} />}
-          showsVerticalScrollIndicator={false} // Hide scrollbar for cleaner UI
-        />
+        {DATA.map(item => (
+          <TouchableOpacity
+            key={item.title}
+            style={styles.item}
+            onPress={() =>
+              navigation.navigate('InputFormField', {
+                screen: item.screen,
+                title: item.title,
+              })
+            }>
+            <Text style={styles.text}>{item.title}</Text>
+            <RightChevron height={17} width={20} />
+          </TouchableOpacity>
+        ))}
       </View>
     </Container>
   );

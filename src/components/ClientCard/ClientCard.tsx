@@ -12,8 +12,14 @@ interface ClientCardProps {
   monthlyTurnover: string;
   sanctionRequested: string;
   financier: string;
-  status: string;
+  status: 'Warm' | 'Hot' | 'Cold';
 }
+
+const ChipColors = {
+  Warm: '#FFC107',
+  Hot: '#FF5656',
+  Cold: Colors.tertiaryBlue,
+};
 
 export const ClientCard: React.FC<ClientCardProps> = ({
   id,
@@ -29,7 +35,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
 }) => {
   return (
     <View style={styles.card}>
-      <View style={styles.statusBadge}>
+      <View style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
         <Text style={styles.statusText}>{status}</Text>
       </View>
 
@@ -91,7 +97,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontWeight: 'bold',
     fontSize: 12,
-    color: '#000',
+    color: '#FFFFFF',
   },
   label: {
     fontSize: 14,

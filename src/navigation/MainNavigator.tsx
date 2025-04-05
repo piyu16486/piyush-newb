@@ -23,7 +23,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      {userInfo ? <HomeNavigator /> : <AuthNavigator />}
+      {!userInfo ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

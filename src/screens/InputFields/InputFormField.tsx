@@ -1,26 +1,60 @@
-import {LeftChevronCircle} from '@assets/Icons';
+import {LeftChevronCircle, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
 import {AppBar, Container, Input} from '@components/index';
 import Colors from '@constants/Colors';
+import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {useNavigation} from '@react-navigation/native';
-import {HomeNavigatorType} from '@type/NavigatorTypes';
+import {
+  CompositeNavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
-export const InputFormField = () => {
-  const navigation =
-    useNavigation<DrawerNavigationProp<HomeNavigatorType, 'ClientInfo'>>();
+const formInputDetails = {
+  BasicDetails: [
+    {label: 'Source of Lead'},
+    {label: 'Location'},
+    {label: 'City'},
+    {label: 'State'},
+    {label: 'Type of Visit'},
+    {label: 'Visit Number'},
+    {label: 'Date of Visit'},
+    {label: 'File By'},
+  ],
+  ClientFirmScreen: [
+    {label: 'Client Name'},
+    {label: 'Firm Name'},
+    {label: 'CIBIL Score'},
+    {label: 'Facility Type'},
+    {label: 'Business Vintage'},
+  ],
+  VendorScreen: [{label: 'Vendor Name'}, {label: 'Vendor Address'}],
+  VisitScreen: [{label: 'Visit Date'}, {label: 'Visit Time'}],
+};
 
+const Forms = Object.keys(formInputDetails) as Array<
+  keyof typeof formInputDetails
+>;
+
+type NavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<ClientNavigatorType, 'InputFormField'>
+>;
+
+export const InputFormField = () => {
+  const navigation = useNavigation<NavigationType>();
+  const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
+  const [formIndex, setFormIndex] = React.useState(
+    Forms.indexOf(params.screen),
+  );
   return (
     <Container>
       <AppBar title="Client Information Master" navigation={navigation} />
@@ -30,68 +64,69 @@ export const InputFormField = () => {
           style={styles.subcontainer}
           onPress={navigation.goBack}>
           <LeftChevronCircle height={26} width={26} />
-          <Text style={styles.subheader}>Basic Details</Text>
+          <Text style={styles.subheader}>{params.title}</Text>
         </TouchableOpacity>
       </View>
       {/*Form Content*/}
       <ScrollView>
         <View style={styles.inputContainer}>
-          <Input label="Source of Lead" />
-          <Input
-            label="Location"
-            containerStyle={{marginTop: scaleHeight(20)}}
-          />
-          <Input label="City" containerStyle={{marginTop: scaleHeight(20)}} />
-          <Input label="State" containerStyle={{marginTop: scaleHeight(20)}} />
-          <Input
-            label="Type of Visit"
-            containerStyle={{marginTop: scaleHeight(20)}}
-          />
-          <Input
-            label="Visit Number"
-            containerStyle={{marginTop: scaleHeight(20)}}
-          />
-          <Input
-            label="Date of Visit"
-            containerStyle={{marginTop: scaleHeight(20)}}
-          />
-          <Input
-            label="File By"
-            containerStyle={{marginTop: scaleHeight(20)}}
-          />
-        </View>
-        <View style={styles.footerButton}>
-          {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
-            <Text style={styles.clearText}>Clear all</Text>
-          </TouchableOpacity>
-          {/* Save Button */}
-          <Pressable
-            style={({pressed}) => [
-              styles.saveButton,
-              pressed && styles.pressed,
-            ]}
-            onPress={() => console.log('Save Pressed')}>
-            <Text style={styles.saveText}>Save</Text>
-          </Pressable>
-          {/* Next Button */}
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => console.log('Next Pressed')}>
-            <Text style={styles.nextText}>Next</Text>
-            <View style={styles.iconWrapper}>
-              <RightChevronCircle width={18} height={18} />
-            </View>
-          </TouchableOpacity>
+          {formInputDetails[Forms[formIndex]].map(item => (
+            <Input label={item.label} key={item.label.toString()} />
+          ))}
         </View>
       </ScrollView>
+      <View style={styles.footerButton}>
+        {/* Clear All Button */}
+        <TouchableOpacity
+          style={styles.clearButton}
+          onPress={() => console.log('Clear All Pressed')}>
+          <Text style={styles.clearText}>Clear all</Text>
+        </TouchableOpacity>
+        {/* Save Button */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.saveButton, {backgroundColor: Colors.white}]}
+            activeOpacity={0.7}
+            onPress={() => console.log('Save Pressed')}>
+            <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
+          </TouchableOpacity>
+
+          {formIndex === Forms.length - 1 ? (
+            // Submit Button
+            <TouchableOpacity
+              style={styles.saveButton}
+              activeOpacity={0.7}
+              onPress={() => console.log('Next Pressed')}>
+              <Text style={styles.saveText}>Submit</Text>
+              <RightCheckmark width={12} height={12} />
+            </TouchableOpacity>
+          ) : (
+            // Next Button
+            <TouchableOpacity
+              style={styles.nextButton}
+              onPress={() => {
+                if (formIndex < Forms.length - 1) {
+                  setFormIndex(formIndex + 1);
+                }
+              }}>
+              <Text style={styles.nextText}>Next</Text>
+              <View style={styles.iconWrapper}>
+                <RightChevronCircle width={24} height={24} />
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scaleWidth(10),
+  },
   subcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -108,6 +143,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginHorizontal: scaleWidth(24),
     marginTop: scaleHeight(17),
+    gap: scaleHeight(20),
   },
   footerButton: {
     flexDirection: 'row',
@@ -125,16 +161,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   saveButton: {
-    borderWidth: 2,
-    borderColor: 'green',
-    paddingVertical: 4,
-    paddingHorizontal: 30,
-    borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.green,
+    paddingHorizontal: scaleWidth(12),
+    paddingVertical: scaleHeight(5),
+    borderRadius: scaleWidth(4),
+    gap: scaleWidth(8),
+    borderWidth: 1,
+    borderColor: Colors.green,
+    minWidth: scaleWidth(100),
   },
   saveText: {
-    color: 'green',
-    fontWeight: '700',
-    fontSize: 16,
+    color: Colors.white,
+    fontFamily: Fonts.GilroyMedium,
+    fontSize: scaleFont(14),
   },
   pressed: {
     opacity: 0.7,
@@ -146,12 +188,16 @@ const styles = StyleSheet.create({
   nextText: {
     color: Colors.blueGray700,
     fontSize: 16,
-    marginRight: 12,
+    marginStart: scaleWidth(10),
   },
   iconWrapper: {
     backgroundColor: '#EAEAEA',
     borderRadius: 50,
-    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: scaleWidth(24),
+    height: scaleWidth(24),
+    marginHorizontal: scaleWidth(12),
   },
   wrappercontainer: {
     marginTop: 16,

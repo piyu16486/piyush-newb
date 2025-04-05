@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {DrawerContent} from '@components/index';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {HomeNavigatorType} from '@type/NavigatorTypes';
@@ -6,6 +5,7 @@ import {scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Dimensions} from 'react-native';
 import {ClientDetailsScreen, ClientInfo, InputFormField} from '@screens/index';
+import {ClientNavigator} from './ClientNavigator';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
 
@@ -21,7 +21,7 @@ export const HomeNavigator = () => {
         },
       }}
       drawerContent={DrawerContent}>
-      <Drawer.Screen name="ClientInfo" component={ClientInfo} />
+      <Drawer.Screen name="ClientNavigator" component={ClientNavigator} />
       {/* <Drawer.Screen name="ClientInfo" component={InputFormField} /> */}
       {/* <Drawer.Screen name="ClientInfo" component={ClientDetailsScreen} /> */}
     </Drawer.Navigator>

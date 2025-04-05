@@ -33,5 +33,22 @@ export type OTPInputScreenParams = {
 };
 
 export type HomeNavigatorType = {
+  ClientNavigator: undefined;
+};
+
+export type ClientNavigatorType = {
   ClientInfo: undefined;
+  FormSelectionScreen: undefined;
+  InputFormField: {
+    screen:
+      | 'BasicDetails'
+      | 'ClientFirmScreen'
+      | 'VendorScreen'
+      | 'VisitScreen';
+    title:
+      | 'Basic Details'
+      | 'Client & Firm Details'
+      | 'Vendor Details'
+      | 'Visit Details';
+  };
 };

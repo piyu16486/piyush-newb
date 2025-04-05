@@ -1,4 +1,4 @@
 export * from './MainNavigator';
 export * from './AuthNavigator';
 export * from './HomeNavigator';
-export * from './HomeStackNavigator';
+export * from './ClientNavigator';
