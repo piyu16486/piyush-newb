@@ -15,30 +15,22 @@ export type AuthNavigatorType = {
   Login: undefined;
 };
 
-export type SignupScreenParams =
-  | {
-      signupMode: 'email';
-      email?: string;
-    }
-  | {
-      signupMode: 'mobile';
-      mobile?: string;
-      country?: Country;
-    }
-  | undefined;
+export type SignupScreenParams = {
+  email: string;
+  mobile: string;
+  country: Country;
+  firstName: string;
+  lastName: string;
+};
 
-export type OTPInputScreenParams =
-  | {
-      signupMode: 'email';
-      email: string;
-      showCreatePass: boolean;
-    }
-  | {
-      signupMode: 'mobile';
-      mobile: string;
-      country: Country;
-      showCreatePass: boolean;
-    };
+export type OTPInputScreenParams = {
+  email: string;
+  mobile: string;
+  country: Country;
+  showCreatePass: boolean;
+  firstName: string;
+  lastName: string;
+};
 
 export type HomeNavigatorType = {
   ClientInfo: undefined;

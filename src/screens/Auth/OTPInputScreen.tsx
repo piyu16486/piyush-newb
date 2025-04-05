@@ -25,12 +25,6 @@ export const OTPInputScreen = () => {
     navigation.replace('SignupScreen', params);
   };
 
-  const onPressContinueWith = () => {
-    navigation.replace('SignupScreen', {
-      signupMode: params.signupMode === 'email' ? 'mobile' : 'email',
-    });
-  };
-
   const startTimer = () => {
     timerInterval.current = setInterval(() => {
       setOtpTimer(prv => {
@@ -97,11 +91,7 @@ export const OTPInputScreen = () => {
     <Container>
       <View style={styles.flex1}>
         <Header
-          title={
-            params.signupMode === 'email'
-              ? 'Verify your Email'
-              : 'Verify your Mobile no.'
-          }
+          title={'Verify your Mobile no.'}
           customSubtitle={
             <View style={styles.subTitleContainer}>
               <Text style={styles.subTitle}>
@@ -110,9 +100,7 @@ export const OTPInputScreen = () => {
               <Text
                 numberOfLines={1}
                 style={[styles.subTitle, styles.subTitleInfo]}>
-                {params.signupMode === 'email'
-                  ? params.email
-                  : `+${params.country.callingCode[0]} ${params.mobile}`}
+                {`+${params.country.callingCode[0]} ${params.mobile}`}
               </Text>
               <TouchableOpacity
                 style={styles.editContainer}
@@ -154,11 +142,7 @@ export const OTPInputScreen = () => {
             }}
           />
           <Button
-            buttonText={
-              params.signupMode === 'email'
-                ? 'Verify Email'
-                : 'Verify Mobile no.'
-            }
+            buttonText={'Verify Mobile no.'}
             style={{marginTop: scaleHeight(20)}}
             onPress={onPressVerifyOTP}
           />
@@ -168,17 +152,6 @@ export const OTPInputScreen = () => {
           <TouchableOpacity disabled={otpTimer > 0} onPress={onPressResendOTP}>
             <Text style={[styles.resendText, {color: Colors.tertiaryColor}]}>
               Resend OTP {otpTimer > 0 ? `in ${otpTimer} sec` : ''}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.continueWithContainer}>
-          <TouchableOpacity
-            style={{padding: scaleWidth(16)}}
-            onPress={onPressContinueWith}>
-            <Text style={styles.continueWithText}>
-              {params.signupMode === 'email'
-                ? 'Continue with Mobile no.'
-                : 'Continue with Email ID'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -227,16 +200,6 @@ const styles = StyleSheet.create({
   resendText: {
     fontFamily: Fonts.GilroyMedium,
     color: Colors.darkGray,
-    fontSize: scaleFont(16),
-  },
-  continueWithContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: scaleHeight(64),
-  },
-  continueWithText: {
-    fontFamily: Fonts.GilroySemiBold,
-    color: Colors.tertiaryColor,
     fontSize: scaleFont(16),
   },
 });
