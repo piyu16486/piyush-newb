@@ -11,7 +11,7 @@ const apiSignup = async (payload: SignUpPayload): Promise<ISignupResponse> => {
   return response.data;
 };
 
-const apiCreatepassword = async (
+const apiCreatePassword = async (
   payload: CreatePasswordPayload,
 ): Promise<ICreatedPasswordResponse> => {
   const response = await Api.post('/auth/verify-otp-from-email', payload);
@@ -20,5 +20,5 @@ const apiCreatepassword = async (
 
 export default {
   apiSignup,
-  apiCreatepassword,
+  apiCreatePassword,
 };

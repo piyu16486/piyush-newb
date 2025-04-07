@@ -28,12 +28,12 @@ function* handleSignup(
   }
 }
 
-function* handleCreatepassword(
+function* handleCreatePassword(
   action: PayloadAction<PayloadWithCallback<CreatePasswordPayload>>,
 ): unknown {
   try {
     const response: ICreatedPasswordResponse = yield call(
-      AuthApis.apiCreatepassword,
+      AuthApis.apiCreatePassword,
       action.payload.payload,
     );
     if (response.statusCode) {
@@ -48,8 +48,5 @@ function* handleCreatepassword(
 
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
-}
-
-export default function* passowrdSaga() {
-  yield takeLatest(passwordRequest.type, handleCreatepassword);
+  yield takeLatest(passwordRequest.type, handleCreatePassword);
 }
