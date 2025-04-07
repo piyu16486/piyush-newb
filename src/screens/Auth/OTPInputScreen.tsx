@@ -142,7 +142,7 @@ export const OTPInputScreen = () => {
             }}
           />
           <Button
-            buttonText={'Verify Mobile no.'}
+            buttonText={'Verify'}
             style={{marginTop: scaleHeight(20)}}
             onPress={onPressVerifyOTP}
           />

@@ -16,6 +16,10 @@ export interface SignUpPayload {
   last_name: string;
   email: string;
 }
+export interface CreatePasswordPayload {
+  email: string;
+  otp: string;
+}
 
 export interface PayloadWithCallback<T> {
   payload: T;
@@ -28,4 +32,9 @@ export interface ISignupResponse {
   statusCode?: number;
   message: string;
   success?: boolean;
+}
+
+export interface ICreatedPasswordResponse {
+  statusCode?: number;
+  message: string;
 }
