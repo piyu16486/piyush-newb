@@ -9,6 +9,7 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CircleCheck, EyeClose, EyeOpen} from '@assets/Icons';
 import {Colors, Fonts} from '@constants/index';
 import Toast from 'react-native-toast-message';
+import {verifypasswordRequest} from '@store/auth/auth.slice';
 
 export const PasswordScreen = () => {
   const navigation =
@@ -40,7 +41,7 @@ export const PasswordScreen = () => {
 
   const dispatch = useAppDispatch();
 
-  const onPressCreatePassword = () => {
+  const onPressCreatePassword = async () => {
     if (password !== confirmPassword) {
       Toast.show({
         type: 'error',
@@ -49,6 +50,7 @@ export const PasswordScreen = () => {
       });
       return;
     }
+
     if (
       passwordError.lengthError ||
       passwordError.symbolError ||
@@ -61,11 +63,38 @@ export const PasswordScreen = () => {
       });
       return;
     }
-    if (params.screenMode === 'createPass') {
-      navigation.replace('SuccessScreen', {authMode: 'signup'});
-    } else {
-      navigation.replace('SuccessScreen', {authMode: 'password'});
-    }
+
+    // ✅ Get email from params (or decode token if you prefer)
+    const email = params.email; // make sure this is passed when navigating to this screen
+
+    dispatch(
+      verifypasswordRequest({
+        payload: {
+          email,
+          password,
+        },
+        callbackSuccess: () => {
+          Toast.show({
+            type: 'success',
+            text1: 'Password created successfully',
+            visibilityTime: 2000,
+          });
+
+          if (params.screenMode === 'createPass') {
+            navigation.replace('SuccessScreen', {authMode: 'signup'});
+          } else {
+            navigation.replace('SuccessScreen', {authMode: 'password'});
+          }
+        },
+        callbackError: (errorMessage: string) => {
+          Toast.show({
+            type: 'error',
+            text1: errorMessage || 'Something went wrong',
+            visibilityTime: 2000,
+          });
+        },
+      }),
+    );
   };
 
   return (
@@ -188,3 +217,6 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {marginHorizontal: scaleWidth(43), marginTop: scaleHeight(68)},
 });
+function useAppDispatch() {
+  throw new Error('Function not implemented.');
+}

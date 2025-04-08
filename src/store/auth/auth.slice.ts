@@ -35,7 +35,7 @@ const passwordSlice = createSlice({
   },
 });
 
-const verifyPassowordSlice = createSlice({
+const verifyPasswordSlice = createSlice({
   name: 'verifyPassword',
   initialState,
   reducers: {
@@ -48,5 +48,5 @@ const verifyPassowordSlice = createSlice({
 
 export const {signupRequest} = authSlice.actions;
 export const {passwordRequest} = passwordSlice.actions;
-export const {verifypasswordRequest} = verifyPassowordSlice.actions;
+export const {verifypasswordRequest} = verifyPasswordSlice.actions;
 export default authSlice.reducer;

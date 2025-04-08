@@ -22,8 +22,8 @@ export interface CreatePasswordPayload {
 }
 
 export interface VerifyPasswordPayload {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
 export interface PayloadWithCallback<T> {
