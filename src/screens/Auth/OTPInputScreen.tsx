@@ -9,6 +9,8 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 import {EditIcon} from '@assets/Icons';
 import Toast from 'react-native-toast-message';
+import {passwordRequest} from '@store/auth/auth.slice';
+import {useDispatch} from 'react-redux';
 
 const OTP_TIMER = 60;
 
@@ -66,6 +68,8 @@ export const OTPInputScreen = () => {
     startTimer();
   };
 
+  const dispatch = useDispatch();
+
   const onPressVerifyOTP = () => {
     if (otp.length < 6) {
       Toast.show({
@@ -75,16 +79,34 @@ export const OTPInputScreen = () => {
       });
       return;
     }
-    Toast.show({
-      type: 'success',
-      text1: 'OTP verified successfully',
-      visibilityTime: 2000,
-    });
-    if (params.showCreatePass) {
-      navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
-    } else {
-      navigation.replace('SuccessScreen', {authMode: 'signin'});
-    }
+    dispatch(
+      passwordRequest({
+        payload: {
+          email: params.email, // or route.params.email
+          otp: otp,
+        },
+        callbackSuccess: () => {
+          Toast.show({
+            type: 'success',
+            text1: 'OTP verified successfully',
+            visibilityTime: 2000,
+          });
+
+          if (params.showCreatePass) {
+            navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
+          } else {
+            navigation.replace('SuccessScreen', {authMode: 'signin'});
+          }
+        },
+        callbackError: (errMsg: string) => {
+          Toast.show({
+            type: 'error',
+            text1: errMsg || 'Wrong OTP. Please try again',
+            visibilityTime: 2000,
+          });
+        },
+      }),
+    );
   };
 
   return (
