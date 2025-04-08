@@ -21,6 +21,11 @@ export interface CreatePasswordPayload {
   otp: string;
 }
 
+export interface VerifyPasswordPayload {
+  email: String;
+  password: String;
+}
+
 export interface PayloadWithCallback<T> {
   payload: T;
   callback?: (...args: any[]) => void;
@@ -35,6 +40,11 @@ export interface ISignupResponse {
 }
 
 export interface ICreatedPasswordResponse {
+  statusCode?: number;
+  message: string;
+}
+
+export interface IverifyPasswordResponse {
   statusCode?: number;
   message: string;
 }

@@ -71,6 +71,10 @@ export const OTPInputScreen = () => {
   const dispatch = useDispatch();
 
   const onPressVerifyOTP = () => {
+    console.log('------->>>>');
+    console.log('OTP entered:', otp);
+    console.log('Email for OTP:', params.email);
+
     if (otp.length < 6) {
       Toast.show({
         type: 'error',

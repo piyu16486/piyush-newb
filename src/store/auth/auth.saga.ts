@@ -4,11 +4,18 @@ import {
   CreatePasswordPayload,
   ICreatedPasswordResponse,
   ISignupResponse,
+  IverifyPasswordResponse,
   PayloadWithCallback,
   SignUpPayload,
+  VerifyPasswordPayload,
 } from './auth.types';
 import {AuthApis} from '@services/api';
-import {passwordRequest, signupRequest} from './auth.slice';
+import {
+  passwordRequest,
+  signupRequest,
+  verifypasswordRequest,
+} from './auth.slice';
+import authApi from '@services/api/auth.api';
 
 function* handleSignup(
   action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
@@ -46,7 +53,26 @@ function* handleCreatePassword(
   }
 }
 
+function* handleVerifyPassword(
+  action: PayloadAction<PayloadWithCallback<VerifyPasswordPayload>>,
+): unknown {
+  try {
+    const response: IverifyPasswordResponse = yield call(
+      authApi.apiVerifyPassword,
+      action.payload.payload,
+    );
+    if (response.statusCode) {
+      action.payload.callbackSuccess?.();
+    } else {
+      action.payload.callbackError?.(response.message);
+    }
+  } catch (error: any) {
+    action.payload.callbackError?.(error?.message);
+  }
+}
+
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(passwordRequest.type, handleCreatePassword);
+  yield takeLatest(verifypasswordRequest.type, handleVerifyPassword);
 }

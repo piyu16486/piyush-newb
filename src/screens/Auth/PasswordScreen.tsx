@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
@@ -36,6 +37,8 @@ export const PasswordScreen = () => {
     }
     return error;
   }, [password]);
+
+  const dispatch = useAppDispatch();
 
   const onPressCreatePassword = () => {
     if (password !== confirmPassword) {
@@ -106,6 +109,20 @@ export const PasswordScreen = () => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
           />
+          {/* Password match message */}
+          {confirmPassword.length > 0 && (
+            <Text
+              style={{
+                marginTop: scaleHeight(8),
+                marginLeft: scaleWidth(8),
+                fontSize: scaleWidth(12),
+                color: password === confirmPassword ? '#028D3E' : 'red',
+              }}>
+              {password === confirmPassword
+                ? 'Passwords match'
+                : 'Passwords do not match'}
+            </Text>
+          )}
         </View>
         <View style={styles.passwordInfoContainer}>
           <View style={styles.passwordInfo}>
