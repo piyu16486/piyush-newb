@@ -9,12 +9,15 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CircleCheck, EyeClose, EyeOpen} from '@assets/Icons';
 import {Colors, Fonts} from '@constants/index';
 import Toast from 'react-native-toast-message';
-import {verifypasswordRequest} from '@store/auth/auth.slice';
+import {verifyPasswordRequest} from '@store/auth/auth.slice';
+import {useDispatch} from 'react-redux';
 
 export const PasswordScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
   const {params} = useRoute<RouteProp<AuthNavigatorType, 'PasswordScreen'>>();
+
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -38,8 +41,6 @@ export const PasswordScreen = () => {
     }
     return error;
   }, [password]);
-
-  const dispatch = useAppDispatch();
 
   const onPressCreatePassword = async () => {
     if (password !== confirmPassword) {
@@ -68,7 +69,7 @@ export const PasswordScreen = () => {
     const email = params.email; // make sure this is passed when navigating to this screen
 
     dispatch(
-      verifypasswordRequest({
+      verifyPasswordRequest({
         payload: {
           email,
           password,
@@ -217,6 +218,3 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {marginHorizontal: scaleWidth(43), marginTop: scaleHeight(68)},
 });
-function useAppDispatch() {
-  throw new Error('Function not implemented.');
-}

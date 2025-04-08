@@ -21,32 +21,17 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
     ) => {},
-  },
-});
-
-const passwordSlice = createSlice({
-  name: 'password',
-  initialState,
-  reducers: {
     passwordRequest: (
       state,
       action: PayloadAction<PayloadWithCallback<CreatePasswordPayload>>,
     ) => {},
-  },
-});
-
-const verifyPasswordSlice = createSlice({
-  name: 'verifyPassword',
-  initialState,
-  reducers: {
-    verifypasswordRequest: (
+    verifyPasswordRequest: (
       state,
       action: PayloadAction<PayloadWithCallback<VerifyPasswordPayload>>,
     ) => {},
   },
 });
 
-export const {signupRequest} = authSlice.actions;
-export const {passwordRequest} = passwordSlice.actions;
-export const {verifypasswordRequest} = verifyPasswordSlice.actions;
+export const {signupRequest, passwordRequest, verifyPasswordRequest} =
+  authSlice.actions;
 export default authSlice.reducer;
