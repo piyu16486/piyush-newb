@@ -2,6 +2,8 @@ import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {Colors, Fonts} from '@constants/index';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {SignInPayload} from '@store/auth';
+import {signinRequest} from '@store/auth/auth.slice';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
@@ -10,6 +12,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Feather';
+import {useDispatch} from 'react-redux';
 
 export const SigninScreen = () => {
   const navigation =
@@ -81,41 +84,41 @@ export const SigninScreen = () => {
     return true;
   };
 
+  const dispatch = useDispatch();
+
   const onPressVerify = async () => {
     if (signupMode === 'email') {
       const isEmailValid = handleEmailVerification();
       if (isEmailValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'email',
-                email: contactInfo,
-                showCreatePass: false,
-              },
+        const payload: SignInPayload = {
+          email: contactInfo, // Assuming `contactInfo` is the email
+          password: passwordValue, // Replace with your password state
+        };
+
+        dispatch(
+          signinRequest({
+            payload,
+            callbackSuccess: () => {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'OTPInputScreen',
+                    params: {
+                      signupMode: 'email',
+                      email: contactInfo,
+                      showCreatePass: false,
+                    },
+                  },
+                ],
+              });
             },
-          ],
-        });
-      }
-    } else {
-      const isMobileValid = handleMobileVerification();
-      if (isMobileValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'mobile',
-                mobile: contactInfo,
-                country: country,
-                showCreatePass: false,
-              },
+            callbackError: errorMessage => {
+              console.warn('Login failed:', errorMessage);
+              // Optional: Show toast or alert
             },
-          ],
-        });
+          }),
+        );
       }
     }
   };
@@ -130,7 +133,7 @@ export const SigninScreen = () => {
         <Input
           label={
             signupMode === 'email'
-              ? 'Enter your Email Address'
+              ? 'Email Address'
               : 'Enter your Mobile Number'
           }
           renderLeftIcon={

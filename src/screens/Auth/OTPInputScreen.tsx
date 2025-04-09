@@ -9,8 +9,8 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 import {EditIcon} from '@assets/Icons';
 import Toast from 'react-native-toast-message';
-import {passwordRequest} from '@store/auth/auth.slice';
 import {useDispatch} from 'react-redux';
+import {otpVerifyRequest} from '@store/auth/auth.slice';
 
 const OTP_TIMER = 60;
 
@@ -84,7 +84,7 @@ export const OTPInputScreen = () => {
       return;
     }
     dispatch(
-      passwordRequest({
+      otpVerifyRequest({
         payload: {
           email: params.email, // or route.params.email
           otp: otp,

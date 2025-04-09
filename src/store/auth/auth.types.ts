@@ -16,7 +16,7 @@ export interface SignUpPayload {
   last_name: string;
   email: string;
 }
-export interface CreatePasswordPayload {
+export interface OtpVerifyPayload {
   email: string;
   otp: string;
 }
@@ -25,6 +25,13 @@ export interface VerifyPasswordPayload {
   email: string;
   password: string;
 }
+
+export interface SignInPayload {
+  email: string;
+  password: string;
+}
+
+export interface SigninOtpVerifyPayload {}
 
 export interface PayloadWithCallback<T> {
   payload: T;
@@ -39,12 +46,23 @@ export interface ISignupResponse {
   success?: boolean;
 }
 
-export interface ICreatedPasswordResponse {
+export interface IOtpVerifyResponse {
   statusCode?: number;
   message: string;
+  data: string;
 }
 
 export interface IverifyPasswordResponse {
   statusCode?: number;
   message: string;
+}
+
+export interface ISigninResponse {
+  statusCode?: number;
+  message: string;
+}
+
+export interface ISigninOtpVerifyResponse {
+  message: string;
+  statusCode?: number;
 }
