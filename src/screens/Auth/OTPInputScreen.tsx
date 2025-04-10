@@ -117,7 +117,7 @@ export const OTPInputScreen = () => {
     <Container>
       <View style={styles.flex1}>
         <Header
-          title={'Verify your Mobile no.'}
+          title={'Verify Email'}
           customSubtitle={
             <View style={styles.subTitleContainer}>
               <Text style={styles.subTitle}>
@@ -126,7 +126,7 @@ export const OTPInputScreen = () => {
               <Text
                 numberOfLines={1}
                 style={[styles.subTitle, styles.subTitleInfo]}>
-                {`+${params.country.callingCode[0]} ${params.mobile}`}
+                {params.email}
               </Text>
               <TouchableOpacity
                 style={styles.editContainer}

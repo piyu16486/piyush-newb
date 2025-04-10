@@ -1,5 +1,7 @@
 import {Api} from '.';
 import {
+  ForgotPasswordPayload,
+  IForgotpasswordResponse,
   IOtpVerifyResponse,
   ISigninOtpVerifyResponse,
   ISigninResponse,
@@ -43,10 +45,18 @@ const apiSigninOtpVerify = async (
   return response.data;
 };
 
+const apiForgotPassword = async (
+  payload: ForgotPasswordPayload,
+): Promise<IForgotpasswordResponse> => {
+  const response = await Api.post('/auth/forgot-password', payload);
+  return response.data;
+};
+
 export default {
   apiSignup,
   apiOtpVerify,
   apiVerifyPassword,
   apiSignin,
   apiSigninOtpVerify,
+  apiForgotPassword,
 };

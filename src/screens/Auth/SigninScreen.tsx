@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {Colors, Fonts} from '@constants/index';
 import {useNavigation} from '@react-navigation/native';

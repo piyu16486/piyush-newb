@@ -33,6 +33,10 @@ export interface SignInPayload {
 
 export interface SigninOtpVerifyPayload {}
 
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
 export interface PayloadWithCallback<T> {
   payload: T;
   callback?: (...args: any[]) => void;
@@ -65,4 +69,9 @@ export interface ISigninResponse {
 export interface ISigninOtpVerifyResponse {
   message: string;
   statusCode?: number;
+}
+
+export interface IForgotpasswordResponse {
+  success?: boolean;
+  message: string;
 }

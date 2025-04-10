@@ -1,6 +1,8 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {
+  ForgotPasswordPayload,
+  IForgotpasswordResponse,
   IOtpVerifyResponse,
   ISigninOtpVerifyResponse,
   ISigninResponse,
@@ -15,6 +17,7 @@ import {
 } from './auth.types';
 import {AuthApis} from '@services/api';
 import {
+  forgotPassword,
   otpVerifyRequest,
   signInOtpVerify,
   signinRequest,
@@ -129,10 +132,29 @@ function* handleSignInOtpVerify(
   }
 }
 
+function* handleForgotPassword(
+  action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
+): unknown {
+  try {
+    const response: IForgotpasswordResponse = yield call(
+      authApi.apiForgotPassword,
+      action.payload.payload,
+    );
+    if (response.message) {
+      action.payload.callbackSuccess?.();
+    } else {
+      action.payload.callbackError?.(response.message);
+    }
+  } catch (error: any) {
+    action.payload.callbackError?.(error?.message);
+  }
+}
+
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);
   yield takeLatest(verifyPasswordRequest.type, handleVerifyPassword);
   yield takeLatest(signinRequest.type, handleSignin);
   yield takeLatest(signInOtpVerify.type, handleSignInOtpVerify);
+  yield takeLatest(forgotPassword.type, handleForgotPassword);
 }

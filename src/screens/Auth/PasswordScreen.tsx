@@ -9,7 +9,7 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CircleCheck, EyeClose, EyeOpen} from '@assets/Icons';
 import {Colors, Fonts} from '@constants/index';
 import Toast from 'react-native-toast-message';
-import {verifyPasswordRequest} from '@store/auth/auth.slice';
+import {forgotPassword, verifyPasswordRequest} from '@store/auth/auth.slice';
 import {useDispatch} from 'react-redux';
 
 export const PasswordScreen = () => {
@@ -19,6 +19,7 @@ export const PasswordScreen = () => {
 
   const dispatch = useDispatch();
 
+  const [email, setEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
@@ -98,6 +99,45 @@ export const PasswordScreen = () => {
     );
   };
 
+  const onPressSendResetLink = () => {
+    console.log('Email entered: ', email);
+
+  if (!email) {
+    Toast.show({
+      type: 'error',
+      text1: 'Please enter your email',
+      visibilityTime: 2000,
+    });
+    return;
+  }
+
+  dispatch(
+    forgotPassword({
+      payload: {email},
+      callbackSuccess: () => {
+        Toast.show({
+          type: 'success',
+          text1: 'Reset link sent successfully',
+          visibilityTime: 2000,
+        });
+
+        navigation.navigate('PasswordScreen', {
+          screenMode: 'forgotPass',
+          email: email,
+        });
+      },
+      callbackError: errorMessage => {
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to send reset link',
+          text2: errorMessage,
+          visibilityTime: 2000,
+        });
+      },
+    }),
+  );
+};
+
   return (
     <Container>
       <Header
@@ -107,89 +147,122 @@ export const PasswordScreen = () => {
             : 'Re-set your Password'
         }
         subtitle={
-          'Your password must be at least 8 characters long and \ninclude 1 symbol and 1 number.'
+          params.screenMode === 'forgotPass'
+            ? 'Enter your Email Address, and you got the updates link to change the Password.'
+            : 'Your password must be at least 8 characters long and \ninclude 1 symbol and 1 number.'
         }
       />
+
       <View style={styles.flex1}>
-        <View style={styles.passwordContainer}>
-          <Input
-            label="Password"
-            placeholder="Enter your password"
-            renderRightIcon={
-              showPassword ? (
-                <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
-              ) : (
-                <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
-              )
-            }
-            onPressRightIcon={() => setShowPassword(prv => !prv)}
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Input
-            label="Confirm Password"
-            placeholder="Repeat your password"
-            containerStyle={{marginTop: scaleHeight(24)}}
-            renderRightIcon={
-              <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
-            }
-            onPressRightIcon={() => setShowConfirmPassword(prv => !prv)}
-            secureTextEntry={!showConfirmPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          {/* Password match message */}
-          {confirmPassword.length > 0 && (
-            <Text
-              style={{
-                marginTop: scaleHeight(8),
-                marginLeft: scaleWidth(8),
-                fontSize: scaleWidth(12),
-                color: password === confirmPassword ? '#028D3E' : 'red',
-              }}>
-              {password === confirmPassword
-                ? 'Passwords match'
-                : 'Passwords do not match'}
-            </Text>
-          )}
-        </View>
-        <View style={styles.passwordInfoContainer}>
-          <View style={styles.passwordInfo}>
-            <CircleCheck
-              color={passwordError.lengthError ? Colors.gray400 : '#028D3E'}
-              height={scaleHeight(16)}
-              width={scaleWidth(16)}
+        {params.screenMode === 'forgotPass' ? (
+          <>
+            <View style={{marginHorizontal: scaleWidth(43)}}>
+              <Input
+                label="Email"
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+                containerStyle={{marginTop: scaleHeight(54)}}
+              />
+            </View>
+            <Button
+              buttonText="Send Reset Link"
+              style={styles.buttonStyle}
+              onPress={onPressSendResetLink}
             />
-            <Text style={styles.passwordInfoText}>Minimum 8 characters</Text>
-          </View>
-          <View style={styles.passwordInfo}>
-            <CircleCheck
-              color={passwordError.symbolError ? Colors.gray400 : '#028D3E'}
-              height={scaleHeight(16)}
-              width={scaleWidth(16)}
+          </>
+        ) : (
+          <>
+            <View style={styles.passwordContainer}>
+              <Input
+                label="Password"
+                placeholder="Enter your password"
+                renderRightIcon={
+                  showPassword ? (
+                    <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
+                  ) : (
+                    <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
+                  )
+                }
+                onPressRightIcon={() => setShowPassword(prv => !prv)}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <Input
+                label="Confirm Password"
+                placeholder="Repeat your password"
+                containerStyle={{marginTop: scaleHeight(24)}}
+                renderRightIcon={
+                  showConfirmPassword ? (
+                    <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
+                  ) : (
+                    <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
+                  )
+                }
+                onPressRightIcon={() => setShowConfirmPassword(prv => !prv)}
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+              {confirmPassword.length > 0 && (
+                <Text
+                  style={{
+                    marginTop: scaleHeight(8),
+                    marginLeft: scaleWidth(8),
+                    fontSize: scaleWidth(12),
+                    color: password === confirmPassword ? '#028D3E' : 'red',
+                  }}>
+                  {password === confirmPassword
+                    ? 'Passwords match'
+                    : 'Passwords do not match'}
+                </Text>
+              )}
+            </View>
+
+            <View style={styles.passwordInfoContainer}>
+              <View style={styles.passwordInfo}>
+                <CircleCheck
+                  color={passwordError.lengthError ? Colors.gray400 : '#028D3E'}
+                  height={scaleHeight(16)}
+                  width={scaleWidth(16)}
+                />
+                <Text style={styles.passwordInfoText}>
+                  Minimum 8 characters
+                </Text>
+              </View>
+              <View style={styles.passwordInfo}>
+                <CircleCheck
+                  color={passwordError.symbolError ? Colors.gray400 : '#028D3E'}
+                  height={scaleHeight(16)}
+                  width={scaleWidth(16)}
+                />
+                <Text style={styles.passwordInfoText}>At least 1 symbol</Text>
+              </View>
+              <View style={styles.passwordInfo}>
+                <CircleCheck
+                  color={passwordError.numberError ? Colors.gray400 : '#028D3E'}
+                  height={scaleHeight(16)}
+                  width={scaleWidth(16)}
+                />
+                <Text style={styles.passwordInfoText}>At least 1 number</Text>
+              </View>
+            </View>
+
+            <Button
+              buttonText={
+                params.screenMode === 'createPass'
+                  ? 'Create Password'
+                  : 'Update Password'
+              }
+              style={styles.buttonStyle}
+              onPress={onPressCreatePassword}
             />
-            <Text style={styles.passwordInfoText}>At least 1 symbol</Text>
-          </View>
-          <View style={styles.passwordInfo}>
-            <CircleCheck
-              color={passwordError.numberError ? Colors.gray400 : '#028D3E'}
-              height={scaleHeight(16)}
-              width={scaleWidth(16)}
-            />
-            <Text style={styles.passwordInfoText}>At least 1 number</Text>
-          </View>
-        </View>
-        <Button
-          buttonText={
-            params.screenMode === 'createPass'
-              ? 'Create Password'
-              : 'Update Password'
-          }
-          style={styles.buttonStyle}
-          onPress={onPressCreatePassword}
-        />
+          </>
+        )}
       </View>
+
       <TnCFooter navigation={navigation} />
     </Container>
   );

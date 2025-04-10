@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
+  ForgotPasswordPayload,
   OtpVerifyPayload,
   PayloadWithCallback,
   SigninOtpVerifyPayload,
@@ -45,6 +46,10 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
     ) => {},
+    forgotPassword: (
+      state,
+      action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
+    ) => {},
   },
 });
 
@@ -55,5 +60,6 @@ export const {
   verifyPasswordRequest,
   signinRequest,
   signInOtpVerify,
+  forgotPassword,
 } = authSlice.actions;
 export default authSlice.reducer;
