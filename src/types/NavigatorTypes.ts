@@ -2,7 +2,7 @@ import {Country} from 'react-native-country-picker-modal';
 
 export type AuthNavigatorType = {
   OnBoarding: undefined;
-  SignupScreen: SignupScreenParams;
+  SignupScreen: SignupScreenParams | undefined;
   OTPInputScreen: OTPInputScreenParams;
   SigninScreen: undefined;
   PasswordScreen: {
@@ -24,13 +24,8 @@ export type SignupScreenParams = {
 };
 
 export type OTPInputScreenParams = {
-  email: string;
-  mobile: string;
-  country: Country;
   showCreatePass: boolean;
-  firstName: string;
-  lastName: string;
-};
+} & SignupScreenParams;
 
 export type HomeNavigatorType = {
   ClientNavigator: undefined;

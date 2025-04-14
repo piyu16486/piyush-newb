@@ -23,11 +23,9 @@ import {
   signinRequest,
   signupRequest,
   verifyPasswordRequest,
+  otpVerifySuccess,
 } from './auth.slice';
 import authApi from '@services/api/auth.api';
-import {otpVerifySuccess} from './auth.slice';
-// import {AsyncStorage} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function* handleSignup(
   action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
@@ -61,7 +59,7 @@ function* handleOtpVerify(
       console.log('API Response:', response);
 
       // ✅ Store token in AsyncStorage
-      yield call(AsyncStorage.setItem, 'authToken', token);
+      // yield call(AsyncStorage.setItem, 'authToken', token);
 
       // ✅ Dispatch success to slice
       yield put(otpVerifySuccess(token));

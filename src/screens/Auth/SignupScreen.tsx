@@ -40,11 +40,11 @@ export const SignupScreen = () => {
 
   useEffect(() => {
     if (params) {
-      setEmail(params.email ?? email);
-      setFirstName(params.firstName ?? firstName);
-      setLastName(params.lastName ?? lastName);
-      setMobileNumber(params.mobile ?? mobileNumber);
-      setCountry(params.country ?? country);
+      setEmail(params.email);
+      setFirstName(params.firstName);
+      setLastName(params.lastName);
+      setMobileNumber(params.mobile);
+      setCountry(params.country);
     }
   }, [params]);
 
@@ -68,6 +68,7 @@ export const SignupScreen = () => {
     }
     return true;
   };
+
   const handleEmailVerification = () => {
     if (!email.trim()) {
       Toast.show({
