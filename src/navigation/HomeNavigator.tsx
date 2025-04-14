@@ -21,8 +21,6 @@ export const HomeNavigator = () => {
       }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientNavigator" component={ClientNavigator} />
-      {/* <Drawer.Screen name="ClientInfo" component={InputFormField} /> */}
-      {/* <Drawer.Screen name="ClientInfo" component={ClientDetailsScreen} /> */}
     </Drawer.Navigator>
   );
 };

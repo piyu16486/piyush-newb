@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-shadow */
 import {LeftChevronCircle, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
-import {AppBar, Container, Input} from '@components/index';
+import {AppBar, Container, CustomDropdown, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -71,9 +73,25 @@ type NavigationType = CompositeNavigationProp<
 export const InputFormField = () => {
   const navigation = useNavigation<NavigationType>();
   const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
+
+  const Forms = Object.keys(formInputDetails) as Array<
+    keyof typeof formInputDetails
+  >;
+
   const [formIndex, setFormIndex] = React.useState(
     Forms.indexOf(params.screen),
   );
+
+  const formTitles: Record<string, string> = {
+    BasicDetails: 'Basic Details',
+    ClientFirmScreen: 'Client & Firm Details',
+    VendorScreen: 'Vendor Details',
+    VisitScreen: 'Visit Details',
+  };
+
+  const currentFormKey = Forms[formIndex];
+  const currentTitle = formTitles[currentFormKey] || 'Form Section';
+
   return (
     <Container>
       <AppBar title="Client Information Master" navigation={navigation} />
@@ -83,15 +101,49 @@ export const InputFormField = () => {
           style={styles.subcontainer}
           onPress={navigation.goBack}>
           <LeftChevronCircle height={26} width={26} />
-          <Text style={styles.subheader}>{params.title}</Text>
+          <Text style={styles.subheader}>{currentTitle}</Text>
         </TouchableOpacity>
       </View>
       {/*Form Content*/}
       <ScrollView>
         <View style={styles.inputContainer}>
-          {formInputDetails[Forms[formIndex]].map(item => (
-            <Input label={item.label} key={item.label.toString()} />
-          ))}
+          {formInputDetails[Forms[formIndex]].map(item => {
+            // Example: show dropdown for these fields
+            const dropdownFields = [
+              'Type of Visit',
+              'State',
+              'Sector',
+              'Source of Lead',
+              'Are you interested for?',
+              'File By',
+              'Type of Firm',
+              'Facility Type',
+              'Product',
+              'Intent',
+            ];
+
+            if (dropdownFields.includes(item.label)) {
+              const dropdownData = [
+                {label: 'Option 1', value: 'option1'},
+                {label: 'Option 2', value: 'option2'},
+                {label: 'Option 3', value: 'option3'},
+                {label: 'Option 4', value: 'option4'},
+                {label: 'Option 5', value: 'option5'},
+              ];
+
+              return (
+                <CustomDropdown
+                  key={item.label}
+                  label={item.label}
+                  data={dropdownData}
+                  placeholder="Select Type"
+                  onChange={val => console.log(`${item.label} selected:`, val)}
+                />
+              );
+            }
+
+            return <Input label={item.label} key={item.label} />;
+          })}
         </View>
       </ScrollView>
       <View style={styles.footerButton}>

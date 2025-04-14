@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Colors} from '@constants/index';
+import {useNavigation} from '@react-navigation/native';
 
 interface ClientCardProps {
   id: string;
@@ -33,6 +35,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   financier,
   status,
 }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.card}>
       <View style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>

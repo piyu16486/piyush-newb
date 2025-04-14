@@ -51,4 +51,6 @@ export type ClientNavigatorType = {
       | 'Vendor Details'
       | 'Visit Details';
   };
+  ClientLeadInfoTab: undefined;
+  ClientCardReadMore: undefined;
 };

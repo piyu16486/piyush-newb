@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   View,
@@ -112,7 +113,7 @@ export const ClientInfo = () => {
           data={clientsData}
           keyExtractor={item => item.id}
           renderItem={({item}) => <ClientCard {...item} />}
-          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing
+          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
       <TouchableOpacity
