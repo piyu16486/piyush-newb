@@ -1,5 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -108,7 +113,10 @@ export const SignupScreen = () => {
     return true;
   };
 
+  const [loading, setLoading] = useState(false);
+
   const onSuccessSignup = () => {
+    setLoading(false);
     Toast.show({
       type: 'success',
       text1: 'OTP sent to your mobile no.',
@@ -134,6 +142,8 @@ export const SignupScreen = () => {
   };
 
   const onErrorSignup = (errorMessage: string) => {
+    setLoading(false);
+
     Toast.show({
       type: 'error',
       text1: errorMessage,
@@ -146,6 +156,7 @@ export const SignupScreen = () => {
     const isEmailValid = handleEmailVerification();
     const isNameValid = handleNameVerifications();
     if (isEmailValid && isMobileValid && isNameValid) {
+      setLoading(true); // Show loader
       dispatch(
         signupRequest({
           payload: {
@@ -167,6 +178,15 @@ export const SignupScreen = () => {
   const onPressLogin = () => {
     navigation.replace('SigninScreen');
   };
+
+  // eslint-disable-next-line no-lone-blocks
+  {
+    loading && (
+      <View style={styles.loaderOverlay}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -276,5 +296,16 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray300,
     height: '100%',
     flexDirection: 'row',
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
 });

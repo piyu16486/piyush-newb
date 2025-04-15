@@ -22,16 +22,19 @@ export interface OtpVerifyPayload {
 }
 
 export interface VerifyPasswordPayload {
-  email: string;
+  //email: string;
+  token?: string;
   password: string;
 }
-
 export interface SignInPayload {
   email: string;
   password: string;
 }
 
-export interface SigninOtpVerifyPayload {}
+export interface SigninOtpVerifyPayload {
+  mobile_number: string;
+  otp: string;
+}
 
 export interface ForgotPasswordPayload {
   email: string;

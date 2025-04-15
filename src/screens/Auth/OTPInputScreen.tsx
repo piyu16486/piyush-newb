@@ -56,6 +56,7 @@ export const OTPInputScreen = () => {
   }, []);
 
   const onPressResendOTP = () => {
+    console.log('----->>>>>');
     setOtpTimer(OTP_TIMER);
     Toast.show({
       type: 'success',
@@ -83,6 +84,7 @@ export const OTPInputScreen = () => {
       });
       return;
     }
+    console.log('----->>>>>11');
     dispatch(
       otpVerifyRequest({
         payload: {
@@ -103,6 +105,7 @@ export const OTPInputScreen = () => {
           }
         },
         callbackError: (errMsg: string) => {
+          console.log('----->>>>>12', errMsg);
           Toast.show({
             type: 'error',
             text1: errMsg || 'Wrong OTP. Please try again',

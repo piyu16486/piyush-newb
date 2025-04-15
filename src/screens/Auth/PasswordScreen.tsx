@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
@@ -11,6 +12,7 @@ import {Colors, Fonts} from '@constants/index';
 import Toast from 'react-native-toast-message';
 import {forgotPassword, verifyPasswordRequest} from '@store/auth/auth.slice';
 import {useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const PasswordScreen = () => {
   const navigation =
@@ -66,13 +68,42 @@ export const PasswordScreen = () => {
       return;
     }
 
+    async function getData(key: string) {
+      try {
+        const value = await AsyncStorage.getItem(key);
+        if (value !== null) {
+          console.log('Retrieved value:', value);
+          return value;
+        }
+      } catch (e) {
+        console.log('Failed to fetch data', e);
+      }
+    }
+    async function getToken() {
+      let token = await getData('token');
+      console.log('Retrieved token:', token);
+      return token; // Or use token for your further logic
+    }
+
     // ✅ Get email from params (or decode token if you prefer)
-    const email = params.email; // make sure this is passed when navigating to this screen
+    //const email = params.email; // make sure this is passed when navigating to this screen
+    const rawToken = await AsyncStorage.getItem('token');
+
+    if (!rawToken) {
+      Toast.show({
+        type: 'error',
+        text1: 'Token not found. Please log in again.',
+        visibilityTime: 2000,
+      });
+      return;
+    }
+
+    const token: string = rawToken; // now it's definitely a string
 
     dispatch(
       verifyPasswordRequest({
         payload: {
-          email,
+          token,
           password,
         },
         callbackSuccess: () => {
@@ -102,41 +133,41 @@ export const PasswordScreen = () => {
   const onPressSendResetLink = () => {
     console.log('Email entered: ', email);
 
-  if (!email) {
-    Toast.show({
-      type: 'error',
-      text1: 'Please enter your email',
-      visibilityTime: 2000,
-    });
-    return;
-  }
+    if (!email) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter your email',
+        visibilityTime: 2000,
+      });
+      return;
+    }
 
-  dispatch(
-    forgotPassword({
-      payload: {email},
-      callbackSuccess: () => {
-        Toast.show({
-          type: 'success',
-          text1: 'Reset link sent successfully',
-          visibilityTime: 2000,
-        });
+    dispatch(
+      forgotPassword({
+        payload: {email},
+        callbackSuccess: () => {
+          Toast.show({
+            type: 'success',
+            text1: 'Reset link sent successfully',
+            visibilityTime: 2000,
+          });
 
-        navigation.navigate('PasswordScreen', {
-          screenMode: 'forgotPass',
-          email: email,
-        });
-      },
-      callbackError: errorMessage => {
-        Toast.show({
-          type: 'error',
-          text1: 'Failed to send reset link',
-          text2: errorMessage,
-          visibilityTime: 2000,
-        });
-      },
-    }),
-  );
-};
+          navigation.navigate('PasswordScreen', {
+            screenMode: 'forgotPass',
+            email: email,
+          });
+        },
+        callbackError: errorMessage => {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to send reset link',
+            text2: errorMessage,
+            visibilityTime: 2000,
+          });
+        },
+      }),
+    );
+  };
 
   return (
     <Container>

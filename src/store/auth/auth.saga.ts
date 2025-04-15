@@ -27,6 +27,22 @@ import {
 } from './auth.slice';
 import authApi from '@services/api/auth.api';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+function storeData(key: any, value: any) {
+  try {
+    AsyncStorage.setItem(key, value)
+      .then(() => {
+        console.log('Data stored successfully');
+      })
+      .catch(e => {
+        console.log('Failed to save data', e);
+      });
+  } catch (e) {
+    console.log('Unexpected error', e);
+  }
+}
+
 function* handleSignup(
   action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
 ): unknown {
@@ -56,6 +72,8 @@ function* handleOtpVerify(
 
     if (response.statusCode && response.data) {
       const token = response.data;
+      storeData('token', token);
+
       console.log('API Response:', response);
 
       // ✅ Store token in AsyncStorage

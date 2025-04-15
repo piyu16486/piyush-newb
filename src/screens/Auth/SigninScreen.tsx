@@ -9,7 +9,7 @@ import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Feather';
@@ -32,7 +32,7 @@ export const SigninScreen = () => {
   });
 
   const [contactInfo, setContactInfo] = useState('');
-  const [password, setPassword] = useState('');
+  const [passwordValue, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleEmailVerification = () => {
@@ -88,18 +88,23 @@ export const SigninScreen = () => {
   const dispatch = useDispatch();
 
   const onPressVerify = async () => {
+    console.log('-------->>>>>');
     if (signupMode === 'email') {
+      console.log('-------->>>>>1');
       const isEmailValid = handleEmailVerification();
       if (isEmailValid) {
+        console.log('-------->>>>>2');
         const payload: SignInPayload = {
-          email: contactInfo, // Assuming `contactInfo` is the email
-          password: passwordValue, // Replace with your password state
+          email: contactInfo,
+          password: passwordValue,
         };
+        console.log('----->>>>3', payload);
 
         dispatch(
           signinRequest({
             payload,
             callbackSuccess: () => {
+              console.log('Login successful. Navigating to OTP screen...');
               navigation.reset({
                 index: 0,
                 routes: [
@@ -115,8 +120,13 @@ export const SigninScreen = () => {
               });
             },
             callbackError: errorMessage => {
+              console.log('error', errorMessage);
               console.warn('Login failed:', errorMessage);
-              // Optional: Show toast or alert
+              // Optionally show alert or toast
+              Alert.alert(
+                'Login Failed',
+                errorMessage || 'Something went wrong',
+              );
             },
           }),
         );
@@ -170,7 +180,7 @@ export const SigninScreen = () => {
         <Input
           label="Password"
           onChangeText={setPassword}
-          value={password}
+          value={passwordValue}
           containerStyle={{marginTop: scaleHeight(24)}}
         />
         <View style={styles.extraInfoContainer}>
