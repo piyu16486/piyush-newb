@@ -56,6 +56,7 @@ export const CustomDropdown = ({
 const styles = StyleSheet.create({
   container: {
     // margin: 16,
+    marginBottom: scaleHeight(16),
   },
   label: {
     fontSize: scaleFont(14),

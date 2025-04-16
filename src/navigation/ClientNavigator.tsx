@@ -6,8 +6,10 @@ import {
   ClientLeadInfoTab,
   FormSelectionScreen,
   InputFormField,
+  SoftsanctionProcess,
 } from '@screens/index';
 import {ClientNavigatorType} from '@type/NavigatorTypes';
+import {Softsanction} from '@screens/SoftSanction/Softsanction';
 
 const Stack = createNativeStackNavigator<ClientNavigatorType>();
 
@@ -22,6 +24,11 @@ export const ClientNavigator = () => {
       <Stack.Screen name="InputFormField" component={InputFormField} />
       <Stack.Screen name="ClientLeadInfoTab" component={ClientLeadInfoTab} />
       <Stack.Screen name="ClientCardReadMore" component={ClientCardReadMore} />
+      <Stack.Screen name="Softsanction" component={Softsanction} />
+      <Stack.Screen
+        name="SoftsanctionProcess"
+        component={SoftsanctionProcess}
+      />
     </Stack.Navigator>
   );
 };

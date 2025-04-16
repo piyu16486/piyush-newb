@@ -118,7 +118,11 @@ export const ClientInfo = () => {
       </View>
       <TouchableOpacity
         style={styles.plusButton}
-        onPress={() => navigation.navigate('FormSelectionScreen')}>
+        // screen changes
+        // for Softsanctionv -> Softsanction
+        // for Next page of Softsanction -> SoftsanctionProcess
+
+        onPress={() => navigation.navigate('SoftsanctionProcess')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

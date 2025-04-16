@@ -53,4 +53,6 @@ export type ClientNavigatorType = {
   };
   ClientLeadInfoTab: undefined;
   ClientCardReadMore: undefined;
+  Softsanction: undefined;
+  SoftsanctionProcess: undefined;
 };

@@ -11,3 +11,5 @@ export * from './InputFields/InputFormField';
 export * from './ClientDetailsScreen/ClientDetailsScreen';
 export * from './ClientLeadInfoTabs/ClientLeadInfoTab';
 export * from './ReadMore/ClientCardReadMore';
+export * from './SoftSanction/Softsanction';
+export * from './SoftsanctionProcess/SoftsanctionProcess';
