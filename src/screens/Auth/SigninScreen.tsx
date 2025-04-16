@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {EyeClose, EyeOpen} from '@assets/Icons';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {Colors, Fonts} from '@constants/index';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInPayload} from '@store/auth';
@@ -20,6 +22,7 @@ export const SigninScreen = () => {
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
 
   const [signupMode] = useState<'email' | 'mobile'>('email');
+  const [showPassword, setShowPassword] = useState(false);
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [country, setCountry] = useState<Country>({
     cca2: 'IN',
@@ -109,7 +112,7 @@ export const SigninScreen = () => {
                 index: 0,
                 routes: [
                   {
-                    name: 'OTPInputScreen',
+                    name: 'OTPInputScreenLogin',
                     params: {
                       signupMode: 'email',
                       email: contactInfo,
@@ -181,6 +184,15 @@ export const SigninScreen = () => {
           label="Password"
           onChangeText={setPassword}
           value={passwordValue}
+          renderRightIcon={
+            showPassword ? (
+              <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
+            ) : (
+              <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
+            )
+          }
+          onPressRightIcon={() => setShowPassword(prv => !prv)}
+          secureTextEntry={!showPassword}
           containerStyle={{marginTop: scaleHeight(24)}}
         />
         <View style={styles.extraInfoContainer}>

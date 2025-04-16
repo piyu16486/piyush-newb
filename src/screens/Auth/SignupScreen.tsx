@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ActivityIndicator,
   StyleSheet,
@@ -18,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
 import {signupRequest} from '@store/auth/auth.slice';
 import {userSelector} from '@store/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const SignupScreen = () => {
   // Hooks
@@ -151,10 +153,25 @@ export const SignupScreen = () => {
     });
   };
 
+  function storeMobilenumber(key: any, value: any) {
+    try {
+      AsyncStorage.setItem(key, value)
+        .then(() => {
+          console.log('Data stored successfully');
+        })
+        .catch(e => {
+          console.log('Failed to save data', e);
+        });
+    } catch (e) {
+      console.log('Unexpected error', e);
+    }
+  }
+
   const onPressVerify = () => {
     const isMobileValid = handleMobileVerification();
     const isEmailValid = handleEmailVerification();
     const isNameValid = handleNameVerifications();
+    storeMobilenumber('mobilenumber', mobileNumber);
     if (isEmailValid && isMobileValid && isNameValid) {
       setLoading(true); // Show loader
       dispatch(

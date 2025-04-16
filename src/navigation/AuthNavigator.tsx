@@ -1,4 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {OTPInputScreenlogin} from '@screens/Auth/OTPInputScreenlogin';
 import {
   OTPInputScreen,
   PasswordScreen,
@@ -20,6 +21,10 @@ export const AuthNavigator = () => {
       <AuthStack.Screen name="SignupScreen" component={SignupScreen} />
       <AuthStack.Screen name="SigninScreen" component={SigninScreen} />
       <AuthStack.Screen name="OTPInputScreen" component={OTPInputScreen} />
+      <AuthStack.Screen
+        name="OTPInputScreenLogin"
+        component={OTPInputScreenlogin}
+      />
       <AuthStack.Screen name="PasswordScreen" component={PasswordScreen} />
       <AuthStack.Screen name="SuccessScreen" component={SuccessScreen} />
       <AuthStack.Screen name="TermsOfService" component={TermsOfService} />

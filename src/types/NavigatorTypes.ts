@@ -4,7 +4,8 @@ export type AuthNavigatorType = {
   OnBoarding: undefined;
   SignupScreen: SignupScreenParams | undefined;
   OTPInputScreen: OTPInputScreenParams;
-  SigninScreen: undefined;
+  OTPInputScreenLogin: OTPInputScreenLoginParams;
+  SigninScreen: SigninScreenParams | undefined;
   PasswordScreen: {
     screenMode: 'forgotPass' | 'createPass';
   };
@@ -23,9 +24,18 @@ export type SignupScreenParams = {
   lastName: string;
 };
 
+export type SigninScreenParams = {
+  email: string;
+  password: string;
+};
+
 export type OTPInputScreenParams = {
   showCreatePass: boolean;
 } & SignupScreenParams;
+
+export type OTPInputScreenLoginParams = {
+  showCreatePass: boolean;
+} & SigninScreenParams;
 
 export type HomeNavigatorType = {
   ClientNavigator: undefined;
