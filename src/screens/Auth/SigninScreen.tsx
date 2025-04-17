@@ -11,7 +11,14 @@ import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
 import React, {useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Feather';
@@ -37,6 +44,7 @@ export const SigninScreen = () => {
   const [contactInfo, setContactInfo] = useState('');
   const [passwordValue, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEmailVerification = () => {
     if (!contactInfo.trim()) {
@@ -102,6 +110,7 @@ export const SigninScreen = () => {
           password: passwordValue,
         };
         console.log('----->>>>3', payload);
+        setLoading(true); // Show loader
 
         dispatch(
           signinRequest({
@@ -228,6 +237,12 @@ export const SigninScreen = () => {
         </View>
       </View>
       <TnCFooter navigation={navigation} />
+      {/* Activity Indicator Overlay - Show when loading */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="blue" />
+        </View>
+      )}
     </Container>
   );
 };
@@ -282,5 +297,16 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray300,
     height: '100%',
     flexDirection: 'row',
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
 });

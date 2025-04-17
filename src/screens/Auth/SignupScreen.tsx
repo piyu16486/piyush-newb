@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ActivityIndicator,
   StyleSheet,
@@ -196,15 +195,6 @@ export const SignupScreen = () => {
     navigation.replace('SigninScreen');
   };
 
-  // eslint-disable-next-line no-lone-blocks
-  {
-    loading && (
-      <View style={styles.loaderOverlay}>
-        <ActivityIndicator size="large" color="blue" />
-      </View>
-    );
-  }
-
   return (
     <Container>
       <View style={styles.flex1}>
@@ -278,6 +268,12 @@ export const SignupScreen = () => {
         </View>
       </View>
       <TnCFooter navigation={navigation} />
+      {/* Activity Indicator Overlay - Show when loading */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="blue" />
+        </View>
+      )}
     </Container>
   );
 };
