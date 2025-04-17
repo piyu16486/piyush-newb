@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 import {View, Text, StyleSheet, FlatList, TextInput} from 'react-native';
 import React, {useState} from 'react';
 import Colors from '@constants/Colors';
@@ -16,6 +16,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
 import {ScrollView} from 'react-native-gesture-handler';
+import {Search} from '@assets/Icons';
 
 type ClientInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -66,76 +67,81 @@ export const SoftsanctionProcess = () => {
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Soft Sanction Process</Text>
       </View>
+      <ScrollView>
+        <View style={styles.head}>
+          <Text style={styles.headText}>Ruleset ID Details</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          {/* <Input label="Bank Name" /> */}
+          <CustomDropdown
+            label="Bank Name"
+            data={[
+              {label: 'Option 1', value: 'option1'},
+              {label: 'Option 2', value: 'option2'},
+              {label: 'Option 3', value: 'option3'},
+              {label: 'Option 4', value: 'option4'},
+              {label: 'Option 5', value: 'option5'},
+            ]}
+            placeholder="Bank Name"
+          />
+          {/* <Input label="Product" /> */}
+          <CustomDropdown
+            label="Product"
+            data={[
+              {label: 'Option 1', value: 'option1'},
+              {label: 'Option 2', value: 'option2'},
+              {label: 'Option 3', value: 'option3'},
+              {label: 'Option 4', value: 'option4'},
+              {label: 'Option 5', value: 'option5'},
+            ]}
+            placeholder="Product Name"
+          />
+          {/* <Input label="Method" /> */}
+          <CustomDropdown
+            label="Method"
+            data={[
+              {label: 'Option 1', value: 'option1'},
+              {label: 'Option 2', value: 'option2'},
+              {label: 'Option 3', value: 'option3'},
+              {label: 'Option 4', value: 'option4'},
+              {label: 'Option 5', value: 'option5'},
+            ]}
+            placeholder="Method Name"
+          />
+          {/* <Input label="Rulest ID" /> */}
+          <CustomDropdown
+            label="Rulest ID"
+            data={[
+              {label: 'Option 1', value: 'option1'},
+              {label: 'Option 2', value: 'option2'},
+              {label: 'Option 3', value: 'option3'},
+              {label: 'Option 4', value: 'option4'},
+              {label: 'Option 5', value: 'option5'},
+            ]}
+            placeholder="All Rules Set IDs here of bank, PID, Method"
+          />
+        </View>
+        <Button buttonText={'View Rulset'} style={styles.button} />
 
-      <View style={styles.head}>
-        <Text style={styles.headText}>Ruleset ID Details</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        {/* <Input label="Bank Name" /> */}
-        <CustomDropdown
-          label="Bank Name"
-          data={[
-            {label: 'Option 1', value: 'option1'},
-            {label: 'Option 2', value: 'option2'},
-            {label: 'Option 3', value: 'option3'},
-            {label: 'Option 4', value: 'option4'},
-            {label: 'Option 5', value: 'option5'},
-          ]}
-          placeholder="Bank Name"
-        />
-        {/* <Input label="Product" /> */}
-        <CustomDropdown
-          label="Product"
-          data={[
-            {label: 'Option 1', value: 'option1'},
-            {label: 'Option 2', value: 'option2'},
-            {label: 'Option 3', value: 'option3'},
-            {label: 'Option 4', value: 'option4'},
-            {label: 'Option 5', value: 'option5'},
-          ]}
-          placeholder="Product Name"
-        />
-        {/* <Input label="Method" /> */}
-        <CustomDropdown
-          label="Method"
-          data={[
-            {label: 'Option 1', value: 'option1'},
-            {label: 'Option 2', value: 'option2'},
-            {label: 'Option 3', value: 'option3'},
-            {label: 'Option 4', value: 'option4'},
-            {label: 'Option 5', value: 'option5'},
-          ]}
-          placeholder="Method Name"
-        />
-        {/* <Input label="Rulest ID" /> */}
-        <CustomDropdown
-          label="Rulest ID"
-          data={[
-            {label: 'Option 1', value: 'option1'},
-            {label: 'Option 2', value: 'option2'},
-            {label: 'Option 3', value: 'option3'},
-            {label: 'Option 4', value: 'option4'},
-            {label: 'Option 5', value: 'option5'},
-          ]}
-          placeholder="All Rules Set IDs here of bank, PID, Method"
-        />
-      </View>
-      <Button buttonText={'View Rulset'} style={styles.button} />
-      {/* <ScrollView>
         <View style={styles.container}>
           <View style={styles.headerRow}>
-            <Text style={styles.header}>Leads</Text>
-            <View style={styles.countBadge}>
-              <Text style={styles.countText}>{leads.length}</Text>
+            <View style={styles.titleWithBadge}>
+              <Text style={styles.header}>Leads</Text>
+              <View style={styles.countBadge}>
+                <Text style={styles.countText}>{leads.length}</Text>
+              </View>
+            </View>
+            <View style={styles.searchContainer}>
+              <Search width={16} height={16} style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search Leads"
+                value={search}
+                onChangeText={setSearch}
+                placeholderTextColor="#999"
+              />
             </View>
           </View>
-
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search Leads"
-            value={search}
-            onChangeText={setSearch}
-          />
 
           <FlatList
             data={filteredLeads}
@@ -144,7 +150,7 @@ export const SoftsanctionProcess = () => {
             contentContainerStyle={{paddingBottom: 20}}
           />
         </View>
-      </ScrollView> */}
+      </ScrollView>
     </Container>
   );
 };
@@ -190,6 +196,13 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap', // optional, in case screen is narrow
+    marginBottom: 10,
+  },
+  titleWithBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   header: {
     fontSize: 20,
@@ -198,22 +211,34 @@ const styles = StyleSheet.create({
   },
   countBadge: {
     backgroundColor: '#fdeef1',
-    borderRadius: 6,
-    paddingHorizontal: 6,
+    borderRadius: 1,
+    paddingHorizontal: 10,
     paddingVertical: 2,
   },
   countText: {
-    color: '#d6336c',
+    color: Colors.SteelGray,
     fontWeight: 'bold',
   },
-  searchInput: {
-    marginTop: 12,
-    marginBottom: 10,
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 6,
     paddingHorizontal: 10,
-    height: 40,
     backgroundColor: '#fff',
+    height: 40,
+    // flex: 1,
+    marginLeft: 10,
+  },
+
+  searchIcon: {
+    marginRight: 8,
+  },
+
+  searchInput: {
+    // flex: 1,
+    padding: 10,
+    color: '#000',
   },
 });

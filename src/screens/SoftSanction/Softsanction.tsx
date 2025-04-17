@@ -38,7 +38,6 @@ export const Softsanction = () => {
       <View style={styles.container}>
         <TouchableOpacity style={styles.item}>
           <Text style={styles.text}>Soft Sanction Process</Text>
-          {/* Replace with the item title */}
           <RightChevron height={17} width={20} />
         </TouchableOpacity>
       </View>

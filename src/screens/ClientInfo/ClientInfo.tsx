@@ -121,6 +121,10 @@ export const ClientInfo = () => {
         // screen changes
         // for Softsanctionv -> Softsanction
         // for Next page of Softsanction -> SoftsanctionProcess
+        // for SoftSanction -> SoftSanctionRuleset
+        // for SoftSanctionRuleset phase-2 -> RulesetTCPD
+        // for UGRO phase-1 -> UGROTurnoverMethod
+        // for UGRO phase-2 -> UGROPurchaseMethod
 
         onPress={() => navigation.navigate('SoftsanctionProcess')}>
         <Plus height={24} width={24} />

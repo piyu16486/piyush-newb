@@ -8,3 +8,5 @@ export * from './Footer/TnCFooter';
 export * from './ClientCard/ClientCard';
 export * from './Dropdown/CustomDropdown';
 export * from './SoftSanctionLeadCard/SoftSanctionLeadCard';
+export * from './SoftRulesetCard/SoftRulestCard';
+export * from './RulesetTCPDCard/RulesetTCPDCard';

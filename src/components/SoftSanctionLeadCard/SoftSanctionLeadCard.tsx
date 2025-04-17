@@ -1,3 +1,6 @@
+import fontWeight from '@constants/FontWeight';
+import {Colors} from '@constants/index';
+import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
@@ -47,7 +50,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     padding: 16,
     borderRadius: 8,
-    elevation: 3,
     borderColor: '#eee',
     borderWidth: 1,
   },
@@ -60,15 +62,26 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   button: {
-    marginTop: 12,
+    marginTop: scaleHeight(12),
     borderWidth: 1,
     borderColor: 'red',
-    paddingVertical: 8,
-    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    color: 'red',
-    fontWeight: '600',
+    color: Colors.primaryColor,
+    fontWeight: fontWeight.SemiBold,
+    fontSize: scaleFont(16),
   },
 });
+
+// marginTop: 12,
+//     borderWidth: 1,
+//     borderColor: 'red',
+//     paddingVertical: 8,
+//     borderRadius: 6,
+//     alignItems: 'center',

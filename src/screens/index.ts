@@ -13,3 +13,7 @@ export * from './ClientLeadInfoTabs/ClientLeadInfoTab';
 export * from './ReadMore/ClientCardReadMore';
 export * from './SoftSanction/Softsanction';
 export * from './SoftsanctionProcess/SoftsanctionProcess';
+export * from './SoftSanctionRuleset/SoftSanctionRuleset';
+export * from './SoftSanctionRulesetTCPD/RulesetTCPD';
+export * from './UGRO-TurnoverMethod/UGROTurnoverMethod';
+export * from './UGRO-PurchaseMethod/UGROPurchaseMethod';

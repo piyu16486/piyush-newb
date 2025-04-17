@@ -55,4 +55,8 @@ export type ClientNavigatorType = {
   ClientCardReadMore: undefined;
   Softsanction: undefined;
   SoftsanctionProcess: undefined;
+  SoftSanctionRuleset: undefined;
+  RulesetTCPD: undefined;
+  UGROTurnoverMethod: undefined;
+  UGROPurchaseMethod: undefined;
 };

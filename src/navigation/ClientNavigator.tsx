@@ -6,7 +6,11 @@ import {
   ClientLeadInfoTab,
   FormSelectionScreen,
   InputFormField,
+  RulesetTCPD,
   SoftsanctionProcess,
+  SoftSanctionRuleset,
+  UGROPurchaseMethod,
+  UGROTurnoverMethod,
 } from '@screens/index';
 import {ClientNavigatorType} from '@type/NavigatorTypes';
 import {Softsanction} from '@screens/SoftSanction/Softsanction';
@@ -29,6 +33,13 @@ export const ClientNavigator = () => {
         name="SoftsanctionProcess"
         component={SoftsanctionProcess}
       />
+      <Stack.Screen
+        name="SoftSanctionRuleset"
+        component={SoftSanctionRuleset}
+      />
+      <Stack.Screen name="RulesetTCPD" component={RulesetTCPD} />
+      <Stack.Screen name="UGROTurnoverMethod" component={UGROTurnoverMethod} />
+      <Stack.Screen name="UGROPurchaseMethod" component={UGROPurchaseMethod} />
     </Stack.Navigator>
   );
 };
