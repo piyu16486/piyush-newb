@@ -34,6 +34,7 @@ export type OTPInputScreenParams = {
 
 export type HomeNavigatorType = {
   ClientNavigator: undefined;
+  SoftNavigator: undefined;
 };
 
 export type ClientNavigatorType = {
@@ -53,10 +54,16 @@ export type ClientNavigatorType = {
   };
   ClientLeadInfoTab: undefined;
   ClientCardReadMore: undefined;
-  Softsanction: undefined;
   SoftsanctionProcess: undefined;
   SoftSanctionRuleset: undefined;
   RulesetTCPD: undefined;
   UGROTurnoverMethod: undefined;
   UGROPurchaseMethod: undefined;
+  LeadProgress: undefined;
+  LeadProgressInfo: undefined;
+  Report: undefined;
+};
+
+export type SoftNavigatorType = {
+  Softsanction: undefined;
 };

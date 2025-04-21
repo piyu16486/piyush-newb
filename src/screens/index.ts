@@ -17,3 +17,6 @@ export * from './SoftSanctionRuleset/SoftSanctionRuleset';
 export * from './SoftSanctionRulesetTCPD/RulesetTCPD';
 export * from './UGRO-TurnoverMethod/UGROTurnoverMethod';
 export * from './UGRO-PurchaseMethod/UGROPurchaseMethod';
+export * from './LeadProgress/LeadProgress';
+export * from './LeadProgressInfo/LeadProgressInfo';
+export * from './Report/Report';

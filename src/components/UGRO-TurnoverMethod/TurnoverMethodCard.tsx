@@ -26,46 +26,33 @@ export const TurnoverMethodCard: React.FC<TurnoverMethodProps> = ({
       <TouchableOpacity style={styles.icon}>
         <Download width={14} height={14} />
       </TouchableOpacity>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Monthly Turnover: </Text>
-        {TurnoverMethod.monthlyTurnover}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Last 12 M Turnover: </Text>
-        {TurnoverMethod.last12MTurnover}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Projected Turnover: </Text>
-        {TurnoverMethod.projectedTurnover}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>CREDIT PERIOD Offered: </Text>
-        {TurnoverMethod.creditPeriodOffered}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>20% of Projected TO :</Text>
-        {TurnoverMethod.projectedTO}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Projected TO for credit period: </Text>
-        {TurnoverMethod.projectedTOforCreditPeriod}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Existing W/C Limits: </Text>
-        {TurnoverMethod.existingWCLimits}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Final Limit: </Text>
-        {TurnoverMethod.finalLimit}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Actual Eligibility: </Text>
-        {TurnoverMethod.actualEligibility}
-      </Text>
-      <Text style={styles.text}>
-        <Text style={styles.label}>Eligibility as per Tenor: </Text>
-        {TurnoverMethod.eligibilityasperTenor}
-      </Text>
+
+      {[
+        {label: 'Monthly Turnover', value: TurnoverMethod.monthlyTurnover},
+        {label: 'Last 12 M Turnover', value: TurnoverMethod.last12MTurnover},
+        {label: 'Projected Turnover', value: TurnoverMethod.projectedTurnover},
+        {
+          label: 'CREDIT PERIOD Offered',
+          value: TurnoverMethod.creditPeriodOffered,
+        },
+        {label: '20% of Projected TO', value: TurnoverMethod.projectedTO},
+        {
+          label: 'Projected TO for credit period',
+          value: TurnoverMethod.projectedTOforCreditPeriod,
+        },
+        {label: 'Existing W/C Limits', value: TurnoverMethod.existingWCLimits},
+        {label: 'Final Limit', value: TurnoverMethod.finalLimit},
+        {label: 'Actual Eligibility', value: TurnoverMethod.actualEligibility},
+        {
+          label: 'Eligibility as per Tenor',
+          value: TurnoverMethod.eligibilityasperTenor,
+        },
+      ].map((item, index) => (
+        <Text style={styles.text} key={index}>
+          <Text style={styles.label}>{item.label}: </Text>
+          {item.value}
+        </Text>
+      ))}
     </View>
   );
 };

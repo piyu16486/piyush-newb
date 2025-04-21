@@ -6,16 +6,20 @@ import {
   ClientLeadInfoTab,
   FormSelectionScreen,
   InputFormField,
+  LeadProgress,
+  LeadProgressInfo,
+  Report,
   RulesetTCPD,
   SoftsanctionProcess,
   SoftSanctionRuleset,
   UGROPurchaseMethod,
   UGROTurnoverMethod,
 } from '@screens/index';
-import {ClientNavigatorType} from '@type/NavigatorTypes';
+import {ClientNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {Softsanction} from '@screens/SoftSanction/Softsanction';
 
 const Stack = createNativeStackNavigator<ClientNavigatorType>();
+const SoftStack = createNativeStackNavigator<SoftNavigatorType>();
 
 export const ClientNavigator = () => {
   return (
@@ -28,7 +32,6 @@ export const ClientNavigator = () => {
       <Stack.Screen name="InputFormField" component={InputFormField} />
       <Stack.Screen name="ClientLeadInfoTab" component={ClientLeadInfoTab} />
       <Stack.Screen name="ClientCardReadMore" component={ClientCardReadMore} />
-      <Stack.Screen name="Softsanction" component={Softsanction} />
       <Stack.Screen
         name="SoftsanctionProcess"
         component={SoftsanctionProcess}
@@ -40,6 +43,17 @@ export const ClientNavigator = () => {
       <Stack.Screen name="RulesetTCPD" component={RulesetTCPD} />
       <Stack.Screen name="UGROTurnoverMethod" component={UGROTurnoverMethod} />
       <Stack.Screen name="UGROPurchaseMethod" component={UGROPurchaseMethod} />
+      <Stack.Screen name="LeadProgressInfo" component={LeadProgressInfo} />
+      <Stack.Screen name="LeadProgress" component={LeadProgress} />
+      <Stack.Screen name="Report" component={Report} />
+    </Stack.Navigator>
+  );
+};
+
+export const SoftNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <SoftStack.Screen name="Softsanction" component={Softsanction} />
     </Stack.Navigator>
   );
 };

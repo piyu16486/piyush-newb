@@ -4,7 +4,7 @@ import {HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import {ClientNavigator} from './ClientNavigator';
+import {ClientNavigator, SoftNavigator} from './ClientNavigator';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
 
@@ -21,6 +21,7 @@ export const HomeNavigator = () => {
       }}
       drawerContent={DrawerContent}>
       <Drawer.Screen name="ClientNavigator" component={ClientNavigator} />
+      <Drawer.Screen name="SoftNavigator" component={SoftNavigator} />
     </Drawer.Navigator>
   );
 };

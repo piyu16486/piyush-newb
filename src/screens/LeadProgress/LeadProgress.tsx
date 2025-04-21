@@ -1,97 +1,76 @@
 /* eslint-disable react-native/no-inline-styles */
+import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import {AppBar, ClientCard, Container} from '@components/index';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
-import {Search, Filter, Plus} from '@assets/Icons'; // Import your search and filter icons
-import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import {AppBar, Container, LeadProgressCard} from '@components/index';
+import {Filter, Search} from '@assets/Icons';
+import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {Colors} from '@constants/index';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
-const clientsData = [
+const leadData = [
   {
-    id: '0001',
-    name: 'S D Verma',
+    clientId: '0001',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
     sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
+    processStart: '10-02-2023',
     status: 'Warm',
   },
   {
-    id: '0002',
-    name: 'S D Verma',
+    clientId: '0002',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
     sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
+    processStart: '10-02-2023',
     status: 'Hot',
   },
   {
-    id: '0003',
-    name: 'S D Verma',
+    clientId: '0003',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
     sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Warm',
-  },
-  {
-    id: '0004',
-    name: 'S D Verma',
-    location: 'Delhi',
-    initiator: 'Delhi',
-    source: 'Source D',
-    referenceDetails: '9898923222',
-    monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
+    processStart: '10-02-2023',
     status: 'Cold',
   },
-  // Add more client data here...
-] as const;
+  {
+    clientId: '0004',
+    clientName: 'S D Verma',
+    location: 'Delhi',
+    initiator: 'Delhi',
+    sourceDHCO: 'Source D',
+    referenceDetails: '9898923222',
+    monthlyTurnover: '20,00,000',
+    sanctionRequested: '25,00,000',
+    processStart: '10-02-2023',
+    status: 'Warm',
+  },
+];
 
-type ClientInfoNavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
->;
-
-export const ClientInfo = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
-
+export const LeadProgress = () => {
   return (
     <Container>
-      {/* AppBar */}
-      <AppBar title="Client Information Master" navigation={navigation} />
-
+      <AppBar title="Client Information Master" />
+      {/* Content */}
       <View style={styles.Subcontainer}>
-        <Text style={styles.Subheader}>Client Information</Text>
+        <Text style={styles.Subheader}>Lead Progress Information</Text>
       </View>
       <View style={styles.RowContainer}>
         <View style={styles.Subrowcontainer}>
-          <Text style={styles.Subrowcontainertxt}>Clients</Text>
+          <Text style={styles.Subrowcontainertxt}>Leads</Text>
           <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>{clientsData.length}</Text>
+            <Text style={styles.Badgetext}>{leadData.length}</Text>
           </View>
         </View>
         <View style={styles.Searchbox}>
@@ -104,34 +83,18 @@ export const ClientInfo = () => {
         </View>
         <View style={styles.Filterbox}>
           <View>
-            <Filter height={12} width={12} />
+            <Filter width={12} height={12} />
           </View>
         </View>
       </View>
       <View style={styles.Cardlist}>
         <FlatList
-          data={clientsData}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => <ClientCard {...item} />}
-          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
+          data={leadData}
+          keyExtractor={item => item.clientId}
+          renderItem={({item}) => <LeadProgressCard {...item} />}
+          contentContainerStyle={{flexGrow: 1}}
         />
       </View>
-      <TouchableOpacity
-        style={styles.plusButton}
-        // screen changes
-        // for Softsanctionv -> Softsanction
-        // for Next page of Softsanction -> SoftsanctionProcess
-        // for SoftSanction -> SoftSanctionRuleset
-        // for SoftSanctionRuleset phase-2 -> RulesetTCPD
-        // for UGRO phase-1 -> UGROTurnoverMethod
-        // for UGRO phase-2 -> UGROPurchaseMethod
-        // for LeadProgress -. LeadProgress
-        // for LeadProgress -> LeadProgressInfo
-        // for Report -> Report
-
-        onPress={() => navigation.navigate('Report')}>
-        <Plus height={24} width={24} />
-      </TouchableOpacity>
     </Container>
   );
 };
@@ -177,7 +140,6 @@ const styles = StyleSheet.create({
   Searchbox: {
     flex: 1,
     flexDirection: 'row',
-    // width: scaleWidth(80),
     height: scaleHeight(29),
     marginLeft: 5,
     marginTop: 2,
@@ -186,10 +148,10 @@ const styles = StyleSheet.create({
     borderColor: '#EAECF0',
     borderWidth: 1,
     borderRadius: 3,
-    gap: 16,
     paddingHorizontal: 10,
   },
   input: {
+    marginLeft: 8,
     fontSize: scaleFont(12),
   },
   Filterbox: {

@@ -10,3 +10,4 @@ export * from './Dropdown/CustomDropdown';
 export * from './SoftSanctionLeadCard/SoftSanctionLeadCard';
 export * from './SoftRulesetCard/SoftRulestCard';
 export * from './RulesetTCPDCard/RulesetTCPDCard';
+export * from './LeadProgressCard/LeadProgressCard';

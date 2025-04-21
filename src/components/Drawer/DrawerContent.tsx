@@ -98,7 +98,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Client Information</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.button, getButtonStyle('SoftSanction')]}>
+                  <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Soft Sanction</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
