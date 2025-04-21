@@ -57,7 +57,7 @@ export const UGROPurchaseMethod = () => {
         <TouchableOpacity style={styles.Content} onPress={navigation.goBack}>
           <LeftChevronCircle height={20} width={20} />
           <Text style={styles.contentText}>
-            UGRO - Purchase Method for XYZ Company PVT. LTD
+            UGRO - Purchase Method for XYZ {'\n'}Company PVT. LTD
           </Text>
         </TouchableOpacity>
       </View>

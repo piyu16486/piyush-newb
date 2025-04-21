@@ -65,7 +65,7 @@ export const UGROTurnoverMethod = () => {
         <TouchableOpacity style={styles.Content} onPress={navigation.goBack}>
           <LeftChevronCircle height={20} width={20} />
           <Text style={styles.contentText}>
-            UGRO - Turnover Method for XYZ Company PVT. LTD
+            UGRO - Turnover Method for {'\n'}XYZ Company PVT. LTD
           </Text>
         </TouchableOpacity>
       </View>

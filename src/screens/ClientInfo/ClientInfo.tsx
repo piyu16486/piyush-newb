@@ -91,7 +91,7 @@ export const ClientInfo = () => {
         <View style={styles.Subrowcontainer}>
           <Text style={styles.Subrowcontainertxt}>Clients</Text>
           <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>1025</Text>
+            <Text style={styles.Badgetext}>{clientsData.length}</Text>
           </View>
         </View>
         <View style={styles.Searchbox}>
@@ -126,7 +126,7 @@ export const ClientInfo = () => {
         // for UGRO phase-1 -> UGROTurnoverMethod
         // for UGRO phase-2 -> UGROPurchaseMethod
 
-        onPress={() => navigation.navigate('SoftsanctionProcess')}>
+        onPress={() => navigation.navigate('UGROPurchaseMethod')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

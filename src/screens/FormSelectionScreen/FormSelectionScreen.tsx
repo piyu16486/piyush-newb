@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 16,
-    marginTop: 71,
+    marginTop: 20,
   },
   item: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import Colors from '@constants/Colors';
-import {scaleFont, scaleHeight} from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -56,7 +56,7 @@ export const CustomDropdown = ({
 const styles = StyleSheet.create({
   container: {
     // margin: 16,
-    marginBottom: scaleHeight(16),
+    marginBottom: scaleHeight(4),
   },
   label: {
     fontSize: scaleFont(14),
@@ -64,12 +64,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   dropdown: {
-    borderWidth: 1,
+    borderWidth: scaleWidth(1.5),
     borderColor: Colors.gray300,
-    borderRadius: 6,
-    paddingHorizontal: 12,
+    borderRadius: scaleWidth(4),
+    paddingHorizontal: scaleWidth(6),
     height: scaleHeight(36),
-    backgroundColor: Colors.white,
     justifyContent: 'center',
   },
   placeholderStyle: {

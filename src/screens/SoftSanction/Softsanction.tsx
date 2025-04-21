@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   TextContainer: {
     padding: scaleHeight(16),
-    marginTop: scaleHeight(23),
+    marginTop: scaleHeight(15),
   },
   bodyText: {
     fontFamily: Fonts.GilroyMedium,
