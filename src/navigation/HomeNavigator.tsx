@@ -4,7 +4,8 @@ import {HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import {ClientNavigator, SoftNavigator} from './ClientNavigator';
+import {ClientNavigator} from './ClientNavigator';
+import {SoftNavigator} from './SoftNavigator';
 
 const Drawer = createDrawerNavigator<HomeNavigatorType>();
 

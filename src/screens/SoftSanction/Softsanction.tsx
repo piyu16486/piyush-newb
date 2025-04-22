@@ -4,22 +4,22 @@ import {AppBar, Container} from '@components/index';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import {Fonts} from '@constants/index';
 import {RightChevron} from '@assets/Icons';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 export const Softsanction = () => {
   const bodyText =
     'The Soft Sanction Process involves evaluating key parameters such as the CIBIL score, existing sanctioned amount, and estimated funding required to determine a rough eligibility amount for each lead.';
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   return (
     <Container>
       <AppBar title="Client Information Master" navigation={navigation} />

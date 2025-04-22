@@ -43,12 +43,6 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
     // You can navigate or perform any other actions here based on the selected item
   };
 
-  const getButtonStyle = (item: string) => {
-    return selectedItem === item
-      ? {backgroundColor: '#D9E3F0'} // Highlight selected item
-      : {backgroundColor: '#E9EBE9'}; // Default style
-  };
-
   return (
     <View style={styles.rootView}>
       <View style={[styles.container, {marginTop: top, marginBottom: bottom}]}>
@@ -98,7 +92,9 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Client Information</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('Softsanctions')}>
                     <Text style={styles.buttonText}>Soft Sanction</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>

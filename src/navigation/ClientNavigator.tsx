@@ -15,11 +15,9 @@ import {
   UGROPurchaseMethod,
   UGROTurnoverMethod,
 } from '@screens/index';
-import {ClientNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
-import {Softsanction} from '@screens/SoftSanction/Softsanction';
+import {ClientNavigatorType} from '@type/NavigatorTypes';
 
 const Stack = createNativeStackNavigator<ClientNavigatorType>();
-const SoftStack = createNativeStackNavigator<SoftNavigatorType>();
 
 export const ClientNavigator = () => {
   return (
@@ -46,14 +44,6 @@ export const ClientNavigator = () => {
       <Stack.Screen name="LeadProgressInfo" component={LeadProgressInfo} />
       <Stack.Screen name="LeadProgress" component={LeadProgress} />
       <Stack.Screen name="Report" component={Report} />
-    </Stack.Navigator>
-  );
-};
-
-export const SoftNavigator = () => {
-  return (
-    <Stack.Navigator>
-      <SoftStack.Screen name="Softsanction" component={Softsanction} />
     </Stack.Navigator>
   );
 };
