@@ -4,14 +4,29 @@ import {
   ClientCardReadMore,
   ClientInfo,
   ClientLeadInfoTab,
+  CompanyDocument,
+  CompanyPanCard,
   FormSelectionScreen,
+  GodownDetails,
+  GodownDetails2,
+  GSTDocument,
   InputFormField,
+  KycDocument,
+  KycElectricityBill,
+  KYCFormSelection,
+  KycOwner,
+  KycUplaodPan,
+  KycUploadAdhar,
+  KycUploadDoc,
   LeadProgress,
   LeadProgressInfo,
   Report,
+  ResidenceDetail,
   RulesetTCPD,
+  ShareholdingCompany,
   SoftsanctionProcess,
   SoftSanctionRuleset,
+  UdhyamCertificate,
   UGROPurchaseMethod,
   UGROTurnoverMethod,
 } from '@screens/index';
@@ -44,6 +59,24 @@ export const ClientNavigator = () => {
       <Stack.Screen name="LeadProgressInfo" component={LeadProgressInfo} />
       <Stack.Screen name="LeadProgress" component={LeadProgress} />
       <Stack.Screen name="Report" component={Report} />
+      <Stack.Screen name="KycUploadDoc" component={KycUploadDoc} />
+      <Stack.Screen name="KycUploadPan" component={KycUplaodPan} />
+      <Stack.Screen name="KycUploadAdhar" component={KycUploadAdhar} />
+      <Stack.Screen name="ResidenceDetail" component={ResidenceDetail} />
+      <Stack.Screen name="KycElectricityBill" component={KycElectricityBill} />
+      <Stack.Screen name="KycOwner" component={KycOwner} />
+      <Stack.Screen name="UdhyamCertificate" component={UdhyamCertificate} />
+      <Stack.Screen name="GSTDocument" component={GSTDocument} />
+      <Stack.Screen name="GodownDetails" component={GodownDetails} />
+      <Stack.Screen name="KycDocument" component={KycDocument} />
+      <Stack.Screen name="KYCFormSelection" component={KYCFormSelection} />
+      <Stack.Screen name="GodownDetails2" component={GodownDetails2} />
+      <Stack.Screen name="CompanyPanCard" component={CompanyPanCard} />
+      <Stack.Screen
+        name="ShareholdingCompany"
+        component={ShareholdingCompany}
+      />
+      <Stack.Screen name="CompanyDocument" component={CompanyDocument} />
     </Stack.Navigator>
   );
 };

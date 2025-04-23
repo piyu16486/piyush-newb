@@ -1,74 +1,65 @@
 /* eslint-disable react-native/no-inline-styles */
+import {View, Text, StyleSheet, TextInput, FlatList} from 'react-native';
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import {AppBar, ClientCard, Container} from '@components/index';
+import {AppBar, Container, KycCard} from '@components/index';
+import {Filter, Search} from '@assets/Icons';
+import Colors from '@constants/Colors';
+import fontWeight from '@constants/FontWeight';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
-import {Search, Filter, Plus} from '@assets/Icons'; // Import your search and filter icons
-import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import fontWeight from '@constants/FontWeight';
-import {Colors} from '@constants/index';
-
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
 
-const clientsData = [
+const KycData = [
   {
-    id: '0001',
-    name: 'S D Verma',
+    clientId: '0001',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Warm',
+    eligibiltyAmount: '25,00,000',
+    intent: 'High',
+    status: 'Complete',
   },
   {
-    id: '0002',
-    name: 'S D Verma',
+    clientId: '0002',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Hot',
+    eligibiltyAmount: '25,00,000',
+    intent: 'High',
+    status: 'Pending',
   },
   {
-    id: '0003',
-    name: 'S D Verma',
+    clientId: '0003',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Warm',
+    eligibiltyAmount: '25,00,000',
+    intent: 'High',
+    status: 'Complete',
   },
   {
-    id: '0004',
-    name: 'S D Verma',
+    clientId: '0004',
+    clientName: 'S D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
-    source: 'Source D',
+    sourceDHCO: 'Source D',
     referenceDetails: '9898923222',
     monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Cold',
+    eligibiltyAmount: '25,00,000',
+    intent: 'High',
+    status: 'Pending',
   },
-  // Add more client data here...
 ] as const;
 
 type ClientInfoNavigationType = CompositeNavigationProp<
@@ -76,22 +67,20 @@ type ClientInfoNavigationType = CompositeNavigationProp<
   NativeStackNavigationProp<ClientNavigatorType>
 >;
 
-export const ClientInfo = () => {
+export const KycDocument = () => {
   const navigation = useNavigation<ClientInfoNavigationType>();
 
   return (
     <Container>
-      {/* AppBar */}
       <AppBar title="Client Information Master" navigation={navigation} />
-
       <View style={styles.Subcontainer}>
-        <Text style={styles.Subheader}>Client Information</Text>
+        <Text style={styles.Subheader}>Kyc Document</Text>
       </View>
       <View style={styles.RowContainer}>
         <View style={styles.Subrowcontainer}>
-          <Text style={styles.Subrowcontainertxt}>Clients</Text>
+          <Text style={styles.Subrowcontainertxt}>Leads</Text>
           <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>{clientsData.length}</Text>
+            <Text style={styles.Badgetext}>{KycData.length}</Text>
           </View>
         </View>
         <View style={styles.Searchbox}>
@@ -110,43 +99,12 @@ export const ClientInfo = () => {
       </View>
       <View style={styles.Cardlist}>
         <FlatList
-          data={clientsData}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => <ClientCard {...item} />}
+          data={KycData}
+          keyExtractor={item => item.clientId}
+          renderItem={({item}) => <KycCard {...item} />}
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
-      <TouchableOpacity
-        style={styles.plusButton}
-        // screen changes
-        // for Softsanctionv -> Softsanction
-        // for Next page of Softsanction -> SoftsanctionProcess
-        // for SoftSanction -> SoftSanctionRuleset
-        // for SoftSanctionRuleset phase-2 -> RulesetTCPD
-        // for UGRO phase-1 -> UGROTurnoverMethod
-        // for UGRO phase-2 -> UGROPurchaseMethod
-        // for LeadProgress -. LeadProgress
-        // for LeadProgress -> LeadProgressInfo
-        // for Report -> Report
-        // for Kyc Screens -> KycUploadDoc
-        // for pan screens -> KycUploadPan
-        // for Aadhar screens -> KycUploadAdhar
-        // for Residence screen -> ResidenceDetail
-        // for KycElectricityBill -> KycElectricityBill
-        // for KycOwnerStatus -> KycOwner
-        // for Udhyam Certificate -> UdhyamCertificate
-        // for GSTDocument -> GSTDocument
-        // for GodownDetails -> GodownDetails
-        // for GodownDetails2 -> GodownDetails2
-        // for CompanyPanCard -> CompanyPanCard
-        // for KycDocument -> KycDocument
-        // for KYCFormSelection -> KYCFormSelection
-        // for ShareholdingCompany -> ShareholdingCompany
-        // for CompanyDocument -> CompanyDocument
-
-        onPress={() => navigation.navigate('KYCFormSelection')}>
-        <Plus height={24} width={24} />
-      </TouchableOpacity>
     </Container>
   );
 };
@@ -220,16 +178,5 @@ const styles = StyleSheet.create({
   Cardlist: {
     flex: 1,
     padding: 16,
-  },
-  plusButton: {
-    position: 'absolute',
-    bottom: scaleHeight(60),
-    right: 30,
-    backgroundColor: Colors.tertiaryBlue,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

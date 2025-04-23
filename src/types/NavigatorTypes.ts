@@ -62,6 +62,21 @@ export type ClientNavigatorType = {
   LeadProgress: undefined;
   LeadProgressInfo: undefined;
   Report: undefined;
+  KycUploadDoc: undefined;
+  KycUploadPan: undefined;
+  KycUploadAdhar: undefined;
+  ResidenceDetail: undefined;
+  KycElectricityBill: undefined;
+  KycOwner: undefined;
+  UdhyamCertificate: undefined;
+  GSTDocument: undefined;
+  GodownDetails: undefined;
+  GodownDetails2: undefined;
+  CompanyPanCard: undefined;
+  KycDocument: undefined;
+  KYCFormSelection: undefined;
+  ShareholdingCompany: undefined;
+  CompanyDocument: undefined;
 };
 
 export type SoftNavigatorType = {
