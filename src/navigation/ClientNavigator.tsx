@@ -1,11 +1,15 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
+  BusinessKYCValidation,
   ClientCardReadMore,
   ClientInfo,
   ClientLeadInfoTab,
   CompanyDocument,
   CompanyPanCard,
+  DocumentValidation,
+  DocValidForm,
+  DocValidSelection,
   FormSelectionScreen,
   GodownDetails,
   GodownDetails2,
@@ -20,6 +24,7 @@ import {
   KycUploadDoc,
   LeadProgress,
   LeadProgressInfo,
+  PersonalKYCValidation,
   Report,
   ResidenceDetail,
   RulesetTCPD,
@@ -77,6 +82,17 @@ export const ClientNavigator = () => {
         component={ShareholdingCompany}
       />
       <Stack.Screen name="CompanyDocument" component={CompanyDocument} />
+      <Stack.Screen name="DocumentValidation" component={DocumentValidation} />
+      <Stack.Screen name="DocValidForm" component={DocValidForm} />
+      <Stack.Screen name="DocValidSelection" component={DocValidSelection} />
+      <Stack.Screen
+        name="PersonalKYCValidation"
+        component={PersonalKYCValidation}
+      />
+      <Stack.Screen
+        name="BusinessKYCValidation"
+        component={BusinessKYCValidation}
+      />
     </Stack.Navigator>
   );
 };

@@ -13,3 +13,5 @@ export * from './RulesetTCPDCard/RulesetTCPDCard';
 export * from './LeadProgressCard/LeadProgressCard';
 export * from './KycCard/KycCard';
 export * from './DashedBox/DashedButton';
+export * from './DocValidCard/DocValidCard';
+export * from './PersonalKYCValidationCard/PersonalKYCValidationCard';
