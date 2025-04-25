@@ -62,6 +62,7 @@ export type ClientNavigatorType = {
   LeadProgress: undefined;
   LeadProgressInfo: undefined;
   Report: undefined;
+  TaskLogTabs: undefined;
 };
 
 export type SoftNavigatorType = {

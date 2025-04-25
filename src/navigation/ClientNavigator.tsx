@@ -12,6 +12,7 @@ import {
   RulesetTCPD,
   SoftsanctionProcess,
   SoftSanctionRuleset,
+  TaskLogTabs,
   UGROPurchaseMethod,
   UGROTurnoverMethod,
 } from '@screens/index';
@@ -44,6 +45,7 @@ export const ClientNavigator = () => {
       <Stack.Screen name="LeadProgressInfo" component={LeadProgressInfo} />
       <Stack.Screen name="LeadProgress" component={LeadProgress} />
       <Stack.Screen name="Report" component={Report} />
+      <Stack.Screen name="TaskLogTabs" component={TaskLogTabs} />
     </Stack.Navigator>
   );
 };

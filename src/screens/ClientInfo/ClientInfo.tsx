@@ -128,8 +128,9 @@ export const ClientInfo = () => {
         // for LeadProgress -. LeadProgress
         // for LeadProgress -> LeadProgressInfo
         // for Report -> Report
+        // for TaskLogTabs -> TaskLogTabs
 
-        onPress={() => navigation.navigate('Report')}>
+        onPress={() => navigation.navigate('TaskLogTabs')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

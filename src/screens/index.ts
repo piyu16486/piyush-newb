@@ -20,3 +20,4 @@ export * from './UGRO-PurchaseMethod/UGROPurchaseMethod';
 export * from './LeadProgress/LeadProgress';
 export * from './LeadProgressInfo/LeadProgressInfo';
 export * from './Report/Report';
+export * from './TaskTabs/TaskLogTabs';
