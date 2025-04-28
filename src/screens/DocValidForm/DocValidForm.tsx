@@ -6,6 +6,10 @@ import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {ScrollView} from 'react-native-gesture-handler';
 import Fonts from '@constants/Fonts';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, DocNavigatorType} from '@type/NavigatorTypes';
 
 const organisationTypes = [
   {label: 'Private Limited', value: 'private_limited'},
@@ -16,10 +20,17 @@ const organisationTypes = [
   {label: 'Non-Profit Organisation', value: 'non_profit'},
 ];
 
+type DocNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<DocNavigatorType>
+>;
+
 export const DocValidForm = () => {
+  const navigation = useNavigation<DocNavigationType>();
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
 
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Document Validation</Text>
@@ -102,9 +113,8 @@ export const DocValidForm = () => {
                 {borderColor: Colors.green},
               ]}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={() => navigation.navigate('DocValidSelection')}>
               <Text style={styles.saveText}>Confirm</Text>
-              {/* <RightCheckmark width={12} height={12} /> */}
             </TouchableOpacity>
           </View>
         </View>

@@ -8,18 +8,22 @@ import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {
+  HomeNavigatorType,
+  ClientNavigatorType,
+  KycNavigatorType,
+} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<KycNavigatorType>
 >;
 
 export const KycUploadDoc = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<KycNavigationType>();
 
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);

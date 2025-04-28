@@ -14,13 +14,13 @@ import {
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Search} from '@assets/Icons';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type Lead = {
@@ -33,7 +33,7 @@ type Lead = {
 };
 
 export const SoftsanctionProcess = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
 
   const leads: Lead[] = [
@@ -121,7 +121,11 @@ export const SoftsanctionProcess = () => {
             placeholder="All Rules Set IDs here of bank, PID, Method"
           />
         </View>
-        <Button buttonText={'View Rulset'} style={styles.button} />
+        <Button
+          buttonText={'View Rulset'}
+          style={styles.button}
+          onPress={() => navigation.navigate('SoftSanctionRuleset')} // SoftSanctionRuleset | RulesetTCPD | UGROPurchaseMethod | UGROTurnoverMethod
+        />
 
         <View style={styles.container}>
           <View style={styles.headerRow}>

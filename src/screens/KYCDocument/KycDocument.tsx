@@ -1,15 +1,22 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, StyleSheet, TextInput, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import {AppBar, Container, KycCard} from '@components/index';
-import {Filter, Search} from '@assets/Icons';
+import {Filter, Plus, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 
 const KycData = [
   {
@@ -62,13 +69,13 @@ const KycData = [
   },
 ] as const;
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<KycNavigatorType>
 >;
 
 export const KycDocument = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<KycNavigationType>();
 
   return (
     <Container>
@@ -105,6 +112,11 @@ export const KycDocument = () => {
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
+      <TouchableOpacity
+        style={styles.plusButton}
+        onPress={() => navigation.navigate('KYCFormSelection')}>
+        <Plus height={24} width={24} />
+      </TouchableOpacity>
     </Container>
   );
 };
@@ -178,5 +190,16 @@ const styles = StyleSheet.create({
   Cardlist: {
     flex: 1,
     padding: 16,
+  },
+  plusButton: {
+    position: 'absolute',
+    bottom: scaleHeight(60),
+    right: 30,
+    backgroundColor: Colors.tertiaryBlue,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -2,11 +2,22 @@ import {Filter, Search} from '@assets/Icons';
 import {AppBar, Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, ReportNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
 
+type ReportNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<ReportNavigatorType>
+>;
+
 export const Report = () => {
+  const navigation = useNavigation<ReportNavigationType>();
+
   const taskData = [
     {
       id: '1',
@@ -74,7 +85,7 @@ export const Report = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       {/* Content */}
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Report</Text>

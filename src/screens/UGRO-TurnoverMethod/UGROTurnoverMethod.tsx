@@ -6,15 +6,15 @@ import {Container, AppBar} from '@components/index';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import {Colors, FontWeight} from '@constants/index';
 import {TurnoverMethodCard} from '@components/UGRO-TurnoverMethod/TurnoverMethodCard';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type TurnoverMethod = {
@@ -31,7 +31,7 @@ type TurnoverMethod = {
 };
 
 export const UGROTurnoverMethod = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search] = useState<string>('');
 
   const leads: TurnoverMethod[] = [

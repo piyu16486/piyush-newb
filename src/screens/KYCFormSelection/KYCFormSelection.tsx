@@ -13,6 +13,10 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {
@@ -23,10 +27,61 @@ import {
   ScrollView,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const KYCFormSelection = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   const [activeTab, setActiveTab] = useState<'personal' | 'business' | 'bank'>(
     'personal',
   );
+
+  const handleNavigation = (text: string) => {
+    switch (text) {
+      case 'Upload your Picture':
+        navigation.navigate('KycUploadDoc');
+        break;
+      case 'PAN Card Details':
+        navigation.navigate('KycUploadPan');
+        break;
+      case 'Aadhar Card Details':
+        navigation.navigate('KycUploadAdhar');
+        break;
+      case 'Residence Details':
+        navigation.navigate('KycOwner');
+        break;
+      default:
+        console.warn('Screen not found for', text);
+    }
+  };
+
+  const handleNavigation2 = (text: string) => {
+    switch (text) {
+      case 'Udhyam Certificate':
+        navigation.navigate('UdhyamCertificate');
+        break;
+      case 'GST Documents':
+        navigation.navigate('GSTDocument');
+        break;
+      case 'Godown Details':
+        navigation.navigate('GodownDetails');
+        break;
+      case 'Company PAN Card Details':
+        navigation.navigate('CompanyPanCard');
+        break;
+      case 'Shareholding Details':
+        navigation.navigate('ShareholdingCompany');
+        break;
+      case 'Company Information':
+        navigation.navigate('CompanyDocument');
+        break;
+      default:
+        console.warn('Screen not found for', text);
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -45,7 +100,10 @@ export const KYCFormSelection = () => {
               'Aadhar Card Details',
               'Residence Details',
             ].map((text, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => handleNavigation(text)}>
                 <Text style={styles.cardText}>{text}</Text>
                 <RightChevron width={20} height={17} />
               </TouchableOpacity>
@@ -69,7 +127,10 @@ export const KYCFormSelection = () => {
               'Shareholding Details',
               'Company Information',
             ].map((text, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => handleNavigation2(text)}>
                 <Text style={styles.cardText}>{text}</Text>
                 <RightChevron width={20} height={17} />
               </TouchableOpacity>
@@ -126,7 +187,7 @@ export const KYCFormSelection = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>

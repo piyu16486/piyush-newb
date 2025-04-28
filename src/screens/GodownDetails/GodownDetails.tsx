@@ -2,12 +2,23 @@
 import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const GodownDetails = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   const [statustype, setstatustype] = useState(false);
   const [selectstatustype, setselectstatusType] = useState(null);
   const [statusType, setstatusType] = useState([
@@ -25,7 +36,7 @@ export const GodownDetails = () => {
 
   return (
     <Container>
-      <AppBar title="KYC Document" />
+      <AppBar title="KYC Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Upload Godown Details</Text>
       </View>

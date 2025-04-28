@@ -9,12 +9,12 @@ import {Container, AppBar} from '@components/index';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {PurchaseMethodCard} from '@components/UGRO-PurchaseMethod/PurchaseMethodCard';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type PurchaseMethod = {
@@ -27,7 +27,7 @@ type PurchaseMethod = {
 };
 
 export const UGROPurchaseMethod = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search] = useState<string>('');
 
   const leads: PurchaseMethod[] = [

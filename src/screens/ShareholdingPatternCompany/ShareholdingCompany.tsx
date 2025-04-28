@@ -2,6 +2,10 @@
 import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import React from 'react';
 import {
@@ -13,14 +17,21 @@ import {
   StyleSheet,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 type LabelProps = {
   label: string;
 };
 
 export const ShareholdingCompany = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>

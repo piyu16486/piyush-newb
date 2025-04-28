@@ -4,6 +4,10 @@ import {Container, AppBar, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {
@@ -14,10 +18,17 @@ import {
   StyleSheet,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const KycUplaodPan = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   return (
     <Container>
-      <AppBar title="KYC Document" />
+      <AppBar title="KYC Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Upload PAN Card Details</Text>
       </View>

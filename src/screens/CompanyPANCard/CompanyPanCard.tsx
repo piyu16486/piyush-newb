@@ -1,14 +1,25 @@
 import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const CompanyPanCard = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>

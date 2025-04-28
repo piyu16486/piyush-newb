@@ -9,14 +9,14 @@ import fontWeight from '@constants/FontWeight';
 import {scaleFont} from '@utils/Scale';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {FontWeight} from '@constants/index';
 import {LeftChevronCircle} from '@assets/Icons';
 import {SoftRulestCard} from '@components/SoftRulesetCard/SoftRulestCard';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type Ruleset = {
@@ -29,7 +29,7 @@ type Ruleset = {
 };
 
 export const SoftSanctionRuleset = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
 
   const leads: Ruleset[] = [

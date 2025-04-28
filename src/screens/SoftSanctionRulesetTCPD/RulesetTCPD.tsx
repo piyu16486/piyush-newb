@@ -2,12 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import React, {useState} from 'react';
-import {
-  AppBar,
-  Container,
-  RulesetTCPDCard,
-  SoftRulestCard,
-} from '@components/index';
+import {AppBar, Container, RulesetTCPDCard} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight} from '@utils/Scale';
@@ -16,11 +11,11 @@ import FontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type RulesetTCPD = {
@@ -33,7 +28,7 @@ type RulesetTCPD = {
 };
 
 export const RulesetTCPD = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
 
   const leads: RulesetTCPD[] = [
