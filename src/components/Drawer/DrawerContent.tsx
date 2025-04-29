@@ -147,7 +147,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               </TouchableOpacity>
               {isOpen && (
                 <View style={{marginLeft: scaleWidth(24)}}>
-                  <TouchableOpacity style={styles.button}>
+                  {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Recording of Lead</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
@@ -155,7 +155,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Follow up Action</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() =>
@@ -174,12 +174,12 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                     }>
                     <Text style={styles.buttonText}>Document Validation</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Pre Screening</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Bank Fitment</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               )}
             </View>
