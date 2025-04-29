@@ -2,7 +2,7 @@
 import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont} from '@utils/Scale';
+import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
 import {
   View,
@@ -31,7 +31,10 @@ export const ShareholdingCompany = () => {
             Shareholding Pattern of Company
           </Text>
         </View>
-        <Input label="Company Name" />
+        <Input
+          label="Company Name"
+          containerStyle={{marginBottom: scaleHeight(14)}}
+        />
         <DashedButton label="Upload Shareholding Pattern" />
 
         {/* Fixed Buttons at Bottom */}
@@ -81,14 +84,11 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.SemiBold,
     backgroundColor: Colors.LimeGray,
   },
-  //   scrollContainer: {
-  //     padding: 16,
-  //     paddingBottom: 80, // Extra padding to account for button height
-  //   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(20),
   },
   inputGroup: {
     marginBottom: 10,

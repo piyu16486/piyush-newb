@@ -144,7 +144,7 @@ export const ClientInfo = () => {
         // for ShareholdingCompany -> ShareholdingCompany
         // for CompanyDocument -> CompanyDocument
 
-        onPress={() => navigation.navigate('KYCFormSelection')}>
+        onPress={() => navigation.navigate('CompanyDocument')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

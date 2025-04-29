@@ -62,14 +62,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 24,
     backgroundColor: '#fff',
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
-    marginBottom: scaleHeight(16),
+    marginBottom: scaleHeight(20),
   },
   buttonGroup: {
     flexDirection: 'row',

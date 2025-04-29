@@ -1,7 +1,7 @@
 import {AppBar, Container, DashedButton} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont} from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {
   View,
@@ -24,6 +24,7 @@ export const CompanyDocument = () => {
           keyboardShouldPersistTaps="handled">
           {/* Main Applicant Section */}
           <Text style={styles.sectionTitle}>Company Documents</Text>
+
           <Text style={styles.subTitle}>AOA</Text>
           <DashedButton label="Upload AOA Document" />
 
@@ -68,16 +69,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.LimeGray,
   },
   scrollContainer: {
-    padding: 16,
+    padding: scaleWidth(24),
     paddingBottom: 100, // Extra padding to account for button row
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(20),
   },
   subTitle: {
-    marginVertical: 12,
+    marginVertical: 10,
     fontSize: scaleFont(14),
     fontWeight: fontWeight.SemiBold,
   },

@@ -1,28 +1,17 @@
-/* eslint-disable react-native/no-inline-styles */
-import {AppBar, Container, DashedButton, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  CustomDropdown,
+  DashedButton,
+  Input,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont, scaleHeight} from '@utils/Scale';
-import React, {useState} from 'react';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 export const GodownDetails = () => {
-  const [statustype, setstatustype] = useState(false);
-  const [selectstatustype, setselectstatusType] = useState(null);
-  const [statusType, setstatusType] = useState([
-    {label: 'Rented', value: 'rented'},
-    {label: 'Partnership', value: 'partnership'},
-    {label: 'Owned', value: 'owned'},
-    {label: 'Private Limited Company', value: 'private_ltd'},
-    {label: 'Public Limited Company', value: 'public_ltd'},
-    {label: 'Limited Liability Company', value: 'llc'},
-    {label: 'Corporation', value: 'corporation'},
-    {label: 'Cooperative', value: 'cooperative'},
-    {label: 'Nonprofit Organization', value: 'nonprofit'},
-    {label: 'Franchise', value: 'franchise'},
-  ]);
-
   return (
     <Container>
       <AppBar title="KYC Document" />
@@ -30,30 +19,29 @@ export const GodownDetails = () => {
         <Text style={styles.Subheader}>Upload Godown Details</Text>
       </View>
       <View style={styles.mainContainer}>
-        {/* Main content container with flex: 1 to push buttons to bottom */}
         <View style={styles.contentContainer}>
-          {/*<Text style={styles.sectionTitle}>Ownership Status</Text>*/}
-          <Text style={styles.label}>Ownership Status</Text>
+          <Text style={styles.sectionTitle}>Go Down Details</Text>
 
-          <DropDownPicker
-            open={statustype}
-            value={selectstatustype}
-            items={statusType}
-            setOpen={setstatustype}
-            setValue={setselectstatusType}
-            setItems={setstatusType}
-            placeholder="Partnership"
-            style={styles.dropdown}
-            dropDownContainerStyle={{
-              ...styles.dropdownContainer,
-              maxHeight: 250,
-            }}
-            labelStyle={styles.labelText}
+          <CustomDropdown
+            label="Ownership Status"
+            data={[
+              {label: 'Rented', value: 'rented'},
+              {label: 'Partnership', value: 'partnership'},
+              {label: 'Owned', value: 'owned'},
+              {label: 'Private Limited Company', value: 'private_ltd'},
+              {label: 'Public Limited Company', value: 'public_ltd'},
+              {label: 'Limited Liability Company', value: 'llc'},
+              {label: 'Corporation', value: 'corporation'},
+              {label: 'Cooperative', value: 'cooperative'},
+              {label: 'Nonprofit Organization', value: 'nonprofit'},
+              {label: 'Franchise', value: 'franchise'},
+            ]}
+            containerStyle={{marginBottom: scaleHeight(24)}}
           />
 
           <Input
             label="Name of Owner"
-            containerStyle={{marginBottom: scaleHeight(24)}}
+            containerStyle={{marginBottom: scaleHeight(14)}}
           />
           <DashedButton label="uplaod Agreement Copy" />
         </View>
@@ -76,6 +64,7 @@ export const GodownDetails = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    padding: scaleWidth(8),
     backgroundColor: '#fff',
   },
   contentContainer: {
@@ -115,9 +104,10 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(20),
   },
   inputGroup: {
     marginBottom: 10,

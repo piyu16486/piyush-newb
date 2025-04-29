@@ -1,14 +1,9 @@
-import {Upload} from '@assets/Icons';
-import {AppBar, Container, Input} from '@components/index';
+import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont, scaleHeight} from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-
-type LabelProps = {
-  label: string;
-};
 
 export const UdhyamCertificate = () => {
   return (
@@ -27,11 +22,10 @@ export const UdhyamCertificate = () => {
           />
           <Input
             label="URN Number"
-            containerStyle={{marginBottom: scaleHeight(24)}}
+            containerStyle={{marginBottom: scaleHeight(14)}}
           />
-
-          <UploadBox label="Upload Front Side of Udhyam" />
-          <UploadBox label="Upload Back Side of Udhyam" />
+          <DashedButton label="Upload Front Side of Udhyam" />
+          <DashedButton label="Upload Back Side of Udhyam" />
         </View>
 
         {/* Fixed Buttons at Bottom */}
@@ -52,16 +46,10 @@ export const UdhyamCertificate = () => {
   );
 };
 
-const UploadBox = ({label}: LabelProps) => (
-  <View style={styles.uploadBox}>
-    <Upload width={18} height={13} />
-    <Text style={styles.uploadText}>{label}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    padding: scaleWidth(8),
     backgroundColor: '#fff',
   },
   Subcontainer: {
@@ -79,9 +67,10 @@ const styles = StyleSheet.create({
     paddingBottom: 80, // Extra padding to account for button height
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(30),
   },
   inputGroup: {
     marginBottom: 10,

@@ -1,14 +1,16 @@
 import Colors from '@constants/Colors';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 
 // Default dummy data if none is passed
 const dummyData = [
-  {label: 'React Native', value: 'react-native'},
   {label: 'A', value: 'A'},
   {label: 'B', value: 'B'},
+  {label: 'C', value: 'C'},
+  {label: 'C', value: 'C'},
+  {label: 'E', value: 'E'},
 ];
 
 type Props = {
@@ -17,6 +19,7 @@ type Props = {
   value?: string | null;
   placeholder?: string;
   onChange?: (value: string) => void;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 export const CustomDropdown = ({
@@ -25,6 +28,7 @@ export const CustomDropdown = ({
   value: selectedValue = null,
   placeholder = 'Choose one',
   onChange,
+  containerStyle,
 }: Props) => {
   const [value, setValue] = useState<string | null>(selectedValue);
 
@@ -34,7 +38,7 @@ export const CustomDropdown = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
 
       <Dropdown
