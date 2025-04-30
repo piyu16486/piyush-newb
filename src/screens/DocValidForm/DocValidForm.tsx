@@ -30,7 +30,7 @@ export const DocValidForm = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Document Validation" navigation={navigation} />
 
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Document Validation</Text>

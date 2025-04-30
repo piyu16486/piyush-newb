@@ -1,11 +1,29 @@
 import {AppBar, Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, LeadNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
+
+type LeadNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<LeadNavigatorType>
+>;
 
 export const LeadProgressInfo = () => {
+  const navigation = useNavigation<LeadNavigationType>();
+
   const progressStatusData = [
     {
       id: '1',
@@ -49,9 +67,9 @@ export const LeadProgressInfo = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Lead Progress" navigation={navigation} />
       <View style={styles.Subcontainer}>
-        <Text style={styles.Subheader}>Client Information</Text>
+        <Text style={styles.Subheader}>Lead Progress Information</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.tag}>
@@ -102,6 +120,10 @@ export const LeadProgressInfo = () => {
             />
           </View>
         </View>
+        {/* "Read More" Button */}
+        <TouchableOpacity style={styles.readMoreButton}>
+          <Text style={styles.readMoreText}>Read Less</Text>
+        </TouchableOpacity>
       </ScrollView>
     </Container>
   );
@@ -167,5 +189,15 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  readMoreButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  readMoreText: {
+    color: Colors.tertiaryBlue,
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
 });

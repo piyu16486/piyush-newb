@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {AppBar, Container, DocValidCard} from '@components/index';
-import {Filter, Plus, Search} from '@assets/Icons';
+import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -79,7 +79,7 @@ export const DocumentValidation = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Document Validation" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Document Validation</Text>
       </View>
@@ -108,18 +108,19 @@ export const DocumentValidation = () => {
         <FlatList
           data={DocData}
           keyExtractor={item => item.clientId}
-          renderItem={({item}) => <DocValidCard {...item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('DocValidForm')}>
+              <DocValidCard {...item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
-      <TouchableOpacity
-        style={styles.plusButton}
-        // for DocValidForm -> DocValidForm
-        // for DocValidSelection -> DocValidSelection
-
-        onPress={() => navigation.navigate('DocValidForm')}>
-        <Plus height={24} width={24} />
-      </TouchableOpacity>
+      {/* // for DocValidForm -> DocValidForm */}
+      {/* // for DocValidSelection -> DocValidSelection */}
+      {/* /// onPress={() => navigation.navigate('DocValidForm')} */}
     </Container>
   );
 };

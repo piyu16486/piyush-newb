@@ -85,7 +85,7 @@ export const Report = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Report" navigation={navigation} />
       {/* Content */}
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Report</Text>

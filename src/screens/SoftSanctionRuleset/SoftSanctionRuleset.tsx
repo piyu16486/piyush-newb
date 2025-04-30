@@ -73,7 +73,7 @@ export const SoftSanctionRuleset = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Soft Sanction" navigation={navigation} />
 
       {/* Content */}
       <View style={styles.Subcontainer}>

@@ -72,7 +72,7 @@ export const LeadProgress = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Lead Progress" navigation={navigation} />
       {/* Content */}
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Lead Progress Information</Text>
