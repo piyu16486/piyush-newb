@@ -58,6 +58,8 @@ export const KycUploadDoc = () => {
           <Upload width={18} height={18} style={{marginRight: 10}} />
           <Text style={styles.uploadText}>Upload Your Picture</Text>
         </TouchableOpacity>
+
+        {/* FooterButton */}
         <View style={styles.footerButton}>
           {/* Clear All Button */}
           <TouchableOpacity

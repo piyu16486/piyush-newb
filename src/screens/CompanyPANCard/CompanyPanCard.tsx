@@ -1,11 +1,13 @@
+import {RightCheckmark} from '@assets/Icons';
 import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
+import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
-import {scaleFont, scaleHeight} from '@utils/Scale';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
@@ -42,16 +44,27 @@ export const CompanyPanCard = () => {
         <DashedButton label="Upload front side of PAN" />
         <DashedButton label="Upload Back side of PAN" />
 
-        {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <Text style={styles.clearText}>clear all</Text>
-
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity style={styles.saveButton}>
-              <Text style={styles.saveText}>Save</Text>
+        <View style={styles.footerButton}>
+          {/* Clear All Button */}
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => console.log('Clear All Pressed')}>
+            <Text style={styles.clearText}>Clear all</Text>
+          </TouchableOpacity>
+          {/* Save Button */}
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.saveButton, {backgroundColor: Colors.white}]}
+              activeOpacity={0.7}
+              onPress={() => console.log('Save Pressed')}>
+              <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.submitButton}>
-              <Text style={styles.submitText}>Submit ✔</Text>
+            <TouchableOpacity
+              style={styles.saveButton}
+              activeOpacity={0.7}
+              onPress={() => console.log('Next Pressed')}>
+              <Text style={styles.saveText}>Submit</Text>
+              <RightCheckmark width={12} height={12} />
             </TouchableOpacity>
           </View>
         </View>
@@ -77,59 +90,45 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: scaleFont(16),
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
-    marginBottom: scaleHeight(16),
+    marginBottom: scaleHeight(14),
   },
-  buttonGroup: {
-    flexDirection: 'row',
-    gap: 10, // Space between Save and Submit buttons
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 20,
-  },
-  buttonContainer: {
+  footerButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    marginVertical: 20,
+    marginTop: scaleHeight(30),
   },
+  clearButton: {},
   clearText: {
-    color: 'red',
-    fontSize: 13,
-    marginRight: 10,
+    color: Colors.primaryColor,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
   saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.green,
+    paddingHorizontal: scaleWidth(12),
+    paddingVertical: scaleHeight(5),
+    borderRadius: scaleWidth(4),
+    gap: scaleWidth(8),
     borderWidth: 1,
-    borderColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    borderColor: Colors.green,
+    minWidth: scaleWidth(100),
   },
   saveText: {
-    color: '#28a745',
-    fontSize: 13,
+    color: Colors.white,
+    fontFamily: Fonts.GilroyMedium,
+    fontSize: scaleFont(14),
   },
-  submitButton: {
-    backgroundColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 13,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scaleWidth(10),
   },
 });

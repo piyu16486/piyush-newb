@@ -69,6 +69,9 @@ export const KYCFormSelection = () => {
       case 'Godown Details':
         navigation.navigate('GodownDetails');
         break;
+      case 'Godown Details2':
+        navigation.navigate('GodownDetails2');
+        break;
       case 'Company PAN Card Details':
         navigation.navigate('CompanyPanCard');
         break;
@@ -123,6 +126,7 @@ export const KYCFormSelection = () => {
               'Udhyam Certificate',
               'GST Documents',
               'Godown Details',
+              'Godown Details2',
               'Company PAN Card Details',
               'Shareholding Details',
               'Company Information',
@@ -141,19 +145,37 @@ export const KYCFormSelection = () => {
         return (
           <View>
             <Text style={styles.heading}>Bank Statement of Last 12 Months</Text>
-            <Input label="Bank Name" />
-            <Input label="Account Number" />
+            <Input
+              label="Bank Name"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
+            <Input
+              label="Account Number"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
             {/* <Input label="Account Type" /> */}
-            <CustomDropdown label="Account Type" />
-            <CustomDropdown label="Reporting Period" />
+            <CustomDropdown
+              label="Account Type"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
+            <CustomDropdown
+              label="Reporting Period"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
             <Input
               label="Start and End Date of Statement"
               placeholder="Start Date"
             />
             <Input placeholder="End Date" />
 
-            <DashedButton label="Upload Statement" />
-            <DashedButton label="Upload Statement" />
+            <DashedButton
+              label="Upload Statement"
+              containerStyle={{marginTop: scaleHeight(20)}}
+            />
+            <DashedButton
+              label="Upload Statement"
+              containerStyle={{marginTop: scaleHeight(15)}}
+            />
             <View style={styles.footerButton}>
               {/* Clear All Button */}
               <TouchableOpacity
@@ -187,7 +209,7 @@ export const KYCFormSelection = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Kyc Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>

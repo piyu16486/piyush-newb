@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {AppBar, Container, KycCard} from '@components/index';
-import {Filter, Plus, Search} from '@assets/Icons';
+import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -79,7 +79,7 @@ export const KycDocument = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Kyc Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>
@@ -108,15 +108,16 @@ export const KycDocument = () => {
         <FlatList
           data={KycData}
           keyExtractor={item => item.clientId}
-          renderItem={({item}) => <KycCard {...item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('KYCFormSelection')}>
+              <KycCard {...item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
-      <TouchableOpacity
-        style={styles.plusButton}
-        onPress={() => navigation.navigate('KYCFormSelection')}>
-        <Plus height={24} width={24} />
-      </TouchableOpacity>
     </Container>
   );
 };
@@ -190,16 +191,5 @@ const styles = StyleSheet.create({
   Cardlist: {
     flex: 1,
     padding: 16,
-  },
-  plusButton: {
-    position: 'absolute',
-    bottom: scaleHeight(60),
-    right: 30,
-    backgroundColor: Colors.tertiaryBlue,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

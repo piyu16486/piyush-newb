@@ -1,40 +1,19 @@
-/* eslint-disable react-native/no-inline-styles */
-import {RightCheckmark, Upload} from '@assets/Icons';
-import {AppBar, Container} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {
+  AppBar,
+  Container,
+  CustomDropdown,
+  DashedButton,
+  Input,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-
-type LabelProps = {
-  label: string;
-};
+import React from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 export const ResidenceDetail = () => {
-  const [statustype, setstatustype] = useState(false);
-  const [selectstatustype, setselectstatusType] = useState(null);
-  const [statusType, setstatusType] = useState([
-    {label: 'Rented', value: 'rented'},
-    {label: 'Partnership', value: 'partnership'},
-    {label: 'Owned', value: 'owned'},
-    {label: 'Private Limited Company', value: 'private_ltd'},
-    {label: 'Public Limited Company', value: 'public_ltd'},
-    {label: 'Limited Liability Company', value: 'llc'},
-    {label: 'Corporation', value: 'corporation'},
-    {label: 'Cooperative', value: 'cooperative'},
-    {label: 'Nonprofit Organization', value: 'nonprofit'},
-    {label: 'Franchise', value: 'franchise'},
-  ]);
-
   return (
     <Container>
       <AppBar title="KYC Document" />
@@ -42,76 +21,56 @@ export const ResidenceDetail = () => {
         <Text style={styles.Subheader}>Upload Residence Details</Text>
       </View>
       <View style={styles.mainContainer}>
-        {/* Main content container with flex: 1 to push buttons to bottom */}
         <View style={styles.contentContainer}>
-          <Text style={styles.sectionTitle}>Ownership Status</Text>
-          <Text style={styles.label}>Company Type</Text>
+          <Text style={styles.sectionTitle}>Residence Details</Text>
 
-          <DropDownPicker
-            open={statustype}
-            value={selectstatustype}
-            items={statusType}
-            setOpen={setstatustype}
-            setValue={setselectstatusType}
-            setItems={setstatusType}
-            placeholder="Partnership"
-            style={styles.dropdown}
-            dropDownContainerStyle={{
-              ...styles.dropdownContainer,
-              maxHeight: 250,
-            }}
-            labelStyle={styles.labelText}
+          <CustomDropdown
+            label="Ownership Status"
+            data={[
+              {label: 'Rented', value: 'rented'},
+              {label: 'Owned', value: 'owned'},
+            ]}
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
 
-          <InputField label="Name of Owner" />
-          <InputField label="Value" />
+          <Input
+            label="Name of Owner"
+            containerStyle={{marginBottom: scaleHeight(20)}}
+          />
 
-          <UploadBox label="Upload Agreement Copy" />
-        </View>
-
-        {/* Fixed button row at the bottom */}
-        <View style={styles.footerButton}>
-          {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
-            <Text style={styles.clearText}>Clear all</Text>
-          </TouchableOpacity>
-          {/* Save Button */}
-          <View style={styles.row}>
+          <DashedButton label="Upload Agreement Copy" />
+          {/* Fixed button row at the bottom */}
+          <View style={styles.footerButton}>
+            {/* Clear All Button */}
             <TouchableOpacity
-              style={[styles.saveButton, {backgroundColor: Colors.white}]}
-              activeOpacity={0.7}
-              onPress={() => console.log('Save Pressed')}>
-              <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
+              style={styles.clearButton}
+              onPress={() => console.log('Clear All Pressed')}>
+              <Text style={styles.clearText}>Clear all</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.saveButton}
-              activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
-              <Text style={styles.saveText}>Submit</Text>
-              <RightCheckmark width={12} height={12} />
-            </TouchableOpacity>
+            {/* Save Button */}
+            <View style={styles.row}>
+              <TouchableOpacity
+                style={[styles.saveButton, {backgroundColor: Colors.white}]}
+                activeOpacity={0.7}
+                onPress={() => console.log('Save Pressed')}>
+                <Text style={[styles.saveText, {color: Colors.green}]}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveButton}
+                activeOpacity={0.7}
+                onPress={() => console.log('Next Pressed')}>
+                <Text style={styles.saveText}>Submit</Text>
+                <RightCheckmark width={12} height={12} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
     </Container>
   );
 };
-
-const InputField = ({label}: LabelProps) => (
-  <View style={styles.inputGroup}>
-    <Text style={styles.label}>{label}</Text>
-    <TextInput style={styles.input} placeholder="Value" editable={false} />
-  </View>
-);
-
-const UploadBox = ({label}: LabelProps) => (
-  <View style={styles.uploadBox}>
-    <Upload width={18} height={13} />
-    <Text style={styles.uploadText}>{label}</Text>
-  </View>
-);
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -156,9 +115,10 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: scaleFont(16),
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(16),
   },
   inputGroup: {
     marginBottom: 10,
@@ -202,6 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 20,
+    marginTop: scaleHeight(30),
   },
   clearButton: {},
   clearText: {
