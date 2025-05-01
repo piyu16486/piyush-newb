@@ -1,5 +1,11 @@
 import {RightCheckmark} from '@assets/Icons';
-import {AppBar, Container, DashedButton, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -8,7 +14,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -18,6 +24,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const UdhyamCertificate = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -40,12 +47,14 @@ export const UdhyamCertificate = () => {
 
           <DashedButton
             label="Upload Front Side of Udhyam"
-            onPress={() => navigation.navigate('UploadScreen')}
+            onPress={() => setIsVisible(true)}
           />
-          <DashedButton
-            label="Upload Back Side of Udhyam"
-            onPress={() => navigation.navigate('UploadScreen')}
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
           />
+
+          <DashedButton label="Upload Back Side of Udhyam" />
 
           {/* FooterButton */}
           <View style={styles.footerButton}>

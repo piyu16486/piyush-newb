@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {RightCheckmark} from '@assets/Icons';
-import {AppBar, Container, DashedButton, Input} from '@components/index';
+import {AppBar, Container, DashedButton, Input, UploadModal} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -9,7 +9,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -26,6 +26,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const ShareholdingCompany = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -44,7 +45,11 @@ export const ShareholdingCompany = () => {
           label="Company Name"
           containerStyle={{marginBottom: scaleHeight(20)}}
         />
-        <DashedButton label="Upload Shareholding Pattern" />
+        <DashedButton
+          label="Upload Shareholding Pattern"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}

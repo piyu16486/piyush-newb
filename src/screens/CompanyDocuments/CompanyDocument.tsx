@@ -1,5 +1,5 @@
-import { RightCheckmark } from '@assets/Icons';
-import {AppBar, Container, DashedButton} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {AppBar, Container, DashedButton, UploadModal} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -8,7 +8,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const CompanyDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -38,16 +39,44 @@ export const CompanyDocument = () => {
           {/* Main Applicant Section */}
           <Text style={styles.sectionTitle}>Company Documents</Text>
           <Text style={styles.subTitle}>AOA</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>MOA</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>COI</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>Other Document</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <View style={styles.footerButton}>
             {/* Clear All Button */}

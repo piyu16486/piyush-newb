@@ -1,7 +1,12 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {RightCheckmark, Upload} from '@assets/Icons';
-import {AppBar, Container, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -24,6 +29,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const KycUploadDoc = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
@@ -54,10 +60,11 @@ export const KycUploadDoc = () => {
           placeholder="Value"
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Your Picture</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Your Picture"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         {/* FooterButton */}
         <View style={styles.footerButton}>

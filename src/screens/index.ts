@@ -40,4 +40,3 @@ export * from './DocValidForm/DocValidForm';
 export * from './DocValidSelection/DocValidSelection';
 export * from './PersonalKYCValidation/PersonalKYCValidation';
 export * from './BusinessKYCValidation/BusinessKYCValidation';
-export * from './UploadScreen/UploadScreen';

@@ -15,3 +15,4 @@ export * from './KycCard/KycCard';
 export * from './DashedBox/DashedButton';
 export * from './DocValidCard/DocValidCard';
 export * from './PersonalKYCValidationCard/PersonalKYCValidationCard';
+export * from './UploadModelComponent/UploadModel';

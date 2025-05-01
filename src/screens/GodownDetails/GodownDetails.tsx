@@ -5,6 +5,7 @@ import {
   CustomDropdown,
   DashedButton,
   Input,
+  UploadModal,
 } from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
@@ -14,7 +15,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -24,6 +25,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const GodownDetails = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -55,7 +57,14 @@ export const GodownDetails = () => {
             label="Name of Owner"
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
-          <DashedButton label="uplaod Agreement Copy" />
+          <DashedButton
+            label="uplaod Agreement Copy"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
           <View style={styles.footerButton}>
             {/* Clear All Button */}
             <TouchableOpacity

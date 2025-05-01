@@ -1,6 +1,11 @@
-/* eslint-disable react-native/no-inline-styles */
-import {RightCheckmark, Upload} from '@assets/Icons';
-import {Container, AppBar, Input} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {
+  Container,
+  AppBar,
+  Input,
+  DashedButton,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -9,7 +14,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -25,6 +30,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const KycUplaodPan = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -48,15 +54,17 @@ export const KycUplaodPan = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Front side of PAN</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Front side of PAN"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
-        <TouchableOpacity style={[styles.uploadButton, {marginTop: 20}]}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Back side of PAN</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Back side of PAN"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         {/* Co Applicant Section */}
         <Text style={styles.sectionTitle}>Co Applicant PAN Card Details</Text>
@@ -73,15 +81,17 @@ export const KycUplaodPan = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <TouchableOpacity style={[styles.uploadButton, {marginBottom: 20}]}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Front side of PAN</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Front side of PAN"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Back side of PAN</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Back side of PAN"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}

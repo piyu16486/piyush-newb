@@ -9,6 +9,7 @@ import {
   CustomDropdown,
   DashedButton,
   Input,
+  UploadModal,
 } from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
@@ -34,6 +35,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const KYCFormSelection = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'personal' | 'business' | 'bank'>(
     'personal',
@@ -171,10 +173,20 @@ export const KYCFormSelection = () => {
             <DashedButton
               label="Upload Statement"
               containerStyle={{marginTop: scaleHeight(20)}}
+              onPress={() => setIsVisible(true)}
+            />
+            <UploadModal
+              visible={isVisible}
+              onClose={() => setIsVisible(false)}
             />
             <DashedButton
               label="Upload Statement"
               containerStyle={{marginTop: scaleHeight(15)}}
+              onPress={() => setIsVisible(true)}
+            />
+            <UploadModal
+              visible={isVisible}
+              onClose={() => setIsVisible(false)}
             />
             <View style={styles.footerButton}>
               {/* Clear All Button */}

@@ -16,7 +16,6 @@ import {
   ResidenceDetail,
   ShareholdingCompany,
   UdhyamCertificate,
-  UploadScreen,
 } from '@screens/index';
 import {KycNavigatorType} from '@type/NavigatorTypes';
 
@@ -43,7 +42,6 @@ export const KycNavigator = () => {
         component={ShareholdingCompany}
       />
       <Stack.Screen name="CompanyDocument" component={CompanyDocument} />
-      <Stack.Screen name="UploadScreen" component={UploadScreen} />
     </Stack.Navigator>
   );
 };

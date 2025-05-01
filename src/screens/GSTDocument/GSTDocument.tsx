@@ -1,5 +1,11 @@
 import {RightCheckmark} from '@assets/Icons';
-import {AppBar, Container, DashedButton, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -8,7 +14,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -18,6 +24,7 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const GSTDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <Container>
@@ -37,7 +44,14 @@ export const GSTDocument = () => {
             label="GST Number"
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
-          <DashedButton label="Upload GST Certificate" />
+          <DashedButton
+            label="Upload GST Certificate"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
         </View>
 
         {/* FooterButton */}

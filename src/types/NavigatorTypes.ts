@@ -94,7 +94,6 @@ export type KycNavigatorType = {
   CompanyPanCard: undefined;
   ShareholdingCompany: undefined;
   CompanyDocument: undefined;
-  UploadScreen: undefined;
 };
 
 export type DocNavigatorType = {
