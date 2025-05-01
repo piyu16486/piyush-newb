@@ -1,5 +1,5 @@
 import {RightCheckmark} from '@assets/Icons';
-import {AppBar, Container, Input} from '@components/index';
+import {AppBar, Container, DashedButton, Input} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -36,6 +36,15 @@ export const UdhyamCertificate = () => {
           <Input
             label="URN Number"
             containerStyle={{marginBottom: scaleHeight(24)}}
+          />
+
+          <DashedButton
+            label="Upload Front Side of Udhyam"
+            onPress={() => navigation.navigate('UploadScreen')}
+          />
+          <DashedButton
+            label="Upload Back Side of Udhyam"
+            onPress={() => navigation.navigate('UploadScreen')}
           />
 
           {/* FooterButton */}
