@@ -83,6 +83,7 @@ export const SoftsanctionProcess = () => {
               {label: 'Option 5', value: 'option5'},
             ]}
             placeholder="Bank Name"
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
           {/* <Input label="Product" /> */}
           <CustomDropdown
@@ -95,6 +96,7 @@ export const SoftsanctionProcess = () => {
               {label: 'Option 5', value: 'option5'},
             ]}
             placeholder="Product Name"
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
           {/* <Input label="Method" /> */}
           <CustomDropdown
@@ -107,6 +109,7 @@ export const SoftsanctionProcess = () => {
               {label: 'Option 5', value: 'option5'},
             ]}
             placeholder="Method Name"
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
           {/* <Input label="Rulest ID" /> */}
           <CustomDropdown

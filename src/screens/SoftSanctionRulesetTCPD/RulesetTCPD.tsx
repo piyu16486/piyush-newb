@@ -84,7 +84,13 @@ export const RulesetTCPD = () => {
         <FlatList
           data={filteredLeads}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => <RulesetTCPDCard RulesetTCPD={item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('UGROTurnoverMethod')}>
+              <RulesetTCPDCard RulesetTCPD={item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{paddingBottom: 20}}
         />
       </View>

@@ -93,7 +93,13 @@ export const SoftSanctionRuleset = () => {
         <FlatList
           data={filteredLeads}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => <SoftRulestCard Ruleset={item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('RulesetTCPD')}>
+              <SoftRulestCard Ruleset={item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{paddingBottom: 20}}
         />
       </View>

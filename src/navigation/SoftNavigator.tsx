@@ -30,11 +30,3 @@ export const SoftNavigator = () => {
     </Stack.Navigator>
   );
 };
-
-// export const SoftNavigator = () => {
-//   return (
-//     <Stack.Navigator>
-//       <SoftStack.Screen name="Softsanction" component={Softsanction} />
-//     </Stack.Navigator>
-//   );
-// };

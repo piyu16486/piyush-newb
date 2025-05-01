@@ -73,7 +73,13 @@ export const UGROTurnoverMethod = () => {
         <FlatList
           data={filteredLeads}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => <TurnoverMethodCard TurnoverMethod={item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('UGROPurchaseMethod')}>
+              <TurnoverMethodCard TurnoverMethod={item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{paddingBottom: 20}}
         />
       </View>
