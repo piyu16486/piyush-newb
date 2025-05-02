@@ -1,7 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import {LeftChevronCircle, Plus, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
-import {AppBar, Container, CustomDropdown, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  CustomDropdown,
+  DateNTimePicker,
+  Input,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
@@ -15,7 +21,7 @@ import {
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -72,6 +78,7 @@ type NavigationType = CompositeNavigationProp<
 export const InputFormField = () => {
   const navigation = useNavigation<NavigationType>();
   const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
+  const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
 
   const [formIndex, setFormIndex] = React.useState(
     Forms.indexOf(params.screen),
@@ -164,6 +171,17 @@ export const InputFormField = () => {
                       onChange={val =>
                         console.log(`${item.label} selected:`, val)
                       }
+                    />
+                  );
+                }
+                if (item.label === 'Date of Visit') {
+                  return (
+                    <DateNTimePicker
+                      key={item.label}
+                      label="Date of Visit"
+                      mode="date"
+                      value={visitDate}
+                      onConfirm={val => setVisitDate(val)}
                     />
                   );
                 }
