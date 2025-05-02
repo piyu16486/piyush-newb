@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-shadow */
-import {LeftChevronCircle, RightCheckmark} from '@assets/Icons';
+/* eslint-disable react-native/no-inline-styles */
+import {LeftChevronCircle, Plus, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
 import {AppBar, Container, CustomDropdown, Input} from '@components/index';
 import Colors from '@constants/Colors';
@@ -74,10 +73,6 @@ export const InputFormField = () => {
   const navigation = useNavigation<NavigationType>();
   const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
 
-  const Forms = Object.keys(formInputDetails) as Array<
-    keyof typeof formInputDetails
-  >;
-
   const [formIndex, setFormIndex] = React.useState(
     Forms.indexOf(params.screen),
   );
@@ -92,10 +87,11 @@ export const InputFormField = () => {
   const currentFormKey = Forms[formIndex];
   const currentTitle = formTitles[currentFormKey] || 'Form Section';
 
+  const [vendorEntries, setVendorEntries] = React.useState([{id: Date.now()}]);
+
   return (
     <Container>
       <AppBar title="Client Information Master" navigation={navigation} />
-      {/* Subheader Section */}
       <View>
         <TouchableOpacity
           style={styles.subcontainer}
@@ -104,56 +100,94 @@ export const InputFormField = () => {
           <Text style={styles.subheader}>{currentTitle}</Text>
         </TouchableOpacity>
       </View>
-      {/*Form Content*/}
       <ScrollView>
         <View style={styles.inputContainer}>
-          {formInputDetails[Forms[formIndex]].map(item => {
-            // Example: show dropdown for these fields
-            const dropdownFields = [
-              'Type of Visit',
-              'State',
-              'Sector',
-              'Source of Lead',
-              'Are you interested for?',
-              'File By',
-              'Type of Firm',
-              'Facility Type',
-              'Product',
-              'Intent',
-            ];
+          {currentFormKey === 'VendorScreen'
+            ? vendorEntries.map((vendor, index) => (
+                <View key={vendor.id} style={{marginBottom: 20}}>
+                  {formInputDetails.VendorScreen.map(field => {
+                    const isDropdown = ['Product'].includes(field.label);
+                    if (isDropdown) {
+                      const dropdownData = [
+                        {label: 'Option 1', value: 'option1'},
+                        {label: 'Option 2', value: 'option2'},
+                      ];
+                      return (
+                        <CustomDropdown
+                          key={`${field.label}-${index}`}
+                          label={`${field.label} ${
+                            vendorEntries.length > 1 ? index + 1 : ''
+                          }`}
+                          data={dropdownData}
+                          placeholder="Select Type"
+                          onChange={val =>
+                            console.log(`${field.label} selected:`, val)
+                          }
+                        />
+                      );
+                    }
+                    return (
+                      <Input
+                        key={`${field.label}-${index}`}
+                        label={`${field.label} ${
+                          vendorEntries.length > 1 ? index + 1 : ''
+                        }`}
+                        containerStyle={{marginTop: scaleHeight(14)}}
+                      />
+                    );
+                  })}
+                </View>
+              ))
+            : formInputDetails[Forms[formIndex]].map(item => {
+                const dropdownFields = [
+                  'Type of Visit',
+                  'State',
+                  'Sector',
+                  'Source of Lead',
+                  'Are you interested for?',
+                  'File By',
+                  'Type of Firm',
+                  'Facility Type',
+                  'Intent',
+                ];
+                if (dropdownFields.includes(item.label)) {
+                  const dropdownData = [
+                    {label: 'Option 1', value: 'option1'},
+                    {label: 'Option 2', value: 'option2'},
+                  ];
+                  return (
+                    <CustomDropdown
+                      key={item.label}
+                      label={item.label}
+                      data={dropdownData}
+                      placeholder="Select Type"
+                      onChange={val =>
+                        console.log(`${item.label} selected:`, val)
+                      }
+                    />
+                  );
+                }
+                return <Input label={item.label} key={item.label} />;
+              })}
 
-            if (dropdownFields.includes(item.label)) {
-              const dropdownData = [
-                {label: 'Option 1', value: 'option1'},
-                {label: 'Option 2', value: 'option2'},
-                {label: 'Option 3', value: 'option3'},
-                {label: 'Option 4', value: 'option4'},
-                {label: 'Option 5', value: 'option5'},
-              ];
-
-              return (
-                <CustomDropdown
-                  key={item.label}
-                  label={item.label}
-                  data={dropdownData}
-                  placeholder="Select Type"
-                  onChange={val => console.log(`${item.label} selected:`, val)}
-                />
-              );
-            }
-
-            return <Input label={item.label} key={item.label} />;
-          })}
+          {currentFormKey === 'VendorScreen' && (
+            <TouchableOpacity
+              style={styles.vendorButton}
+              onPress={() =>
+                setVendorEntries(prev => [...prev, {id: Date.now()}])
+              }>
+              <Text style={styles.vendorButtonText}>Add Vendor</Text>
+              <Plus width={18} height={18} />
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
       <View style={styles.footerButton}>
-        {/* Clear All Button */}
         <TouchableOpacity
           style={styles.clearButton}
           onPress={() => console.log('Clear All Pressed')}>
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
-        {/* Save Button */}
         <View style={styles.row}>
           <TouchableOpacity
             style={[styles.saveButton, {backgroundColor: Colors.white}]}
@@ -161,9 +195,7 @@ export const InputFormField = () => {
             onPress={() => console.log('Save Pressed')}>
             <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
           </TouchableOpacity>
-
           {formIndex === Forms.length - 1 ? (
-            // Submit Button
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
@@ -172,7 +204,6 @@ export const InputFormField = () => {
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>
           ) : (
-            // Next Button
             <TouchableOpacity
               style={styles.nextButton}
               onPress={() => {
@@ -202,11 +233,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.LimeGray,
-    paddingLeft: 16, // Spacing from the left
+    paddingLeft: 16,
     paddingVertical: 12,
   },
   subheader: {
-    marginLeft: 12, // Space between icon and text
+    marginLeft: 12,
     fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
     color: '#333',
@@ -249,9 +280,6 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     fontSize: scaleFont(14),
   },
-  pressed: {
-    opacity: 0.7,
-  },
   nextButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -270,23 +298,23 @@ const styles = StyleSheet.create({
     height: scaleWidth(24),
     marginHorizontal: scaleWidth(12),
   },
-  wrappercontainer: {
-    marginTop: 16,
-    alignItems: 'flex-start', // Align button to the left
-  },
-  button: {
+  vendorButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.lightGray,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: Colors.graybase,
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+    marginTop: scaleHeight(10),
+    gap: 8,
   },
-  text: {
-    fontSize: 16,
-    color: Colors.darkGray,
-    fontWeight: '500',
+  vendorButtonText: {
+    color: '#6E6E78',
+    fontSize: scaleFont(14),
+    fontWeight: '600',
   },
 });

@@ -130,7 +130,7 @@ export const ClientInfo = () => {
         // for Report -> Report
         // for TaskLogTabs -> TaskLogTabs
 
-        onPress={() => navigation.navigate('TaskLogTabs')}>
+        onPress={() => navigation.navigate('FormSelectionScreen')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>
