@@ -15,7 +15,7 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -100,7 +100,7 @@ export const GodownDetails = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: scaleWidth(8),
+    padding: scaleWidth(24),
     backgroundColor: '#fff',
   },
   contentContainer: {

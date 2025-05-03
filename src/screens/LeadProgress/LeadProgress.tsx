@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {AppBar, Container, LeadProgressCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
@@ -10,6 +10,7 @@ import {HomeNavigatorType, LeadNavigatorType} from '@type/NavigatorTypes';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { LeadProgressInfo } from '@screens/LeadProgressInfo/LeadProgressInfo';
 
 type LeadNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -65,11 +66,14 @@ const leadData = [
     processStart: '10-02-2023',
     status: 'Warm',
   },
-];
+] as const;
 
 export const LeadProgress = () => {
   const navigation = useNavigation<LeadNavigationType>();
-
+  const [showReadMore, setShowReadMore] = useState(false);
+  const onPressReadMore = useCallback(() => {
+    setShowReadMore(prev => !prev);
+  },[])
   return (
     <Container>
       <AppBar title="Lead Progress" navigation={navigation} />
@@ -77,35 +81,41 @@ export const LeadProgress = () => {
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Lead Progress Information</Text>
       </View>
-      <View style={styles.RowContainer}>
-        <View style={styles.Subrowcontainer}>
-          <Text style={styles.Subrowcontainertxt}>Leads</Text>
-          <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>{leadData.length}</Text>
+      {showReadMore ? (
+        <LeadProgressInfo onPressReadLess={onPressReadMore}/>
+      ) : (
+        <>
+          <View style={styles.RowContainer}>
+            <View style={styles.Subrowcontainer}>
+              <Text style={styles.Subrowcontainertxt}>Leads</Text>
+              <View style={styles.Badge}>
+                <Text style={styles.Badgetext}>{leadData.length}</Text>
+              </View>
+            </View>
+            <View style={styles.Searchbox}>
+              <Search height={12} width={12} />
+              <TextInput
+                style={styles.input}
+                placeholder="Search Leads"
+                placeholderTextColor="#999"
+              />
+            </View>
+            <View style={styles.Filterbox}>
+              <View>
+                <Filter width={12} height={12} />
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={styles.Searchbox}>
-          <Search height={12} width={12} />
-          <TextInput
-            style={styles.input}
-            placeholder="Search Leads"
-            placeholderTextColor="#999"
-          />
-        </View>
-        <View style={styles.Filterbox}>
-          <View>
-            <Filter width={12} height={12} />
+          <View style={styles.Cardlist}>
+            <FlatList
+              data={leadData}
+              keyExtractor={item => item.clientId}
+              renderItem={({item}) => <LeadProgressCard {...item} onPressReadMore={onPressReadMore}/>}
+              contentContainerStyle={{flexGrow: 1}}
+            />
           </View>
-        </View>
-      </View>
-      <View style={styles.Cardlist}>
-        <FlatList
-          data={leadData}
-          keyExtractor={item => item.clientId}
-          renderItem={({item}) => <LeadProgressCard {...item} />}
-          contentContainerStyle={{flexGrow: 1}}
-        />
-      </View>
+        </>
+      )}
     </Container>
   );
 };

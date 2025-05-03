@@ -1,10 +1,6 @@
-import {AppBar, Container} from '@components/index';
+import {Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, LeadNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
 import {
@@ -16,14 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-type LeadNavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<LeadNavigatorType>
->;
-
-export const LeadProgressInfo = () => {
-  const navigation = useNavigation<LeadNavigationType>();
-
+export const LeadProgressInfo = ({onPressReadLess}: {onPressReadLess: () => void}) => {
   const progressStatusData = [
     {
       id: '1',
@@ -66,66 +55,60 @@ export const LeadProgressInfo = () => {
   );
 
   return (
-    <Container>
-      <AppBar title="Lead Progress" navigation={navigation} />
-      <View style={styles.Subcontainer}>
-        <Text style={styles.Subheader}>Lead Progress Information</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.tag}>
+        <Text style={styles.tagText}>Warm</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>Warm</Text>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Basic Details</Text>
-          {/* All Basic Details */}
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Client ID :</Text> 0001
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Client Name :</Text> S D Verma
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Location :</Text> Delhi
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Initiator :</Text> Delhi
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Source (D/H/C/O) :</Text> Source D
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Reference Details :</Text> 9889823222
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Monthly Turnover :</Text> 20,00,000
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Sanction Requested :</Text> 25,00,000
-          </Text>
-          <Text style={styles.label}>
-            <Text style={styles.bold}>Process Start :</Text> 10-02-2023
-          </Text>
-        </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionHeader}>Basic Details</Text>
+        {/* All Basic Details */}
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Client ID :</Text> 0001
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Client Name :</Text> S D Verma
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Location :</Text> Delhi
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Initiator :</Text> Delhi
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Source (D/H/C/O) :</Text> Source D
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Reference Details :</Text> 9889823222
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Monthly Turnover :</Text> 20,00,000
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Sanction Requested :</Text> 25,00,000
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Process Start :</Text> 10-02-2023
+        </Text>
+      </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Lead Progress Status</Text>
-          {/* Wrapping FlatList inside a View */}
-          <View>
-            <FlatList
-              data={progressStatusData}
-              renderItem={renderStatusItem}
-              keyExtractor={item => item.id}
-              scrollEnabled={false} // required inside ScrollView
-            />
-          </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionHeader}>Lead Progress Status</Text>
+        {/* Wrapping FlatList inside a View */}
+        <View>
+          <FlatList
+            data={progressStatusData}
+            renderItem={renderStatusItem}
+            keyExtractor={item => item.id}
+            scrollEnabled={false} // required inside ScrollView
+          />
         </View>
-        {/* "Read More" Button */}
-        <TouchableOpacity style={styles.readMoreButton}>
-          <Text style={styles.readMoreText}>Read Less</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </Container>
+      </View>
+      {/* "Read More" Button */}
+      <TouchableOpacity style={styles.readMoreButton} onPress={onPressReadLess}>
+        <Text style={styles.readMoreText}>Read Less</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 

@@ -13,6 +13,7 @@ interface LeadProgressProps {
   sanctionRequested: string;
   processStart: string;
   status: 'Warm' | 'Hot' | 'Cold';
+  onPressReadMore: (id: string) => void;
 }
 
 const ChipColors = {
@@ -32,6 +33,7 @@ export const LeadProgressCard: React.FC<LeadProgressProps> = ({
   sanctionRequested,
   processStart,
   status,
+  onPressReadMore,
 }) => {
   return (
     <View style={styles.card}>
@@ -62,7 +64,9 @@ export const LeadProgressCard: React.FC<LeadProgressProps> = ({
         </Text>
       ))}
       {/* "Read More" Button */}
-      <TouchableOpacity style={styles.readMoreButton}>
+      <TouchableOpacity
+        style={styles.readMoreButton}
+        onPress={() => onPressReadMore(clientId)}>
         <Text style={styles.readMoreText}>Read more</Text>
       </TouchableOpacity>
     </View>

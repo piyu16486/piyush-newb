@@ -3,6 +3,7 @@
 import {File, RightCheckmark} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
+import {pick} from '@react-native-documents/picker';
 import {scaleWidth, scaleHeight, scaleFont} from '@utils/Scale';
 import React, {useState} from 'react';
 import {
@@ -24,8 +25,15 @@ export const UploadModal = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-  const handleBrowseFile = () => {
+  const handleBrowseFile = async () => {
     // You can trigger DocumentPicker here
+    try {
+      const files = await pick({
+        mode: 'import',
+        allowMultiSelection: true,
+      });
+      console.log(files);
+    } catch (error) {}
   };
 
   const handleSubmit = () => {
@@ -34,7 +42,11 @@ export const UploadModal = ({
   };
 
   return (
-    <Modal transparent visible={visible} animationType="fade">
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}>
       <TouchableWithoutFeedback
         onPress={() => {
           console.log('Outside modal pressed - closing');

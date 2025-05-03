@@ -87,7 +87,7 @@ export const GSTDocument = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: scaleWidth(8),
+    padding: scaleWidth(24),
     backgroundColor: '#fff',
   },
   Subcontainer: {

@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.LimeGray,
   },
   scrollContainer: {
-    padding: 24,
+    padding: scaleWidth(24),
     paddingBottom: 80, // Extra padding to account for button height
   },
   sectionTitle: {
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 20,
+    marginTop: scaleHeight(20),
   },
   clearButton: {},
   clearText: {
