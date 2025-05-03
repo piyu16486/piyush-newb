@@ -2,9 +2,18 @@ import {RightChevron} from '@assets/Icons';
 import {AppBar, Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, DocNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+
+type DocNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<DocNavigatorType>
+>;
 
 type ItemProps = {
   title: 'Personal KYC Validation' | 'Business KYC Validation' | 'Reports';
@@ -17,14 +26,33 @@ const Data: ItemProps[] = [
 ];
 
 export const DocValidSelection = () => {
+  const navigation = useNavigation<DocNavigationType>();
+
+  const handleNavigation = (title: ItemProps['title']) => {
+    if (title === 'Personal KYC Validation') {
+      navigation.navigate('PersonalKYCValidation');
+    } else if (title === 'Business KYC Validation') {
+      navigation.navigate('BusinessKYCValidation');
+    } else if (title === 'Reports') {
+      // For "Reports", if you have a screen, navigate accordingly.
+      // Otherwise, show an alert or handle it.
+      // Example (placeholder):
+      // navigation.navigate('ReportsScreen');
+      console.warn('Reports navigation is not set up yet.');
+    }
+  };
+
   return (
     <Container>
-      <AppBar title="Document Validation" />
+      <AppBar title="Document Validation" navigation={navigation} />
 
       {/* List Section */}
       <View style={styles.container}>
         {Data.map(item => (
-          <TouchableOpacity key={item.title} style={styles.item}>
+          <TouchableOpacity
+            key={item.title}
+            style={styles.item}
+            onPress={() => handleNavigation(item.title)}>
             <Text style={styles.text}>{item.title}</Text>
             <RightChevron height={17} width={20} />
           </TouchableOpacity>

@@ -1,5 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, StyleSheet, TextInput, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import {AppBar, Container, DocValidCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
@@ -9,7 +16,7 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, DocNavigatorType} from '@type/NavigatorTypes';
 
 const DocData = [
   {
@@ -62,17 +69,17 @@ const DocData = [
   },
 ] as const;
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type DocNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<DocNavigatorType>
 >;
 
 export const DocumentValidation = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<DocNavigationType>();
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Document Validation" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Document Validation</Text>
       </View>
@@ -101,10 +108,19 @@ export const DocumentValidation = () => {
         <FlatList
           data={DocData}
           keyExtractor={item => item.clientId}
-          renderItem={({item}) => <DocValidCard {...item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('DocValidForm')}>
+              <DocValidCard {...item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
+      {/* // for DocValidForm -> DocValidForm */}
+      {/* // for DocValidSelection -> DocValidSelection */}
+      {/* /// onPress={() => navigation.navigate('DocValidForm')} */}
     </Container>
   );
 };
@@ -178,5 +194,16 @@ const styles = StyleSheet.create({
   Cardlist: {
     flex: 1,
     padding: 16,
+  },
+  plusButton: {
+    position: 'absolute',
+    bottom: scaleHeight(60),
+    right: 30,
+    backgroundColor: Colors.tertiaryBlue,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

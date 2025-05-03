@@ -1,11 +1,20 @@
-/* eslint-disable react-native/no-inline-styles */
-import {RightCheckmark, Upload} from '@assets/Icons';
-import {AppBar, Container, Input} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth, scaleHeight, scaleFont} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -14,10 +23,18 @@ import {
   StyleSheet,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const KycUploadAdhar = () => {
+  const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
+
   return (
     <Container>
-      <AppBar title="KYC Document" />
+      <AppBar title="KYC Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Upload Aadhar Card Details</Text>
       </View>
@@ -35,18 +52,22 @@ export const KycUploadAdhar = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Front side of Aadhar</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Front side of Aadhar"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
-        <TouchableOpacity style={[styles.uploadButton, {marginTop: 20}]}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Back side of Aadhar</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Back side of Aadhar"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         {/* Co Applicant Section */}
-        <Text style={styles.sectionTitle}>Co Applicant Aadhar Card Details</Text>
+        <Text style={styles.sectionTitle}>
+          Co Applicant Aadhar Card Details
+        </Text>
         <Input
           label="Name as per Aadhar Card"
           containerStyle={{marginBottom: scaleHeight(24)}}
@@ -56,15 +77,17 @@ export const KycUploadAdhar = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <TouchableOpacity style={[styles.uploadButton, {marginBottom: 20}]}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Front side of Aadhar</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Front side of Aadhar"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Back side of Aadhar</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Back side of Aadhar"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}

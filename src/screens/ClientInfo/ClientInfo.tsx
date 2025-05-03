@@ -149,7 +149,7 @@ export const ClientInfo = () => {
         // for PersonalKYCValidation -> PersonalKYCValidation 4
         // for BusinessKYCValidation -> BusinessKYCValidation 5
 
-        onPress={() => navigation.navigate('BusinessKYCValidation')}>
+        onPress={() => navigation.navigate('FormSelectionScreen')}>
         <Plus height={24} width={24} />
       </TouchableOpacity>
     </Container>

@@ -35,6 +35,10 @@ export type OTPInputScreenParams = {
 export type HomeNavigatorType = {
   ClientNavigator: undefined;
   SoftNavigator: undefined;
+  LeadNavigator: undefined;
+  ReportNavigator: undefined;
+  KycNavigator: undefined;
+  DocNavigator: undefined;
 };
 
 export type ClientNavigatorType = {
@@ -54,14 +58,29 @@ export type ClientNavigatorType = {
   };
   ClientLeadInfoTab: undefined;
   ClientCardReadMore: undefined;
+};
+
+export type SoftNavigatorType = {
+  Softsanction: undefined;
   SoftsanctionProcess: undefined;
   SoftSanctionRuleset: undefined;
   RulesetTCPD: undefined;
   UGROTurnoverMethod: undefined;
   UGROPurchaseMethod: undefined;
+};
+
+export type LeadNavigatorType = {
   LeadProgress: undefined;
   LeadProgressInfo: undefined;
+};
+
+export type ReportNavigatorType = {
   Report: undefined;
+};
+
+export type KycNavigatorType = {
+  KycDocument: undefined;
+  KYCFormSelection: undefined;
   KycUploadDoc: undefined;
   KycUploadPan: undefined;
   KycUploadAdhar: undefined;
@@ -73,18 +92,15 @@ export type ClientNavigatorType = {
   GodownDetails: undefined;
   GodownDetails2: undefined;
   CompanyPanCard: undefined;
-  KycDocument: undefined;
-  KYCFormSelection: undefined;
   ShareholdingCompany: undefined;
   CompanyDocument: undefined;
+};
+
+export type DocNavigatorType = {
   DocumentValidation: undefined;
   DocValidForm: undefined;
   DocValidSelection: undefined;
   PersonalKYCValidation: undefined;
   BusinessKYCValidation: undefined;
   TaskLogTabs: undefined;
-};
-
-export type SoftNavigatorType = {
-  Softsanction: undefined;
 };

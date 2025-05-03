@@ -89,18 +89,40 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               </TouchableOpacity>
               {DisOpen && (
                 <View style={{marginLeft: scaleWidth(24)}}>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('ClientNavigator', {
+                        screen: 'ClientInfo',
+                      })
+                    }>
                     <Text style={styles.buttonText}>Client Information</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('Softsanctions')}>
+                    onPress={() =>
+                      navigation.navigate('SoftNavigator', {
+                        screen: 'Softsanction',
+                      })
+                    }>
                     <Text style={styles.buttonText}>Soft Sanction</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('LeadNavigator', {
+                        screen: 'LeadProgress',
+                      })
+                    }>
                     <Text style={styles.buttonText}>Lead Progress</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('ReportNavigator', {
+                        screen: 'Report',
+                      })
+                    }>
                     <Text style={styles.buttonText}>Report</Text>
                   </TouchableOpacity>
                 </View>
@@ -125,7 +147,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               </TouchableOpacity>
               {isOpen && (
                 <View style={{marginLeft: scaleWidth(24)}}>
-                  <TouchableOpacity style={styles.button}>
+                  {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Recording of Lead</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
@@ -133,19 +155,31 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Follow up Action</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  </TouchableOpacity> */}
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('KycNavigator', {
+                        screen: 'KycDocument',
+                      })
+                    }>
                     <Text style={styles.buttonText}>KYC Document</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('DocNavigator', {
+                        screen: 'DocumentValidation',
+                      })
+                    }>
                     <Text style={styles.buttonText}>Document Validation</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.button}>
+                  {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Pre Screening</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Bank Fitment</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               )}
             </View>

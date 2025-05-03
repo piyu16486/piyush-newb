@@ -9,14 +9,14 @@ import fontWeight from '@constants/FontWeight';
 import {scaleFont} from '@utils/Scale';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {FontWeight} from '@constants/index';
 import {LeftChevronCircle} from '@assets/Icons';
 import {SoftRulestCard} from '@components/SoftRulesetCard/SoftRulestCard';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type Ruleset = {
@@ -29,7 +29,7 @@ type Ruleset = {
 };
 
 export const SoftSanctionRuleset = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
 
   const leads: Ruleset[] = [
@@ -73,7 +73,7 @@ export const SoftSanctionRuleset = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Soft Sanction" navigation={navigation} />
 
       {/* Content */}
       <View style={styles.Subcontainer}>
@@ -93,7 +93,13 @@ export const SoftSanctionRuleset = () => {
         <FlatList
           data={filteredLeads}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => <SoftRulestCard Ruleset={item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('RulesetTCPD')}>
+              <SoftRulestCard Ruleset={item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{paddingBottom: 20}}
         />
       </View>

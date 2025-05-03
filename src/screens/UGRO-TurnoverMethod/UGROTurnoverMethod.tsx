@@ -6,15 +6,15 @@ import {Container, AppBar} from '@components/index';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import {Colors, FontWeight} from '@constants/index';
 import {TurnoverMethodCard} from '@components/UGRO-TurnoverMethod/TurnoverMethodCard';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<SoftNavigatorType>
 >;
 
 type TurnoverMethod = {
@@ -31,7 +31,7 @@ type TurnoverMethod = {
 };
 
 export const UGROTurnoverMethod = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const [search] = useState<string>('');
 
   const leads: TurnoverMethod[] = [
@@ -55,7 +55,7 @@ export const UGROTurnoverMethod = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Soft Sanction" navigation={navigation} />
 
       {/* Content */}
       <View style={styles.Subcontainer}>
@@ -73,7 +73,13 @@ export const UGROTurnoverMethod = () => {
         <FlatList
           data={filteredLeads}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => <TurnoverMethodCard TurnoverMethod={item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('UGROPurchaseMethod')}>
+              <TurnoverMethodCard TurnoverMethod={item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{paddingBottom: 20}}
         />
       </View>

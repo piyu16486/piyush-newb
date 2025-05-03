@@ -1,16 +1,29 @@
 import {Upload} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 type UploadButtonProps = {
   label: string;
   onPress?: () => void;
+  containerStyle?: ViewStyle;
 };
 
-export const DashedButton: React.FC<UploadButtonProps> = ({label, onPress}) => {
+export const DashedButton: React.FC<UploadButtonProps> = ({
+  label,
+  onPress,
+  containerStyle,
+}) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, containerStyle]}
+      onPress={onPress}>
       <View style={styles.buttonContent}>
         <Upload width={18} height={13} />
         <Text style={styles.label}>{label}</Text>

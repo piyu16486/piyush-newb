@@ -1,25 +1,35 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {RightCheckmark, Upload} from '@assets/Icons';
-import {AppBar, Container, Input} from '@components/index';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {
+  HomeNavigatorType,
+  ClientNavigatorType,
+  KycNavigatorType,
+} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<KycNavigatorType>
 >;
 
 export const KycUploadDoc = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
 
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
@@ -50,10 +60,13 @@ export const KycUploadDoc = () => {
           placeholder="Value"
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
-        <TouchableOpacity style={styles.uploadButton}>
-          <Upload width={18} height={18} style={{marginRight: 10}} />
-          <Text style={styles.uploadText}>Upload Your Picture</Text>
-        </TouchableOpacity>
+        <DashedButton
+          label="Upload Your Picture"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+
+        {/* FooterButton */}
         <View style={styles.footerButton}>
           {/* Clear All Button */}
           <TouchableOpacity

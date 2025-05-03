@@ -22,7 +22,7 @@ export const Softsanction = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Soft Sanction" navigation={navigation} />
 
       {/* Content */}
       <View style={styles.Subcontainer}>
@@ -36,7 +36,9 @@ export const Softsanction = () => {
       </View>
 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => navigation.navigate('SoftsanctionProcess')}>
           <Text style={styles.text}>Soft Sanction Process</Text>
           <RightChevron height={17} width={20} />
         </TouchableOpacity>

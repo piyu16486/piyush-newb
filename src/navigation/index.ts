@@ -3,3 +3,7 @@ export * from './AuthNavigator';
 export * from './HomeNavigator';
 export * from './ClientNavigator';
 export * from './SoftNavigator';
+export * from './LeadNavigator';
+export * from './ReportNavigator';
+export * from './KycNavigator';
+export * from './DocNavigator';

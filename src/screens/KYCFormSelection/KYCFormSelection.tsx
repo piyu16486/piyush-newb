@@ -9,10 +9,15 @@ import {
   CustomDropdown,
   DashedButton,
   Input,
+  UploadModal,
 } from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {
@@ -23,10 +28,65 @@ import {
   ScrollView,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const KYCFormSelection = () => {
+  const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'personal' | 'business' | 'bank'>(
     'personal',
   );
+
+  const handleNavigation = (text: string) => {
+    switch (text) {
+      case 'Upload your Picture':
+        navigation.navigate('KycUploadDoc');
+        break;
+      case 'PAN Card Details':
+        navigation.navigate('KycUploadPan');
+        break;
+      case 'Aadhar Card Details':
+        navigation.navigate('KycUploadAdhar');
+        break;
+      case 'Residence Details':
+        navigation.navigate('KycOwner');
+        break;
+      default:
+        console.warn('Screen not found for', text);
+    }
+  };
+
+  const handleNavigation2 = (text: string) => {
+    switch (text) {
+      case 'Udhyam Certificate':
+        navigation.navigate('UdhyamCertificate');
+        break;
+      case 'GST Documents':
+        navigation.navigate('GSTDocument');
+        break;
+      case 'Godown Details':
+        navigation.navigate('GodownDetails');
+        break;
+      case 'Godown Details2':
+        navigation.navigate('GodownDetails2');
+        break;
+      case 'Company PAN Card Details':
+        navigation.navigate('CompanyPanCard');
+        break;
+      case 'Shareholding Details':
+        navigation.navigate('ShareholdingCompany');
+        break;
+      case 'Company Information':
+        navigation.navigate('CompanyDocument');
+        break;
+      default:
+        console.warn('Screen not found for', text);
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -45,7 +105,10 @@ export const KYCFormSelection = () => {
               'Aadhar Card Details',
               'Residence Details',
             ].map((text, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => handleNavigation(text)}>
                 <Text style={styles.cardText}>{text}</Text>
                 <RightChevron width={20} height={17} />
               </TouchableOpacity>
@@ -65,11 +128,15 @@ export const KYCFormSelection = () => {
               'Udhyam Certificate',
               'GST Documents',
               'Godown Details',
+              'Godown Details2',
               'Company PAN Card Details',
               'Shareholding Details',
               'Company Information',
             ].map((text, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() => handleNavigation2(text)}>
                 <Text style={styles.cardText}>{text}</Text>
                 <RightChevron width={20} height={17} />
               </TouchableOpacity>
@@ -80,19 +147,47 @@ export const KYCFormSelection = () => {
         return (
           <View>
             <Text style={styles.heading}>Bank Statement of Last 12 Months</Text>
-            <Input label="Bank Name" />
-            <Input label="Account Number" />
+            <Input
+              label="Bank Name"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
+            <Input
+              label="Account Number"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
             {/* <Input label="Account Type" /> */}
-            <CustomDropdown label="Account Type" />
-            <CustomDropdown label="Reporting Period" />
+            <CustomDropdown
+              label="Account Type"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
+            <CustomDropdown
+              label="Reporting Period"
+              containerStyle={{marginBottom: scaleHeight(20)}}
+            />
             <Input
               label="Start and End Date of Statement"
               placeholder="Start Date"
             />
             <Input placeholder="End Date" />
 
-            <DashedButton label="Upload Statement" />
-            <DashedButton label="Upload Statement" />
+            <DashedButton
+              label="Upload Statement"
+              containerStyle={{marginTop: scaleHeight(20)}}
+              onPress={() => setIsVisible(true)}
+            />
+            <UploadModal
+              visible={isVisible}
+              onClose={() => setIsVisible(false)}
+            />
+            <DashedButton
+              label="Upload Statement"
+              containerStyle={{marginTop: scaleHeight(15)}}
+              onPress={() => setIsVisible(true)}
+            />
+            <UploadModal
+              visible={isVisible}
+              onClose={() => setIsVisible(false)}
+            />
             <View style={styles.footerButton}>
               {/* Clear All Button */}
               <TouchableOpacity
@@ -126,7 +221,7 @@ export const KYCFormSelection = () => {
 
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Kyc Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>

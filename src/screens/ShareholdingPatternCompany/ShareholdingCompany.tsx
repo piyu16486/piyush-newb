@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {AppBar, Container, DashedButton, Input} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {AppBar, Container, DashedButton, Input, UploadModal} from '@components/index';
 import Colors from '@constants/Colors';
+import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont, scaleHeight} from '@utils/Scale';
-import React from 'react';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -13,14 +19,18 @@ import {
   StyleSheet,
 } from 'react-native';
 
-type LabelProps = {
-  label: string;
-};
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
 
 export const ShareholdingCompany = () => {
+  const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>
@@ -33,20 +43,35 @@ export const ShareholdingCompany = () => {
         </View>
         <Input
           label="Company Name"
-          containerStyle={{marginBottom: scaleHeight(14)}}
+          containerStyle={{marginBottom: scaleHeight(20)}}
         />
-        <DashedButton label="Upload Shareholding Pattern" />
+        <DashedButton
+          label="Upload Shareholding Pattern"
+          onPress={() => setIsVisible(true)}
+        />
+        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
-        {/* Fixed Buttons at Bottom */}
-        <View style={styles.buttonContainer}>
-          <Text style={styles.clearText}>clear all</Text>
-
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity style={styles.saveButton}>
-              <Text style={styles.saveText}>Save</Text>
+        <View style={styles.footerButton}>
+          {/* Clear All Button */}
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => console.log('Clear All Pressed')}>
+            <Text style={styles.clearText}>Clear all</Text>
+          </TouchableOpacity>
+          {/* Save Button */}
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.saveButton, {backgroundColor: Colors.white}]}
+              activeOpacity={0.7}
+              onPress={() => console.log('Save Pressed')}>
+              <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.submitButton}>
-              <Text style={styles.submitText}>Submit ✔</Text>
+            <TouchableOpacity
+              style={styles.saveButton}
+              activeOpacity={0.7}
+              onPress={() => console.log('Next Pressed')}>
+              <Text style={styles.saveText}>Submit</Text>
+              <RightCheckmark width={12} height={12} />
             </TouchableOpacity>
           </View>
         </View>
@@ -55,23 +80,10 @@ export const ShareholdingCompany = () => {
   );
 };
 
-const InputField = ({label}: LabelProps) => (
-  <View style={styles.inputGroup}>
-    <Text style={styles.label}>{label}</Text>
-    <TextInput style={styles.input} placeholder="Value" editable={false} />
-  </View>
-);
-
-const UploadBox = ({label}: LabelProps) => (
-  <View style={styles.uploadBox}>
-    <Text style={styles.uploadText}>{label}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: 20,
+    padding: 24,
     backgroundColor: '#fff',
   },
   Subcontainer: {
@@ -85,89 +97,45 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.LimeGray,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
-    marginBottom: scaleHeight(20),
+    marginBottom: scaleHeight(16),
   },
-  inputGroup: {
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    fontSize: 14,
-    backgroundColor: '#f9f9f9',
-  },
-  uploadBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#bbb',
-    borderRadius: 6,
-    padding: 10,
-    marginBottom: 10,
-  },
-  icon: {
-    width: 16,
-    height: 16,
-    marginRight: 8,
-    tintColor: '#888',
-  },
-  uploadText: {
-    fontSize: 13,
-    color: '#666',
-  },
-  buttonContainer: {
+  footerButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    marginVertical: 20,
+    marginTop: scaleHeight(30),
   },
+  clearButton: {},
   clearText: {
-    color: 'red',
-    fontSize: 13,
+    color: Colors.primaryColor,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
-
-  buttonGroup: {
-    flexDirection: 'row',
-    gap: 10, // Space between Save and Submit buttons
-  },
-
   saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.green,
+    paddingHorizontal: scaleWidth(12),
+    paddingVertical: scaleHeight(5),
+    borderRadius: scaleWidth(4),
+    gap: scaleWidth(8),
     borderWidth: 1,
-    borderColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    borderColor: Colors.green,
+    minWidth: scaleWidth(100),
   },
   saveText: {
-    color: '#28a745',
-    fontSize: 13,
+    color: Colors.white,
+    fontFamily: Fonts.GilroyMedium,
+    fontSize: scaleFont(14),
   },
-  submitButton: {
-    backgroundColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 13,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scaleWidth(10),
   },
 });

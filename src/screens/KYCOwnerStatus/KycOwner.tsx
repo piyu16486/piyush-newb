@@ -1,53 +1,28 @@
-/* eslint-disable react-native/no-inline-styles */
-import {AppBar, Container} from '@components/index';
+import {AppBar, Container, CustomDropdown} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {scaleFont} from '@utils/Scale';
-import React, {useState} from 'react';
+import {scaleFont, scaleHeight} from '@utils/Scale';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 export const KycOwner = () => {
-  const [statustype, setstatustype] = useState(false);
-  const [selectstatustype, setselectstatusType] = useState(null);
-  const [statusType, setstatusType] = useState([
-    {label: 'Rented', value: 'rented'},
-    {label: 'Partnership', value: 'partnership'},
-    {label: 'Owned', value: 'owned'},
-    {label: 'Private Limited Company', value: 'private_ltd'},
-    {label: 'Public Limited Company', value: 'public_ltd'},
-    {label: 'Limited Liability Company', value: 'llc'},
-    {label: 'Corporation', value: 'corporation'},
-    {label: 'Cooperative', value: 'cooperative'},
-    {label: 'Nonprofit Organization', value: 'nonprofit'},
-    {label: 'Franchise', value: 'franchise'},
-  ]);
-
   return (
     <Container>
       <AppBar title="KYC Document" />
       <View style={styles.Subcontainer}>
-        <Text style={styles.Subheader}>Upload Residence Details</Text>
+        <Text style={styles.Subheader}>KYC Document</Text>
       </View>
       <View style={styles.mainContainer}>
-        {/* Main content container with flex: 1 to push buttons to bottom */}
         <View style={styles.contentContainer}>
-          <Text style={styles.sectionTitle}>Ownership Status</Text>
+          <Text style={styles.sectionTitle}>Residence Details</Text>
 
-          <DropDownPicker
-            open={statustype}
-            value={selectstatustype}
-            items={statusType}
-            setOpen={setstatustype}
-            setValue={setselectstatusType}
-            setItems={setstatusType}
-            placeholder="Partnership"
-            style={styles.dropdown}
-            dropDownContainerStyle={{
-              ...styles.dropdownContainer,
-              maxHeight: 250,
-            }}
-            labelStyle={styles.labelText}
+          <CustomDropdown
+            label="Ownership Status"
+            data={[
+              {label: 'Rented', value: 'rented'},
+              {label: 'Owned', value: 'owned'},
+            ]}
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
         </View>
       </View>
@@ -72,7 +47,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 16,
+    padding: 24,
   },
   dropdown: {
     backgroundColor: '#FFF',
@@ -97,8 +72,10 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: scaleFont(16),
+    fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
+    marginBottom: scaleHeight(16),
   },
   inputGroup: {
     marginBottom: 10,

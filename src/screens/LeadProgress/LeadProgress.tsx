@@ -6,6 +6,15 @@ import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import {HomeNavigatorType, LeadNavigatorType} from '@type/NavigatorTypes';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+type LeadNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<LeadNavigatorType>
+>;
 
 const leadData = [
   {
@@ -59,9 +68,11 @@ const leadData = [
 ];
 
 export const LeadProgress = () => {
+  const navigation = useNavigation<LeadNavigationType>();
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Lead Progress" navigation={navigation} />
       {/* Content */}
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Lead Progress Information</Text>

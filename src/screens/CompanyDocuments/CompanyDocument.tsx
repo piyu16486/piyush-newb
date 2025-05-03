@@ -1,8 +1,14 @@
-import {AppBar, Container, DashedButton} from '@components/index';
+import {RightCheckmark} from '@assets/Icons';
+import {AppBar, Container, DashedButton, UploadModal} from '@components/index';
 import Colors from '@constants/Colors';
+import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -11,10 +17,18 @@ import {
   StyleSheet,
 } from 'react-native';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const CompanyDocument = () => {
+  const navigation = useNavigation<KycNavigationType>();
+  const [isVisible, setIsVisible] = useState(false);
+
   return (
     <Container>
-      <AppBar title="Client Information Master" />
+      <AppBar title="Client Information Master" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>
@@ -26,28 +40,72 @@ export const CompanyDocument = () => {
           <Text style={styles.sectionTitle}>Company Documents</Text>
 
           <Text style={styles.subTitle}>AOA</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>MOA</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>COI</Text>
-          <DashedButton label="Upload AOA Document" />
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           <Text style={styles.subTitle}>Other Document</Text>
-          <DashedButton label="Upload AOA Document" />
-        </ScrollView>
+          <DashedButton
+            label="Upload AOA Document"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
-        {/* Fixed button row at the bottom */}
-        <View style={styles.buttonRow}>
-          <Text style={styles.clearText}>clear all</Text>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveText}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitText}>Submit ✔</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.footerButton}>
+            {/* Clear All Button */}
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={() => console.log('Clear All Pressed')}>
+              <Text style={styles.clearText}>Clear all</Text>
+            </TouchableOpacity>
+            {/* Save Button */}
+            <View style={styles.row}>
+              <TouchableOpacity
+                style={[styles.saveButton, {backgroundColor: Colors.white}]}
+                activeOpacity={0.7}
+                onPress={() => console.log('Save Pressed')}>
+                <Text style={[styles.saveText, {color: Colors.green}]}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveButton}
+                activeOpacity={0.7}
+                onPress={() => console.log('Next Pressed')}>
+                <Text style={styles.saveText}>Submit</Text>
+                <RightCheckmark width={12} height={12} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </Container>
   );
@@ -73,7 +131,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100, // Extra padding to account for button row
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
     marginVertical: 10,
     marginBottom: scaleHeight(20),
@@ -83,81 +141,40 @@ const styles = StyleSheet.create({
     fontSize: scaleFont(14),
     fontWeight: fontWeight.SemiBold,
   },
-  inputGroup: {
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  label: {
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    fontSize: 14,
-    backgroundColor: '#f9f9f9',
-  },
-  uploadBox: {
+  footerButton: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#bbb',
-    borderRadius: 6,
-    padding: 10,
-    marginBottom: 10,
+    marginVertical: 20,
+    marginTop: scaleHeight(30),
   },
-  icon: {
-    width: 16,
-    height: 16,
-    marginRight: 8,
-    tintColor: '#888',
-  },
-  uploadText: {
-    fontSize: 13,
-    color: '#666',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    gap: 10,
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
+  clearButton: {},
   clearText: {
-    color: 'red',
-    fontSize: 13,
-    marginRight: 10,
+    color: Colors.primaryColor,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
   saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.green,
+    paddingHorizontal: scaleWidth(12),
+    paddingVertical: scaleHeight(5),
+    borderRadius: scaleWidth(4),
+    gap: scaleWidth(8),
     borderWidth: 1,
-    borderColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    borderColor: Colors.green,
+    minWidth: scaleWidth(100),
   },
   saveText: {
-    color: '#28a745',
-    fontSize: 13,
+    color: Colors.white,
+    fontFamily: Fonts.GilroyMedium,
+    fontSize: scaleFont(14),
   },
-  submitButton: {
-    backgroundColor: '#28a745',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 13,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scaleWidth(10),
   },
 });

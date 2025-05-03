@@ -1,5 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, StyleSheet, TextInput, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import {AppBar, Container, KycCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
@@ -9,7 +16,7 @@ import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 
 const KycData = [
   {
@@ -62,17 +69,17 @@ const KycData = [
   },
 ] as const;
 
-type ClientInfoNavigationType = CompositeNavigationProp<
+type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+  NativeStackNavigationProp<KycNavigatorType>
 >;
 
 export const KycDocument = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+  const navigation = useNavigation<KycNavigationType>();
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <AppBar title="Kyc Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Kyc Document</Text>
       </View>
@@ -101,7 +108,13 @@ export const KycDocument = () => {
         <FlatList
           data={KycData}
           keyExtractor={item => item.clientId}
-          renderItem={({item}) => <KycCard {...item} />}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('KYCFormSelection')}>
+              <KycCard {...item} />
+            </TouchableOpacity>
+          )}
           contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
         />
       </View>
