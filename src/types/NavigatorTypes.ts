@@ -77,6 +77,11 @@ export type ClientNavigatorType = {
   KYCFormSelection: undefined;
   ShareholdingCompany: undefined;
   CompanyDocument: undefined;
+  DocumentValidation: undefined;
+  DocValidForm: undefined;
+  DocValidSelection: undefined;
+  PersonalKYCValidation: undefined;
+  BusinessKYCValidation: undefined;
   TaskLogTabs: undefined;
 };
 
