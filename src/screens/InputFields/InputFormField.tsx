@@ -148,6 +148,7 @@ export const InputFormField = () => {
             : formInputDetails[Forms[formIndex]].map(item => {
                 const dropdownFields = [
                   'Type of Visit',
+                  'City',
                   'State',
                   'Sector',
                   'Source of Lead',
@@ -179,6 +180,18 @@ export const InputFormField = () => {
                     <DateNTimePicker
                       key={item.label}
                       label="Date of Visit"
+                      mode="date"
+                      value={visitDate}
+                      onConfirm={val => setVisitDate(val)}
+                    />
+                  );
+                }
+
+                if (item.label === 'Date of Next Visit') {
+                  return (
+                    <DateNTimePicker
+                      key={item.label}
+                      label="Date of Next Visit"
                       mode="date"
                       value={visitDate}
                       onConfirm={val => setVisitDate(val)}
