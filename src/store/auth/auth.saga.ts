@@ -1,18 +1,31 @@
-import {call, put, takeLatest} from 'redux-saga/effects';
-import {loginRequest, loginSuccess, loginFailure} from './auth.slice';
+import {call, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
-import {LoginPayload} from './auth.types';
+import {
+  ISignupResponse,
+  PayloadWithCallback,
+  SignUpPayload,
+} from './auth.types';
 import {AuthApis} from '@services/api';
+import {signupRequest} from './auth.slice';
 
-function* handleLogin(action: PayloadAction<LoginPayload>): unknown {
+function* handleSignup(
+  action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
+): unknown {
   try {
-    const response = yield call(AuthApis.apiLogin, action.payload);
-    yield put(loginSuccess(response));
+    const response: ISignupResponse = yield call(
+      AuthApis.apiSignup,
+      action.payload.payload,
+    );
+    if (response.success) {
+      action.payload.callbackSuccess?.();
+    } else {
+      action.payload.callbackError?.(response.message);
+    }
   } catch (error: any) {
-    yield put(loginFailure(error.message));
+    action.payload.callbackError?.(error?.message);
   }
 }
 
 export default function* authSaga() {
-  yield takeLatest(loginRequest.type, handleLogin);
+  yield takeLatest(signupRequest.type, handleSignup);
 }

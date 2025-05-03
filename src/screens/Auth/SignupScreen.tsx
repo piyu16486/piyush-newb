@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
@@ -9,6 +10,9 @@ import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
 import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {signupRequest} from '@store/auth/auth.slice';
+import {userSelector} from '@store/user';
 
 export const SignupScreen = () => {
   // Hooks
@@ -16,7 +20,6 @@ export const SignupScreen = () => {
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
   const {params} = useRoute<RouteProp<AuthNavigatorType, 'SignupScreen'>>();
   // States
-  const [signupMode, setSignupMode] = useState<'email' | 'mobile'>('email');
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [country, setCountry] = useState<Country>({
     cca2: 'IN',
@@ -27,24 +30,46 @@ export const SignupScreen = () => {
     flag: 'flag-in',
     name: 'India',
   });
-  const [contactInfo, setContactInfo] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+
+  const dispatch = useDispatch();
+  const userType = useSelector(userSelector.getUserType);
 
   useEffect(() => {
-    if (params?.signupMode) {
-      setSignupMode(params.signupMode);
-      if (params.signupMode === 'mobile') {
-        setContactInfo(params.mobile ?? '');
-        setCountry(params.country ?? country);
-      } else {
-        setContactInfo(params.email ?? '');
-      }
+    if (params) {
+      setEmail(params.email ?? email);
+      setFirstName(params.firstName ?? firstName);
+      setLastName(params.lastName ?? lastName);
+      setMobileNumber(params.mobile ?? mobileNumber);
+      setCountry(params.country ?? country);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Functions
+  const handleNameVerifications = () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Name is required',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    if (firstName.length < 2 || lastName.length < 2) {
+      Toast.show({
+        type: 'error',
+        text1: 'Name is too short',
+        visibilityTime: 2000,
+      });
+      return false;
+    }
+    return true;
+  };
   const handleEmailVerification = () => {
-    if (!contactInfo.trim()) {
+    if (!email.trim()) {
       Toast.show({
         type: 'error',
         text1: 'Email is required',
@@ -52,7 +77,7 @@ export const SignupScreen = () => {
       });
       return false;
     }
-    if (!isValidEmail(contactInfo.trim())) {
+    if (!isValidEmail(email.trim())) {
       Toast.show({
         type: 'error',
         text1: 'Email is not valid',
@@ -60,16 +85,10 @@ export const SignupScreen = () => {
       });
       return false;
     }
-    Toast.show({
-      type: 'success',
-      text1: 'OTP sent to your email',
-      visibilityTime: 2000,
-    });
     return true;
   };
-
   const handleMobileVerification = () => {
-    if (!contactInfo.trim()) {
+    if (!mobileNumber.trim()) {
       Toast.show({
         type: 'error',
         text1: 'Mobile no. is required',
@@ -77,7 +96,7 @@ export const SignupScreen = () => {
       });
       return false;
     }
-    if (!isValidMobile(contactInfo.trim(), country.callingCode[0])) {
+    if (!isValidMobile(mobileNumber.trim(), country.callingCode[0])) {
       Toast.show({
         type: 'error',
         text1: 'Mobile no. is not valid',
@@ -85,50 +104,62 @@ export const SignupScreen = () => {
       });
       return false;
     }
+    return true;
+  };
+
+  const onSuccessSignup = () => {
     Toast.show({
       type: 'success',
       text1: 'OTP sent to your mobile no.',
       visibilityTime: 2000,
     });
-    return true;
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'OTPInputScreen',
+          params: {
+            mobile: mobileNumber,
+            showCreatePass: true,
+            email,
+            country,
+            firstName,
+            lastName,
+          },
+        },
+      ],
+    });
+  };
+
+  const onErrorSignup = (errorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: errorMessage,
+      visibilityTime: 2000,
+    });
   };
 
   const onPressVerify = () => {
-    if (signupMode === 'email') {
-      const isEmailValid = handleEmailVerification();
-      if (isEmailValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'email',
-                email: contactInfo,
-                showCreatePass: true,
-              },
-            },
-          ],
-        });
-      }
-    } else {
-      const isMobileValid = handleMobileVerification();
-      if (isMobileValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'mobile',
-                mobile: contactInfo,
-                country: country,
-                showCreatePass: true,
-              },
-            },
-          ],
-        });
-      }
+    const isMobileValid = handleMobileVerification();
+    const isEmailValid = handleEmailVerification();
+    const isNameValid = handleNameVerifications();
+    if (isEmailValid && isMobileValid && isNameValid) {
+      dispatch(
+        signupRequest({
+          payload: {
+            country_code: country.callingCode[0],
+            mobile_number: mobileNumber,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            is_client: userType === 'client',
+            is_internal: userType === 'internal',
+          },
+          callbackSuccess: onSuccessSignup,
+          callbackError: onErrorSignup,
+        }),
+      );
     }
   };
 
@@ -145,76 +176,61 @@ export const SignupScreen = () => {
         />
         <View style={styles.inputContainer}>
           <Input
-            label={
-              signupMode === 'email'
-                ? 'Enter your Email Address'
-                : 'Enter your Mobile Number'
-            }
+            label="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <Input
+            label="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            containerStyle={{marginTop: scaleHeight(20)}}
+          />
+          <Input
+            label="Email Address"
+            maxLength={32}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType={'email-address'}
+            containerStyle={{marginTop: scaleHeight(20)}}
+          />
+          <Input
+            label="Mobile No."
             renderLeftIcon={
-              signupMode === 'email' ? undefined : (
-                <View style={styles.countryCodeContainer}>
-                  <CountryPicker
-                    visible={showCountryModal}
-                    countryCode={country.cca2}
-                    onSelect={item => {
-                      setShowCountryModal(false);
-                      setCountry(item);
-                    }}
-                    withEmoji
-                    withFlag
-                    withCallingCode
-                    withAlphaFilter
-                    withFilter
-                    withFlagButton
-                    withCallingCodeButton
-                  />
-                </View>
-              )
+              <View style={styles.countryCodeContainer}>
+                <CountryPicker
+                  visible={showCountryModal}
+                  countryCode={country.cca2}
+                  onSelect={item => {
+                    setShowCountryModal(false);
+                    setCountry(item);
+                  }}
+                  withEmoji
+                  withFlag
+                  withCallingCode
+                  withAlphaFilter
+                  withFilter
+                  withFlagButton
+                  withCallingCodeButton
+                />
+              </View>
             }
             leftIconStyle={styles.leftIcon}
-            onPressLeftIcon={() => {
-              setShowCountryModal(prv => !prv);
-            }}
-            maxLength={32}
-            value={contactInfo}
-            onChangeText={setContactInfo}
-            keyboardType={
-              signupMode === 'email' ? 'email-address' : 'number-pad'
-            }
+            onPressLeftIcon={() => setShowCountryModal(prv => !prv)}
+            maxLength={15}
+            value={mobileNumber}
+            onChangeText={setMobileNumber}
+            keyboardType="number-pad"
+            containerStyle={{marginTop: scaleHeight(20)}}
           />
           <Button
-            buttonText={
-              signupMode === 'email' ? 'Get Verification Code' : 'Get OTP'
-            }
+            buttonText={'Get Verification Code'}
             style={{marginTop: scaleHeight(35)}}
             onPress={onPressVerify}
           />
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>or</Text>
-            <View style={styles.divider} />
-          </View>
-
-          <Button
-            buttonText={
-              signupMode === 'email'
-                ? 'Continue with Mobile No.'
-                : 'Continue with Email ID'
-            }
-            mode="outlined"
-            style={{marginTop: scaleHeight(24)}}
-            onPress={() => {
-              if (signupMode === 'email') {
-                setSignupMode('mobile');
-              } else {
-                setSignupMode('email');
-              }
-              setContactInfo('');
-            }}
-          />
 
           <View style={styles.accountContainer}>
-            <Text style={styles.accountText}>Already have an account?</Text>
+            <Text style={styles.accountText}>Already have an account? </Text>
             <TouchableOpacity onPress={onPressLogin}>
               <Text style={[styles.accountText, styles.accountLinkText]}>
                 Log in
@@ -232,28 +248,10 @@ const styles = StyleSheet.create({
   flex1: {flex: 1},
   inputContainer: {
     marginHorizontal: scaleWidth(43),
-    marginTop: scaleHeight(64),
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: scaleHeight(35),
-  },
-  divider: {
-    flex: 1,
-    height: scaleHeight(2),
-    backgroundColor: '#CED0CE',
-    borderRadius: 10,
-  },
-  dividerText: {
-    marginHorizontal: scaleWidth(10),
-    color: Colors.lightGray,
-    lineHeight: scaleFont(14),
-    fontSize: scaleFont(14),
-    fontFamily: Fonts.GilroyMedium,
+    marginTop: scaleHeight(50),
   },
   accountContainer: {
-    marginTop: scaleHeight(93),
+    marginTop: scaleHeight(21),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

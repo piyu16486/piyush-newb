@@ -15,31 +15,56 @@ export type AuthNavigatorType = {
   Login: undefined;
 };
 
-export type SignupScreenParams =
-  | {
-      signupMode: 'email';
-      email?: string;
-    }
-  | {
-      signupMode: 'mobile';
-      mobile?: string;
-      country?: Country;
-    }
-  | undefined;
+export type SignupScreenParams = {
+  email: string;
+  mobile: string;
+  country: Country;
+  firstName: string;
+  lastName: string;
+};
 
-export type OTPInputScreenParams =
-  | {
-      signupMode: 'email';
-      email: string;
-      showCreatePass: boolean;
-    }
-  | {
-      signupMode: 'mobile';
-      mobile: string;
-      country: Country;
-      showCreatePass: boolean;
-    };
+export type OTPInputScreenParams = {
+  email: string;
+  mobile: string;
+  country: Country;
+  showCreatePass: boolean;
+  firstName: string;
+  lastName: string;
+};
 
 export type HomeNavigatorType = {
+  ClientNavigator: undefined;
+  SoftNavigator: undefined;
+};
+
+export type ClientNavigatorType = {
   ClientInfo: undefined;
+  FormSelectionScreen: undefined;
+  InputFormField: {
+    screen:
+      | 'BasicDetails'
+      | 'ClientFirmScreen'
+      | 'VendorScreen'
+      | 'VisitScreen';
+    title:
+      | 'Basic Details'
+      | 'Client & Firm Details'
+      | 'Vendor Details'
+      | 'Visit Details';
+  };
+  ClientLeadInfoTab: undefined;
+  ClientCardReadMore: undefined;
+  SoftsanctionProcess: undefined;
+  SoftSanctionRuleset: undefined;
+  RulesetTCPD: undefined;
+  UGROTurnoverMethod: undefined;
+  UGROPurchaseMethod: undefined;
+  LeadProgress: undefined;
+  LeadProgressInfo: undefined;
+  Report: undefined;
+  TaskLogTabs: undefined;
+};
+
+export type SoftNavigatorType = {
+  Softsanction: undefined;
 };

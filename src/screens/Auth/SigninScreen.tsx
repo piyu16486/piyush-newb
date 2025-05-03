@@ -15,7 +15,7 @@ export const SigninScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
 
-  const [signupMode, setSignupMode] = useState<'email' | 'mobile'>('email');
+  const [signupMode] = useState<'email' | 'mobile'>('email');
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [country, setCountry] = useState<Country>({
     cca2: 'IN',
@@ -26,18 +26,10 @@ export const SigninScreen = () => {
     flag: 'flag-in',
     name: 'India',
   });
+
   const [contactInfo, setContactInfo] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-
-  const onPressContinue = () => {
-    if (signupMode === 'email') {
-      setSignupMode('mobile');
-    } else {
-      setSignupMode('email');
-    }
-    setContactInfo('');
-  };
 
   const handleEmailVerification = () => {
     if (!contactInfo.trim()) {
@@ -89,7 +81,7 @@ export const SigninScreen = () => {
     return true;
   };
 
-  const onPressVerify = () => {
+  const onPressVerify = async () => {
     if (signupMode === 'email') {
       const isEmailValid = handleEmailVerification();
       if (isEmailValid) {
@@ -200,21 +192,6 @@ export const SigninScreen = () => {
           </TouchableOpacity>
         </View>
         <Button buttonText="Get Verification Code" onPress={onPressVerify} />
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>or</Text>
-          <View style={styles.divider} />
-        </View>
-        <Button
-          buttonText={
-            signupMode === 'email'
-              ? 'Continue with Mobile No.'
-              : 'Continue with Email ID'
-          }
-          mode="outlined"
-          style={{marginTop: scaleHeight(24)}}
-          onPress={onPressContinue}
-        />
         <View style={styles.accountContainer}>
           <Text style={styles.accountText}>{"Don't have an account? "}</Text>
           <TouchableOpacity onPress={() => navigation.replace('SignupScreen')}>
@@ -240,7 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: scaleHeight(8),
     alignItems: 'center',
-    marginBottom: scaleHeight(18),
+    marginBottom: scaleHeight(47),
   },
   row: {flexDirection: 'row', alignItems: 'center'},
   rememberText: {
@@ -254,26 +231,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     fontSize: scaleFont(12),
   },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: scaleHeight(24),
-  },
-  divider: {
-    flex: 1,
-    height: scaleHeight(2),
-    backgroundColor: '#CED0CE',
-    borderRadius: 10,
-  },
-  dividerText: {
-    marginHorizontal: scaleWidth(10),
-    color: Colors.lightGray,
-    lineHeight: scaleFont(14),
-    fontSize: scaleFont(14),
-    fontFamily: Fonts.GilroyMedium,
-  },
   accountContainer: {
-    marginTop: scaleHeight(54),
+    marginTop: scaleHeight(64),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

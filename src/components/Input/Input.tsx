@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     fontSize: scaleFont(14),
     color: Colors.gray,
-    marginBottom: scaleHeight(12),
+    marginBottom: scaleHeight(6),
   },
   inputContainer: {
     borderWidth: scaleWidth(1.5),

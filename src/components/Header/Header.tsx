@@ -47,15 +47,18 @@ const styles = StyleSheet.create({
     fontSize: scaleFont(16),
     color: Colors.gray,
     fontFamily: Fonts.GilroyMedium,
+    // textAlign: 'center', // Centers text
   },
   subtitle: {
     marginTop: scaleHeight(8),
     fontSize: scaleFont(12),
     color: Colors.lightGray,
     fontFamily: Fonts.GilroySemiBold,
+    // textAlign: 'center', // Centers text
   },
   subtitleContainer: {
-    marginTop: scaleHeight(75),
+    marginTop: scaleHeight(50),
     marginHorizontal: scaleWidth(32),
+    // alignItems: 'center', // Centers children horizontally
   },
 });
