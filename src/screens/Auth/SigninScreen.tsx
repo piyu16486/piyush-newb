@@ -1,21 +1,35 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {EyeClose, EyeOpen} from '@assets/Icons';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {Colors, Fonts} from '@constants/index';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {SignInPayload} from '@store/auth';
+import {signinRequest} from '@store/auth/auth.slice';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {isValidEmail, isValidMobile} from '@utils/Utils';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CountryPicker, {Country} from 'react-native-country-picker-modal';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Feather';
+import {useDispatch} from 'react-redux';
 
 export const SigninScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
 
   const [signupMode] = useState<'email' | 'mobile'>('email');
+  const [showPassword, setShowPassword] = useState(false);
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [country, setCountry] = useState<Country>({
     cca2: 'IN',
@@ -28,8 +42,9 @@ export const SigninScreen = () => {
   });
 
   const [contactInfo, setContactInfo] = useState('');
-  const [password, setPassword] = useState('');
+  const [passwordValue, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleEmailVerification = () => {
     if (!contactInfo.trim()) {
@@ -81,41 +96,52 @@ export const SigninScreen = () => {
     return true;
   };
 
+  const dispatch = useDispatch();
+
   const onPressVerify = async () => {
+    console.log('-------->>>>>');
     if (signupMode === 'email') {
+      console.log('-------->>>>>1');
       const isEmailValid = handleEmailVerification();
       if (isEmailValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'email',
-                email: contactInfo,
-                showCreatePass: false,
-              },
+        console.log('-------->>>>>2');
+        const payload: SignInPayload = {
+          email: contactInfo,
+          password: passwordValue,
+        };
+        console.log('----->>>>3', payload);
+        setLoading(true); // Show loader
+
+        dispatch(
+          signinRequest({
+            payload,
+            callbackSuccess: () => {
+              console.log('Login successful. Navigating to OTP screen...');
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'OTPInputScreenLogin',
+                    params: {
+                      signupMode: 'email',
+                      email: contactInfo,
+                      showCreatePass: false,
+                    },
+                  },
+                ],
+              });
             },
-          ],
-        });
-      }
-    } else {
-      const isMobileValid = handleMobileVerification();
-      if (isMobileValid) {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'OTPInputScreen',
-              params: {
-                signupMode: 'mobile',
-                mobile: contactInfo,
-                country: country,
-                showCreatePass: false,
-              },
+            callbackError: errorMessage => {
+              console.log('error', errorMessage);
+              console.warn('Login failed:', errorMessage);
+              // Optionally show alert or toast
+              Alert.alert(
+                'Login Failed',
+                errorMessage || 'Something went wrong',
+              );
             },
-          ],
-        });
+          }),
+        );
       }
     }
   };
@@ -130,7 +156,7 @@ export const SigninScreen = () => {
         <Input
           label={
             signupMode === 'email'
-              ? 'Enter your Email Address'
+              ? 'Email Address'
               : 'Enter your Mobile Number'
           }
           renderLeftIcon={
@@ -166,7 +192,16 @@ export const SigninScreen = () => {
         <Input
           label="Password"
           onChangeText={setPassword}
-          value={password}
+          value={passwordValue}
+          renderRightIcon={
+            showPassword ? (
+              <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
+            ) : (
+              <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
+            )
+          }
+          onPressRightIcon={() => setShowPassword(prv => !prv)}
+          secureTextEntry={!showPassword}
           containerStyle={{marginTop: scaleHeight(24)}}
         />
         <View style={styles.extraInfoContainer}>
@@ -202,6 +237,12 @@ export const SigninScreen = () => {
         </View>
       </View>
       <TnCFooter navigation={navigation} />
+      {/* Activity Indicator Overlay - Show when loading */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="blue" />
+        </View>
+      )}
     </Container>
   );
 };
@@ -256,5 +297,16 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray300,
     height: '100%',
     flexDirection: 'row',
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
 });

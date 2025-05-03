@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'x-client-type': 'mobile',
   },
   timeout: GENERAL_TIMEOUT,
 });

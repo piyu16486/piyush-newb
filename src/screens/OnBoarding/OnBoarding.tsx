@@ -16,9 +16,10 @@ import {scaleFont, scaleHeight} from '@utils/Scale';
 import {useDispatch} from 'react-redux';
 import {userActions} from '@store/user';
 
+type OnBoardingNavigationType = NativeStackNavigationProp<AuthNavigatorType>;
+
 export const OnBoarding = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+  const navigation = useNavigation<OnBoardingNavigationType>();
   const [showNewUser, setShowNewUser] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -38,6 +39,10 @@ export const OnBoarding = () => {
   const navigateToSignup = (userType: 'client' | 'internal') => {
     dispatch(userActions.setUserType(userType));
     navigation.navigate('SignupScreen');
+  };
+
+  const navigateToSignin = () => {
+    navigation.navigate('SigninScreen');
   };
 
   return (
@@ -90,8 +95,7 @@ export const OnBoarding = () => {
                     style={
                       styles.subTitle
                     }>{`Continue your Journey as an `}</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('SigninScreen')}>
+                  <TouchableOpacity onPress={() => navigateToSignin()}>
                     <Text style={styles.subTitleLink}>{'existing user?'}</Text>
                   </TouchableOpacity>
                 </View>

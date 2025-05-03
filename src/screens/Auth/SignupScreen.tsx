@@ -1,5 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -13,6 +18,7 @@ import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
 import {signupRequest} from '@store/auth/auth.slice';
 import {userSelector} from '@store/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const SignupScreen = () => {
   // Hooks
@@ -40,11 +46,11 @@ export const SignupScreen = () => {
 
   useEffect(() => {
     if (params) {
-      setEmail(params.email ?? email);
-      setFirstName(params.firstName ?? firstName);
-      setLastName(params.lastName ?? lastName);
-      setMobileNumber(params.mobile ?? mobileNumber);
-      setCountry(params.country ?? country);
+      setEmail(params.email);
+      setFirstName(params.firstName);
+      setLastName(params.lastName);
+      setMobileNumber(params.mobile);
+      setCountry(params.country);
     }
   }, [params]);
 
@@ -68,6 +74,7 @@ export const SignupScreen = () => {
     }
     return true;
   };
+
   const handleEmailVerification = () => {
     if (!email.trim()) {
       Toast.show({
@@ -107,7 +114,10 @@ export const SignupScreen = () => {
     return true;
   };
 
+  const [loading, setLoading] = useState(false);
+
   const onSuccessSignup = () => {
+    setLoading(false);
     Toast.show({
       type: 'success',
       text1: 'OTP sent to your mobile no.',
@@ -133,6 +143,8 @@ export const SignupScreen = () => {
   };
 
   const onErrorSignup = (errorMessage: string) => {
+    setLoading(false);
+
     Toast.show({
       type: 'error',
       text1: errorMessage,
@@ -140,11 +152,27 @@ export const SignupScreen = () => {
     });
   };
 
+  function storeMobilenumber(key: any, value: any) {
+    try {
+      AsyncStorage.setItem(key, value)
+        .then(() => {
+          console.log('Data stored successfully');
+        })
+        .catch(e => {
+          console.log('Failed to save data', e);
+        });
+    } catch (e) {
+      console.log('Unexpected error', e);
+    }
+  }
+
   const onPressVerify = () => {
     const isMobileValid = handleMobileVerification();
     const isEmailValid = handleEmailVerification();
     const isNameValid = handleNameVerifications();
+    storeMobilenumber('mobilenumber', mobileNumber);
     if (isEmailValid && isMobileValid && isNameValid) {
+      setLoading(true); // Show loader
       dispatch(
         signupRequest({
           payload: {
@@ -240,6 +268,12 @@ export const SignupScreen = () => {
         </View>
       </View>
       <TnCFooter navigation={navigation} />
+      {/* Activity Indicator Overlay - Show when loading */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <ActivityIndicator size="large" color="blue" />
+        </View>
+      )}
     </Container>
   );
 };
@@ -275,5 +309,16 @@ const styles = StyleSheet.create({
     borderColor: Colors.gray300,
     height: '100%',
     flexDirection: 'row',
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
   },
 });

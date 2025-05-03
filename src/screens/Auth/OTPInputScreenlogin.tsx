@@ -1,30 +1,51 @@
-import {View, Text, TouchableOpacity, StyleSheet, AppState} from 'react-native';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {View, Text, AppState, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, Container, Header, TnCFooter} from '@components/index';
-import {OtpInput} from 'react-native-otp-entry';
-import {AuthNavigatorType} from '@type/NavigatorTypes';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import {Colors, Fonts} from '@constants/index';
-import {EditIcon} from '@assets/Icons';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthNavigatorType} from '@type/NavigatorTypes';
 import Toast from 'react-native-toast-message';
+import {Button, Container, Header, TnCFooter} from '@components/index';
+import {EditIcon} from '@assets/Icons';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import {OtpInput} from 'react-native-otp-entry';
+import Colors from '@constants/Colors';
+import Fonts from '@constants/Fonts';
+import {signInOtpVerify} from '@store/auth/auth.slice';
 import {useDispatch} from 'react-redux';
-import {otpVerifyRequest} from '@store/auth/auth.slice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OTP_TIMER = 60;
 
-export const OTPInputScreen = () => {
+export const OTPInputScreenlogin = () => {
   const [otp, setOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(OTP_TIMER);
   const timerInterval = useRef<NodeJS.Timeout>(null);
 
+  async function getData(key: string) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        console.log('Retrieved value:', value);
+        return value;
+      }
+    } catch (e) {
+      console.log('Failed to fetch data', e);
+    }
+  }
+  async function getMobilenumber() {
+    let mobileNumber = await getData('mobilenumber');
+    console.log('Retrieved token:', mobileNumber);
+    return mobileNumber; // Or use token for your further logic
+  }
+
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
-  const {params} = useRoute<RouteProp<AuthNavigatorType, 'OTPInputScreen'>>();
+  const {params} =
+    useRoute<RouteProp<AuthNavigatorType, 'OTPInputScreenLogin'>>();
 
   const onPressEdit = () => {
-    navigation.replace('SignupScreen', params);
+    navigation.replace('SigninScreen', params);
   };
 
   const startTimer = () => {
@@ -71,44 +92,40 @@ export const OTPInputScreen = () => {
 
   const dispatch = useDispatch();
 
-  const onPressVerifyOTP = () => {
+  const onPressVerifyOTP = async () => {
+    const mobilenumber = (await AsyncStorage.getItem('mobilenumber')) ?? '';
+
     console.log('------->>>>');
     console.log('OTP entered:', otp);
-    console.log('Email for OTP:', params.email);
+    console.log('Mobile number for OTP:', params.email); // Assuming it's mobile_number
 
-    if (otp.length < 6) {
+    if (otp.length < 6 || !/^\d{6}$/.test(otp)) {
       Toast.show({
         type: 'error',
-        text1: 'Please enter a valid OTP',
+        text1: 'Please enter a valid 6-digit OTP',
         visibilityTime: 2000,
       });
       return;
     }
-    console.log('----->>>>>11');
+
     dispatch(
-      otpVerifyRequest({
+      signInOtpVerify({
         payload: {
-          email: params.email, // or route.params.email
+          mobile_number: mobilenumber, // Replace 'email' with actual mobile_number if needed
           otp: otp,
         },
         callbackSuccess: () => {
           Toast.show({
             type: 'success',
-            text1: 'OTP verified successfully',
+            text1: 'OTP Verified Successfully!',
             visibilityTime: 2000,
           });
-
-          if (params.showCreatePass) {
-            navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
-          } else {
-            navigation.replace('SuccessScreen', {authMode: 'signin'});
-          }
+          navigation.navigate('SuccessScreen', {authMode: 'signin'});
         },
-        callbackError: (errMsg: string) => {
-          console.log('----->>>>>12', errMsg);
+        callbackError: (errMessage: string) => {
           Toast.show({
             type: 'error',
-            text1: errMsg || 'Wrong OTP. Please try again',
+            text1: errMessage || 'Invalid OTP',
             visibilityTime: 2000,
           });
         },
