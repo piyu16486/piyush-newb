@@ -1,5 +1,6 @@
 import React, {forwardRef} from 'react';
 import {
+  ActivityIndicator,
   StyleProp,
   StyleSheet,
   Text,
@@ -11,10 +12,31 @@ import {
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {Colors, Fonts} from '@constants/index';
 
+/**
+ * Customizable button component.
+ */
 export interface CustomButtonProps extends TouchableOpacityProps {
+  /**
+   * The text to display within the button.
+   */
   buttonText: string;
+
+  /**
+   * The visual style of the button.
+   * @default 'contained'
+   */
   mode?: 'contained' | 'outlined';
+
+  /**
+   * The style of the button text.
+   */
   buttonTextStyle?: StyleProp<TextStyle>;
+
+  /**
+   * Whether to display a loading indicator.
+   * @default false
+   */
+  showLoader?: boolean;
 }
 
 export const Button = forwardRef<View, CustomButtonProps>((props, ref) => {
@@ -24,6 +46,7 @@ export const Button = forwardRef<View, CustomButtonProps>((props, ref) => {
     buttonTextStyle,
     disabled,
     style,
+    showLoader,
     ...touchableProps
   } = props;
   return (
@@ -36,14 +59,18 @@ export const Button = forwardRef<View, CustomButtonProps>((props, ref) => {
         style,
       ]}
       {...touchableProps}>
-      <Text
-        style={[
-          styles.buttonTextStyle,
-          mode === 'outlined' && styles.outlinedButtonText,
-          buttonTextStyle,
-        ]}>
-        {buttonText}
-      </Text>
+      {showLoader ? (
+        <ActivityIndicator color={Colors.white} />
+      ) : (
+        <Text
+          style={[
+            styles.buttonTextStyle,
+            mode === 'outlined' && styles.outlinedButtonText,
+            buttonTextStyle,
+          ]}>
+          {buttonText}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 });
