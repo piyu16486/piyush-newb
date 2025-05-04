@@ -8,7 +8,7 @@ import {HomeNavigator} from './HomeNavigator';
 
 export const MainNavigator = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const userInfo = useSelector(userSelector.getUserInfo);
+  const userInfo = null;
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {

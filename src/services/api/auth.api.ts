@@ -1,27 +1,48 @@
+import {Result} from '@utils/TryCatch';
 import {Api} from '.';
+import {responseHandler} from './responseHandler';
+// Types
 import {
   ForgotPasswordPayload,
   IForgotpasswordResponse,
-  IOtpVerifyResponse,
+  IOtpVerifyPayload,
+  IOtpVerifySuccessResponse,
   ISigninOtpVerifyResponse,
+  ISignInPayload,
   ISigninResponse,
-  ISignupResponse,
+  // Signup
+  ISignupErrorResponse,
+  ISignupPayload,
+  ISignupSuccessResponse,
   IverifyPasswordResponse,
-  OtpVerifyPayload,
   SigninOtpVerifyPayload,
-  SignInPayload,
-  SignUpPayload,
   VerifyPasswordPayload,
 } from '@store/auth';
 
-const apiSignup = async (payload: SignUpPayload): Promise<ISignupResponse> => {
-  const response = await Api.post('/auth/signup', payload);
-  return response.data;
+/**
+ * Sends a signup request to the server.
+ * @param {ISignupPayload} payload - The payload containing signup details such as email, name, and mobile number.
+ * @returns {Promise<Result<ISignupSuccessResponse, ISignupErrorResponse>>} The result of the signup operation, containing either the success response or an error response.
+ */
+
+const apiSignup = async (
+  payload: ISignupPayload,
+): Promise<Result<ISignupSuccessResponse, ISignupErrorResponse>> => {
+  const resultSet = await responseHandler<
+    ISignupSuccessResponse,
+    ISignupErrorResponse
+  >(Api.post('/auth/signup', payload));
+  return resultSet;
 };
 
+/**
+ * Verify OTP API
+ * @param {IOtpVerifyPayload} payload - request payload
+ * @returns {Promise<IOtpVerifySuccessResponse>} response of API
+ */
 const apiOtpVerify = async (
-  payload: OtpVerifyPayload,
-): Promise<IOtpVerifyResponse> => {
+  payload: IOtpVerifyPayload,
+): Promise<IOtpVerifySuccessResponse> => {
   const response = await Api.post('/auth/verify-otp-from-email', payload);
   return response.data;
 };
@@ -33,7 +54,7 @@ const apiVerifyPassword = async (
   return response.data;
 };
 
-const apiSignin = async (payload: SignInPayload): Promise<ISigninResponse> => {
+const apiSignin = async (payload: ISignInPayload): Promise<ISigninResponse> => {
   const response = await Api.post('/auth/login', payload);
   return response.data;
 };
