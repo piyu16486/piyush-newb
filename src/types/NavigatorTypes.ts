@@ -8,6 +8,8 @@ export type AuthNavigatorType = {
   SigninScreen: SigninScreenParams | undefined;
   PasswordScreen: {
     screenMode: 'forgotPass' | 'createPass';
+    email?: string;
+    token?: string; // <-- Add this
   };
   TermsOfService: undefined;
   SuccessScreen: {

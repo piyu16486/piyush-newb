@@ -21,9 +21,23 @@ export const MainNavigator = () => {
     return <SplashScreen />;
   }
 
+  const linking = {
+    prefixes: ['myapp://'],
+    config: {
+      screens: {
+        PasswordScreen: {
+          path: 'reset-password',
+          parse: {
+            token: (token: string) => token,
+          },
+        },
+      },
+    },
+  };
+
   return (
-    <NavigationContainer>
-      {!userInfo ? <HomeNavigator /> : <AuthNavigator />}
+    <NavigationContainer linking={linking}>
+      {userInfo ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

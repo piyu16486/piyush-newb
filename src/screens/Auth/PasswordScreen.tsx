@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -17,7 +17,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const PasswordScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+
   const {params} = useRoute<RouteProp<AuthNavigatorType, 'PasswordScreen'>>();
+
+  useEffect(() => {
+    if (params?.token) {
+      AsyncStorage.setItem('token', params.token);
+      console.log('Token from deep link saved to AsyncStorage:', params.token);
+    }
+  }, [params?.token]);
 
   const dispatch = useDispatch();
 
@@ -82,7 +90,7 @@ export const PasswordScreen = () => {
     async function getToken() {
       let token = await getData('token');
       console.log('Retrieved token:', token);
-      return token; // Or use token for your further logic
+      return token;
     }
 
     // ✅ Get email from params (or decode token if you prefer)
