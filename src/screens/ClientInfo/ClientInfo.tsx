@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import fontWeight from '@constants/FontWeight';
 import {Colors} from '@constants/index';
 
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ClientCardReadMore} from '@screens/ReadMore/ClientCardReadMore';
 
 const clientsData = [
   {
@@ -78,6 +79,10 @@ type ClientInfoNavigationType = CompositeNavigationProp<
 
 export const ClientInfo = () => {
   const navigation = useNavigation<ClientInfoNavigationType>();
+  const [showReadMore, setShowReadMore] = useState(false);
+  const onPressReadMore = useCallback(() => {
+    setShowReadMore(prev => !prev);
+  }, []);
 
   return (
     <Container>
@@ -87,71 +92,79 @@ export const ClientInfo = () => {
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Client Information</Text>
       </View>
-      <View style={styles.RowContainer}>
-        <View style={styles.Subrowcontainer}>
-          <Text style={styles.Subrowcontainertxt}>Clients</Text>
-          <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>{clientsData.length}</Text>
+      {showReadMore ? (
+        <ClientCardReadMore onPressReadLess={onPressReadMore} />
+      ) : (
+        <>
+          <View style={styles.RowContainer}>
+            <View style={styles.Subrowcontainer}>
+              <Text style={styles.Subrowcontainertxt}>Clients</Text>
+              <View style={styles.Badge}>
+                <Text style={styles.Badgetext}>{clientsData.length}</Text>
+              </View>
+            </View>
+            <View style={styles.Searchbox}>
+              <Search height={12} width={12} />
+              <TextInput
+                style={styles.input}
+                placeholder="Search Leads"
+                placeholderTextColor="#999"
+              />
+            </View>
+            <View style={styles.Filterbox}>
+              <View>
+                <Filter height={12} width={12} />
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={styles.Searchbox}>
-          <Search height={12} width={12} />
-          <TextInput
-            style={styles.input}
-            placeholder="Search Leads"
-            placeholderTextColor="#999"
-          />
-        </View>
-        <View style={styles.Filterbox}>
-          <View>
-            <Filter height={12} width={12} />
+          <View style={styles.Cardlist}>
+            <FlatList
+              data={clientsData}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                <ClientCard {...item} onPressReadMore={onPressReadMore} />
+              )}
+              contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
+            />
           </View>
-        </View>
-      </View>
-      <View style={styles.Cardlist}>
-        <FlatList
-          data={clientsData}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => <ClientCard {...item} />}
-          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
-        />
-      </View>
-      <TouchableOpacity
-        style={styles.plusButton}
-        // screen changes
-        // for Softsanctionv -> Softsanction
-        // for Next page of Softsanction -> SoftsanctionProcess
-        // for SoftSanction -> SoftSanctionRuleset
-        // for SoftSanctionRuleset phase-2 -> RulesetTCPD
-        // for UGRO phase-1 -> UGROTurnoverMethod
-        // for UGRO phase-2 -> UGROPurchaseMethod
-        // for LeadProgress -. LeadProgress
-        // for LeadProgress -> LeadProgressInfo
-        // for Report -> Report
-        // for Kyc Screens -> KycUploadDoc
-        // for pan screens -> KycUploadPan
-        // for Aadhar screens -> KycUploadAdhar
-        // for Residence screen -> ResidenceDetail
-        // for KycElectricityBill -> KycElectricityBill
-        // for KycOwnerStatus -> KycOwner
-        // for Udhyam Certificate -> UdhyamCertificate
-        // for GSTDocument -> GSTDocument
-        // for GodownDetails -> GodownDetails
-        // for GodownDetails2 -> GodownDetails2
-        // for CompanyPanCard -> CompanyPanCard
-        // for KycDocument -> KycDocument
-        // for KYCFormSelection -> KYCFormSelection
-        // for ShareholdingCompany -> ShareholdingCompany
-        // for CompanyDocument -> CompanyDocument
-        // for DocumentValidation -> DocumentValidation 1
-        // for DocValidForm -> DocValidForm 2
-        // for DocValidSelection -> DocValidSelection 3
-        // for PersonalKYCValidation -> PersonalKYCValidation 4
-        // for BusinessKYCValidation -> BusinessKYCValidation 5
+          <TouchableOpacity
+            style={styles.plusButton}
+            // screen changes
+            // for Softsanctionv -> Softsanction
+            // for Next page of Softsanction -> SoftsanctionProcess
+            // for SoftSanction -> SoftSanctionRuleset
+            // for SoftSanctionRuleset phase-2 -> RulesetTCPD
+            // for UGRO phase-1 -> UGROTurnoverMethod
+            // for UGRO phase-2 -> UGROPurchaseMethod
+            // for LeadProgress -. LeadProgress
+            // for LeadProgress -> LeadProgressInfo
+            // for Report -> Report
+            // for Kyc Screens -> KycUploadDoc
+            // for pan screens -> KycUploadPan
+            // for Aadhar screens -> KycUploadAdhar
+            // for Residence screen -> ResidenceDetail
+            // for KycElectricityBill -> KycElectricityBill
+            // for KycOwnerStatus -> KycOwner
+            // for Udhyam Certificate -> UdhyamCertificate
+            // for GSTDocument -> GSTDocument
+            // for GodownDetails -> GodownDetails
+            // for GodownDetails2 -> GodownDetails2
+            // for CompanyPanCard -> CompanyPanCard
+            // for KycDocument -> KycDocument
+            // for KYCFormSelection -> KYCFormSelection
+            // for ShareholdingCompany -> ShareholdingCompany
+            // for CompanyDocument -> CompanyDocument
+            // for DocumentValidation -> DocumentValidation 1
+            // for DocValidForm -> DocValidForm 2
+            // for DocValidSelection -> DocValidSelection 3
+            // for PersonalKYCValidation -> PersonalKYCValidation 4
+            // for BusinessKYCValidation -> BusinessKYCValidation 5
 
-        onPress={() => navigation.navigate('FormSelectionScreen')}>
-        <Plus height={24} width={24} />
-      </TouchableOpacity>
+            onPress={() => navigation.navigate('FormSelectionScreen')}>
+            <Plus height={24} width={24} />
+          </TouchableOpacity>
+        </>
+      )}
     </Container>
   );
 };

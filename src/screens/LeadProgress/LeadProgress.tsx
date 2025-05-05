@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {AppBar, Container, LeadProgressCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
@@ -10,7 +10,7 @@ import {HomeNavigatorType, LeadNavigatorType} from '@type/NavigatorTypes';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { LeadProgressInfo } from '@screens/LeadProgressInfo/LeadProgressInfo';
+import {LeadProgressInfo} from '@screens/LeadProgressInfo/LeadProgressInfo';
 
 type LeadNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -73,7 +73,7 @@ export const LeadProgress = () => {
   const [showReadMore, setShowReadMore] = useState(false);
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
-  },[])
+  }, []);
   return (
     <Container>
       <AppBar title="Lead Progress" navigation={navigation} />
@@ -82,7 +82,7 @@ export const LeadProgress = () => {
         <Text style={styles.Subheader}>Lead Progress Information</Text>
       </View>
       {showReadMore ? (
-        <LeadProgressInfo onPressReadLess={onPressReadMore}/>
+        <LeadProgressInfo onPressReadLess={onPressReadMore} />
       ) : (
         <>
           <View style={styles.RowContainer}>
@@ -110,7 +110,9 @@ export const LeadProgress = () => {
             <FlatList
               data={leadData}
               keyExtractor={item => item.clientId}
-              renderItem={({item}) => <LeadProgressCard {...item} onPressReadMore={onPressReadMore}/>}
+              renderItem={({item}) => (
+                <LeadProgressCard {...item} onPressReadMore={onPressReadMore} />
+              )}
               contentContainerStyle={{flexGrow: 1}}
             />
           </View>

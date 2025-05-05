@@ -1,4 +1,3 @@
-import {Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight} from '@utils/Scale';
@@ -12,7 +11,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-export const LeadProgressInfo = ({onPressReadLess}: {onPressReadLess: () => void}) => {
+interface StatusItem {
+  status: string;
+  date: string;
+  remark: string;
+  tat: string;
+}
+
+export const LeadProgressInfo = ({
+  onPressReadLess,
+}: {
+  onPressReadLess: () => void;
+}) => {
   const progressStatusData = [
     {
       id: '1',
@@ -37,7 +47,7 @@ export const LeadProgressInfo = ({onPressReadLess}: {onPressReadLess: () => void
     },
   ];
 
-  const renderStatusItem = ({item}) => (
+  const renderStatusItem = ({item}: {item: StatusItem}) => (
     <View style={styles.statusBlock}>
       <Text style={styles.label}>
         <Text style={styles.bold}>Status :</Text> {item.status}
@@ -175,12 +185,12 @@ const styles = StyleSheet.create({
   },
   readMoreButton: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 15,
     right: 10,
   },
   readMoreText: {
     color: Colors.tertiaryBlue,
     textDecorationLine: 'underline',
-    fontWeight: 'bold',
+    fontWeight: fontWeight.SemiBold,
   },
 });

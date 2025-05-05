@@ -15,6 +15,7 @@ interface ClientCardProps {
   sanctionRequested: string;
   financier: string;
   status: 'Warm' | 'Hot' | 'Cold';
+  onPressReadMore: (id: string) => void;
 }
 
 const ChipColors = {
@@ -34,6 +35,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   sanctionRequested,
   financier,
   status,
+  onPressReadMore,
 }) => {
   const navigation = useNavigation();
 
@@ -72,7 +74,9 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         <Text style={styles.bold}>Financier :</Text> {financier}
       </Text>
       {/* "Read More" Button */}
-      <TouchableOpacity style={styles.readMoreButton}>
+      <TouchableOpacity
+        style={styles.readMoreButton}
+        onPress={() => onPressReadMore(id)}>
         <Text style={styles.readMoreText}>Read more</Text>
       </TouchableOpacity>
     </View>

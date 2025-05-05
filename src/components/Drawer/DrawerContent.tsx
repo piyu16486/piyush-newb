@@ -186,12 +186,14 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
           </ScrollView>
         </View>
         {/* Logout Button*/}
-        <View style={styles.logOut}>
-          <View style={styles.row}>
-            <Logout height={scaleHeight(24)} width={scaleWidth(24)} />
-            <Text style={styles.buttonText}>Log Out</Text>
+        <TouchableOpacity>
+          <View style={styles.logOut}>
+            <View style={styles.row}>
+              <Logout height={scaleHeight(24)} width={scaleWidth(24)} />
+              <Text style={styles.buttonText}>Log Out</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
