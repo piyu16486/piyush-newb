@@ -145,6 +145,8 @@ export const SignupScreen = () => {
   const onErrorSignup = (errorMessage: string) => {
     setLoading(false);
 
+    console.error('Signup Error:', errorMessage); // This will log the error to the console
+
     Toast.show({
       type: 'error',
       text1: errorMessage,
