@@ -122,9 +122,15 @@ export const ClientInfo = () => {
               data={clientsData}
               keyExtractor={item => item.id}
               renderItem={({item}) => (
-                <ClientCard {...item} onPressReadMore={onPressReadMore} />
+                <ClientCard
+                  {...item}
+                  onPressReadMore={onPressReadMore}
+                  onDoublePress={id => {
+                    navigation.navigate('ClientLeadInfoTab', {clientId: id});
+                  }}
+                />
               )}
-              contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
+              contentContainerStyle={{flexGrow: 1}}
             />
           </View>
           <TouchableOpacity

@@ -37,7 +37,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer linking={linking}>
-      {userInfo ? <HomeNavigator /> : <AuthNavigator />}
+      {!userInfo ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

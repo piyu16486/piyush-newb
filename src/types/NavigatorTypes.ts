@@ -63,7 +63,7 @@ export type ClientNavigatorType = {
       | 'Vendor Details'
       | 'Visit Details';
   };
-  ClientLeadInfoTab: undefined;
+  ClientLeadInfoTab: {clientId: string};
   ClientCardReadMore: undefined;
 };
 

@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Colors} from '@constants/index';
 import {useNavigation} from '@react-navigation/native';
+import {createDoubleTapHandler} from '@utils/doubleTap';
 
 interface ClientCardProps {
   id: string;
@@ -16,6 +17,7 @@ interface ClientCardProps {
   financier: string;
   status: 'Warm' | 'Hot' | 'Cold';
   onPressReadMore: (id: string) => void;
+  onDoublePress?: (id: string) => void; // ✅ new prop
 }
 
 const ChipColors = {
@@ -36,43 +38,53 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   financier,
   status,
   onPressReadMore,
+  onDoublePress,
 }) => {
   const navigation = useNavigation();
+  const handleDoubleTap = createDoubleTapHandler(() => {
+    if (onDoublePress) {
+      onDoublePress(id);
+    }
+  });
 
   return (
     <View style={styles.card}>
-      <View style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
-        <Text style={styles.statusText}>{status}</Text>
-      </View>
+      <TouchableOpacity onPress={handleDoubleTap} activeOpacity={0.95}>
+        <View
+          style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
+          <Text style={styles.statusText}>{status}</Text>
+        </View>
 
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Client ID :</Text> {id}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Client Name :</Text> {name}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Location :</Text> {location}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Initiator :</Text> {initiator}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Source (D/H/C/O) :</Text> {source}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Reference Details :</Text> {referenceDetails}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Monthly Turnover :</Text> {monthlyTurnover}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Sanction Requested :</Text>{' '}
-        {sanctionRequested}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Financier :</Text> {financier}
-      </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Client ID :</Text> {id}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Client Name :</Text> {name}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Location :</Text> {location}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Initiator :</Text> {initiator}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Source (D/H/C/O) :</Text> {source}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Reference Details :</Text>{' '}
+          {referenceDetails}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Monthly Turnover :</Text> {monthlyTurnover}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Sanction Requested :</Text>{' '}
+          {sanctionRequested}
+        </Text>
+        <Text style={styles.label}>
+          <Text style={styles.bold}>Financier :</Text> {financier}
+        </Text>
+      </TouchableOpacity>
       {/* "Read More" Button */}
       <TouchableOpacity
         style={styles.readMoreButton}
