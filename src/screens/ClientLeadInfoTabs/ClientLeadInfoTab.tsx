@@ -1,30 +1,64 @@
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
-import {AppBar, Container} from '@components/index';
-import {
-  CompositeNavigationProp,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {Container, CustomDropdown, DateNTimePicker} from '@components/index';
+import {CompositeNavigationProp} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import DropDownPicker from 'react-native-dropdown-picker';
-import DatePicker from 'react-native-date-picker';
-import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import {scaleFont, scaleHeight} from '@utils/Scale';
+import {Plus} from '@assets/Icons';
 import fontWeight from '@constants/FontWeight';
-import Colors from '@constants/Colors';
+
+const remarkData = [
+  {
+    id: '1',
+    visitDate: '10-10-2024',
+    visitorName: 'Pritesh Trivedi',
+    taskType: 'Call',
+    taskDescription: 'Discussed Product',
+    remark: 'Client showed interest in premium packages.',
+    status: 'Completed',
+  },
+  {
+    id: '2',
+    visitDate: '12-10-2024',
+    visitorName: 'Hardik Patel',
+    taskType: 'Email',
+    taskDescription: 'Send Product Details',
+    remark: 'Follow-up required next week for confirmation.',
+    status: 'Completed',
+  },
+  {
+    id: '3',
+    visitDate: '12-10-2024',
+    visitorName: 'Hardik Patel',
+    taskType: 'Call',
+    taskDescription: 'Send Product Details',
+    remark: 'Follow-up required next week for confirmation.',
+    status: 'Pending',
+  },
+];
+
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'completed':
+      return {color: 'green'};
+    case 'pending':
+      return {color: 'orange'};
+    case 'cancelled':
+      return {color: 'red'};
+    default:
+      return {color: '#333'};
+  }
+};
 
 type ClientInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -32,348 +66,292 @@ type ClientInfoNavigationType = CompositeNavigationProp<
 >;
 
 export const ClientLeadInfoTab = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
-
-  const [activeTab, setActiveTab] = useState('task'); // 'task' or 'remark'
-  const [salesPersonOpen, setSalesPersonOpen] = useState(false);
-  const [taskTypeOpen, setTaskTypeOpen] = useState(false);
-  const [taskOpen, setTaskOpen] = useState(false);
-
-  const [salesPerson, setSalesPerson] = useState(null);
-  const [taskType, setTaskType] = useState(null);
-  const [task, setTask] = useState(null);
-  const [date, setDate] = useState(new Date());
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-
-  const remarkData = [
-    {
-      id: '1',
-      visitDate: '10-10-2024',
-      visitorName: 'Pritesh Trivedi',
-      taskType: 'Call',
-      taskDescription: 'Discussed Product',
-      remark: 'Client showed interest in premium packages.',
-      status: 'Completed',
-    },
-    {
-      id: '2',
-      visitDate: '12-10-2024',
-      visitorName: 'Hardik Patel',
-      taskType: 'Email',
-      taskDescription: 'Send Product Details',
-      remark: 'Follow-up required next week for confirmation.',
-      status: 'Completed',
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<'Task' | 'Report'>('Task');
+  const [schedule, setSchedule] = useState<Date | undefined>();
 
   return (
     <Container>
-      <AppBar title="Client Information Master" navigation={navigation} />
+      <ScrollView style={styles.container}>
+        {/* Lead Information Card */}
+        <View style={styles.card}>
+          {/* Status Badge */}
+          <View style={styles.badgeContainer}>
+            <Text style={styles.badgeText}>Warm</Text>
+          </View>
 
-      <View style={styles.mainContainer}>
-        <Text style={styles.tag}>Warm</Text>
-
-        <View style={styles.section}>
+          {/* Lead Details */}
           <Text style={styles.label}>Lead Information</Text>
-          <Text style={styles.text}>Full Name: XYZ Company PVT. LTD.</Text>
-          <Text style={styles.text}>Follow Up :</Text>
-        </View>
+          <Text style={styles.subLabel}>
+            <Text style={styles.boldText}>Full Name :</Text> XYZ Company PVT.
+            LTD.
+          </Text>
+          <Text style={styles.subLabel}>Follow Up :</Text>
+          <View style={styles.separator} />
 
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-        </View>
-
-        <View style={styles.section}>
           <Text style={styles.label}>Owner</Text>
-          <Text style={styles.text}>Lorem Ipsum</Text>
-        </View>
+          <Text style={styles.subLabel}>Lorem Ipsum</Text>
+          <View style={styles.separator} />
 
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-        </View>
-
-        <View style={styles.section}>
           <Text style={styles.label}>Assigned to</Text>
-          <Text style={styles.text}>Lorem Ipsum</Text>
+          <Text style={styles.subLabel}>Lorem Ipsum</Text>
         </View>
-      </View>
 
-      {/* Tabs */}
-      <View style={styles.tabContainer}>
-        <View style={styles.tabsWrapper}>
+        {/* Tabs */}
+        <View style={styles.tabs}>
           <TouchableOpacity
-            onPress={() => setActiveTab('task')}
-            style={styles.tab}>
+            onPress={() => setActiveTab('Task')}
+            style={[
+              styles.tabButton,
+              activeTab === 'Task' && styles.activeTab,
+            ]}>
             <Text
               style={[
                 styles.tabText,
-                activeTab === 'task' && styles.activeTabText,
+                activeTab === 'Task' && styles.activeTabText,
               ]}>
               Task Assignment
             </Text>
-            {activeTab === 'task' && <View style={styles.redUnderline} />}
           </TouchableOpacity>
-
           <TouchableOpacity
-            onPress={() => setActiveTab('remark')}
-            style={styles.tab}>
+            onPress={() => setActiveTab('Report')}
+            style={[
+              styles.tabButton,
+              activeTab === 'Report' && styles.activeTab,
+            ]}>
             <Text
               style={[
                 styles.tabText,
-                activeTab === 'remark' && styles.activeTabText,
+                activeTab === 'Report' && styles.activeTabText,
               ]}>
               Remark Report
             </Text>
-            {activeTab === 'remark' && <View style={styles.redUnderline} />}
           </TouchableOpacity>
         </View>
-      </View>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}>
+
         {/* Tab Content */}
-        {activeTab === 'task' ? (
-          <View style={styles.section}>
+        {activeTab === 'Task' ? (
+          <View style={styles.formCard}>
             <Text style={styles.label}>Assign Task</Text>
 
-            <TouchableOpacity
-              onPress={() => setDatePickerOpen(true)}
-              style={styles.inputBox}>
-              <Text>{date.toDateString()}</Text>
+            {/* Date and Time Input */}
+            <DateNTimePicker
+              mode="datetime"
+              label="Schedule"
+              value={schedule}
+              onConfirm={setSchedule}
+            />
+
+            {/* Sales Person Name */}
+            <CustomDropdown
+              label="Sales Person Name"
+              data={[
+                {label: 'Sales Person 1', value: 'salesperson1'},
+                {label: 'Sales Person 2', value: 'salesperson2'},
+                {label: 'Sales Person 3', value: 'salesperson3'},
+                {label: 'Sales Person 4', value: 'salesperson4'},
+              ]}
+              containerStyle={{marginTop: scaleHeight(14)}}
+            />
+
+            {/* Task Type */}
+            <CustomDropdown
+              label="Task Type"
+              data={[
+                {label: 'Task Type 1', value: 'tasktype1'},
+                {label: 'Task Type 2', value: 'tasktype2'},
+                {label: 'Task Type 3', value: 'tasktype3'},
+                {label: 'Task Type 4', value: 'tasktype4'},
+              ]}
+              containerStyle={{marginTop: scaleHeight(14)}}
+            />
+
+            {/* Task */}
+            <CustomDropdown
+              label="Task"
+              data={[
+                {label: 'Task 1', value: 'task1'},
+                {label: 'Task 2', value: 'task2'},
+                {label: 'Task 3', value: 'task3'},
+                {label: 'Task 4', value: 'task4'},
+              ]}
+              containerStyle={{marginTop: scaleHeight(14)}}
+            />
+
+            {/* Add More Task Button */}
+            <TouchableOpacity style={styles.addTaskButton}>
+              <Text style={styles.addTaskText}>Add more Task</Text>
+              <Plus height={15} width={15} />
             </TouchableOpacity>
 
-            <DatePicker
-              modal
-              open={datePickerOpen}
-              date={date}
-              onConfirm={date => {
-                setDatePickerOpen(false);
-                setDate(date);
-              }}
-              onCancel={() => setDatePickerOpen(false)}
-            />
-
-            <DropDownPicker
-              open={salesPersonOpen}
-              value={salesPerson}
-              items={[
-                {label: 'John Doe', value: 'john'},
-                {label: 'Jane Smith', value: 'jane'},
-              ]}
-              setOpen={setSalesPersonOpen}
-              setValue={setSalesPerson}
-              placeholder="Sales Person Name"
-              style={styles.dropdown}
-              zIndex={3000}
-              zIndexInverse={1000}
-            />
-
-            <DropDownPicker
-              open={taskTypeOpen}
-              value={taskType}
-              items={[
-                {label: 'Follow Up', value: 'followup'},
-                {label: 'Meeting', value: 'meeting'},
-              ]}
-              setOpen={setTaskTypeOpen}
-              setValue={setTaskType}
-              placeholder="Task Type"
-              style={styles.dropdown}
-              zIndex={2000}
-              zIndexInverse={2000}
-            />
-
-            <DropDownPicker
-              open={taskOpen}
-              value={task}
-              items={[
-                {label: 'Call', value: 'call'},
-                {label: 'Email', value: 'email'},
-              ]}
-              setOpen={setTaskOpen}
-              setValue={setTask}
-              placeholder="Task"
-              style={styles.dropdown}
-              zIndex={1000}
-              zIndexInverse={3000}
-            />
-
-            <TouchableOpacity style={styles.addMoreButton}>
-              <Text style={styles.addMoreText}>Add more Task +</Text>
-            </TouchableOpacity>
-
+            {/* Submit Button */}
             <TouchableOpacity style={styles.assignButton}>
               <Text style={styles.assignButtonText}>Assign a Task</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View>
+          <View style={{marginTop: 20}}>
             <Text style={[styles.label, {marginBottom: 12}]}>
               [Lead Name] Feedback & Remark Overview
             </Text>
 
-            <FlatList
-              data={remarkData}
-              keyExtractor={item => item.id}
-              contentContainerStyle={{paddingBottom: 20}}
-              renderItem={({item}) => (
-                <View style={styles.card}>
-                  <Text style={styles.label}>
-                    Visit Date:{' '}
-                    <Text style={styles.text}>{item.visitDate}</Text>
+            {remarkData.map(item => (
+              <View key={item.id} style={styles.remarkCard}>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Visit Date:</Text>{' '}
+                  {item.visitDate}
+                </Text>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Visitor:</Text>{' '}
+                  {item.visitorName}
+                </Text>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Task Type:</Text>{' '}
+                  {item.taskType}
+                </Text>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Description:</Text>{' '}
+                  {item.taskDescription}
+                </Text>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Remark:</Text> {item.remark}
+                </Text>
+                <Text style={styles.remarkLabel}>
+                  <Text style={styles.remarkTitle}>Status: </Text>
+                  <Text
+                    style={[styles.statusValue, getStatusColor(item.status)]}>
+                    {item.status}
                   </Text>
-                  <Text style={styles.label}>
-                    Visitor Name:{' '}
-                    <Text style={styles.text}>{item.visitorName}</Text>
-                  </Text>
-                  <Text style={styles.label}>
-                    Task Type: <Text style={styles.text}>{item.taskType}</Text>
-                  </Text>
-                  <Text style={styles.label}>
-                    Task Description:{' '}
-                    <Text style={styles.text}>{item.taskDescription}</Text>
-                  </Text>
-                  <Text style={styles.label}>
-                    Remark: <Text style={styles.text}>{item.remark}</Text>
-                  </Text>
-                  <Text style={styles.label}>
-                    Status:{' '}
-                    <Text style={[styles.text, styles.completed]}>
-                      {item.status}
-                    </Text>
-                  </Text>
-                </View>
-              )}
-            />
+                </Text>
+              </View>
+            ))}
           </View>
         )}
       </ScrollView>
     </Container>
   );
 };
+
+// Styles
 const styles = StyleSheet.create({
-  Subcontainer: {
-    backgroundColor: '#fff',
-  },
-  Subheader: {
-    width: '100%', // ✅ Ensures full width
+  container: {flex: 1, backgroundColor: '#fff', padding: 16},
+  header: {
+    backgroundColor: '#fdeeee',
     padding: 16,
-    fontSize: scaleFont(16),
-    fontWeight: fontWeight.SemiBold,
-    backgroundColor: Colors.LimeGray,
-  },
-  mainContainer: {
-    padding: 16,
-    backgroundColor: Colors.LimeGray,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.black,
-  },
-  container: {
-    // padding: 16,
-    marginTop: scaleHeight(16),
-    backgroundColor: Colors.LimeGray,
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 12,
-    marginBottom: 12,
     borderRadius: 8,
-    elevation: 2, // Android shadow
-    shadowColor: '#000', // iOS shadow
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    marginBottom: 12,
   },
-  completed: {
-    color: Colors.green,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  tag: {
-    backgroundColor: Colors.Yellow,
-    padding: 4,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginBottom: 16,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  label: {
-    marginBottom: 4,
-    fontWeight: '500',
-    color: Colors.gray500,
-  },
-  text: {
-    color: Colors.graybase,
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#e53935',
+    textAlign: 'center',
   },
 
-  inputBox: {
+  card: {
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  badgeContainer: {
+    backgroundColor: '#f4c542',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  badgeText: {fontWeight: 'bold', fontSize: 12, color: '#fff'},
+
+  label: {fontWeight: 'bold', fontSize: 14, marginTop: 8},
+  subLabel: {color: '#555', marginVertical: 2},
+  boldText: {fontWeight: 'bold'},
+  separator: {height: 1, backgroundColor: '#ddd', marginVertical: 8},
+
+  tabs: {
+    flexDirection: 'row',
+    backgroundColor: '#f4f4f4',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginVertical: 10,
+  },
+  tabButton: {flex: 1, padding: 12, alignItems: 'center'},
+  tabText: {color: '#444', fontWeight: '600'},
+  activeTab: {borderBottomWidth: 2, borderBottomColor: '#e53935'},
+  activeTabText: {color: '#e53935'},
+
+  formCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  inputLabel: {fontWeight: 'bold', marginTop: 12, marginBottom: 4},
+  inputWithIcon: {
+    flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 12,
     borderRadius: 6,
-    marginBottom: 18,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
   },
-  dropdown: {
-    marginBottom: 40,
-    zIndex: 10,
-    height: 20,
+  input: {flex: 1, fontSize: 14, color: '#000'},
+
+  addTaskButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginTop: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 6,
   },
-  addMoreButton: {
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  addMoreText: {
-    color: 'blue',
+  addTaskText: {
+    marginLeft: 6,
+    fontWeight: fontWeight.SemiBold,
+    fontSize: scaleFont(13),
+    marginRight: scaleHeight(6),
   },
   assignButton: {
-    backgroundColor: '#E30613',
-    padding: 14,
+    backgroundColor: '#e53935',
+    padding: 12,
     borderRadius: 6,
+    marginTop: 20,
     alignItems: 'center',
   },
   assignButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: fontWeight.SemiBold,
   },
-
-  tabContainer: {
-    alignItems: 'center',
-    padding: 10,
-    width: '100%',
-    // backgroundColor: Colors.blueGray700,
+  remarkCard: {
+    backgroundColor: '#fff',
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  tabsWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: scaleWidth(60), // space between tabs
+  remarkLabel: {
+    marginVertical: 2,
+    color: '#333',
+    fontSize: 13,
   },
-  tab: {
-    alignItems: 'center',
+  remarkTitle: {
+    fontWeight: fontWeight.SemiBold,
   },
-  tabText: {
-    fontSize: scaleFont(16),
-    color: Colors.SteelGray,
-  },
-  activeTabText: {
-    fontWeight: 'bold',
-    color: Colors.black,
-  },
-  redUnderline: {
-    height: 2,
-    backgroundColor: Colors.primaryColor,
-    width: '100%',
-    marginTop: 4,
+  statusValue: {
+    fontWeight: fontWeight.Medium,
   },
 });
