@@ -53,7 +53,7 @@ export const KYCFormSelection = () => {
         navigation.navigate('KycUploadAdhar');
         break;
       case 'Residence Details':
-        navigation.navigate('KycOwner');
+        navigation.navigate('ResidenceDetail');
         break;
       default:
         console.warn('Screen not found for', text);
@@ -70,9 +70,6 @@ export const KYCFormSelection = () => {
         break;
       case 'Godown Details':
         navigation.navigate('GodownDetails');
-        break;
-      case 'Godown Details2':
-        navigation.navigate('GodownDetails2');
         break;
       case 'Company PAN Card Details':
         navigation.navigate('CompanyPanCard');
@@ -128,7 +125,6 @@ export const KYCFormSelection = () => {
               'Udhyam Certificate',
               'GST Documents',
               'Godown Details',
-              'Godown Details2',
               'Company PAN Card Details',
               'Shareholding Details',
               'Company Information',

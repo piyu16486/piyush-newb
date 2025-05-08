@@ -22,7 +22,13 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const formInputDetails = {
@@ -79,6 +85,8 @@ export const InputFormField = () => {
   const navigation = useNavigation<NavigationType>();
   const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
   const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formIndex, setFormIndex] = React.useState(
     Forms.indexOf(params.screen),
@@ -95,6 +103,43 @@ export const InputFormField = () => {
   const currentTitle = formTitles[currentFormKey] || 'Form Section';
 
   const [vendorEntries, setVendorEntries] = React.useState([{id: Date.now()}]);
+
+  const initialFormState = formInputDetails[currentFormKey].reduce(
+    (acc, field) => {
+      acc[field.label] = '';
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+
+  const [formValues, setFormValues] = useState(initialFormState);
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    formInputDetails[currentFormKey].forEach(field => {
+      const value = formValues[field.label];
+
+      if (!value || value.trim() === '') {
+        errors[field.label] = `${field.label} is required`;
+      }
+      if (field.label === 'Vendor Contact Email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          errors[field.label] = 'Enter a valid email';
+        }
+      }
+      if (
+        field.label.toLowerCase().includes('contact') &&
+        value &&
+        !/^\d{10}$/.test(value)
+      ) {
+        errors[field.label] = 'Enter a valid 10-digit number';
+      }
+    });
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   return (
     <Container>
@@ -164,15 +209,28 @@ export const InputFormField = () => {
                     {label: 'Option 2', value: 'option2'},
                   ];
                   return (
-                    <CustomDropdown
-                      key={item.label}
-                      label={item.label}
-                      data={dropdownData}
-                      placeholder="Select Type"
-                      onChange={val =>
-                        console.log(`${item.label} selected:`, val)
-                      }
-                    />
+                    <View key={item.label}>
+                      <CustomDropdown
+                        label={item.label}
+                        data={dropdownData}
+                        placeholder="Select Type"
+                        value={formValues[item.label]}
+                        onChange={val =>
+                          setFormValues(prev => ({...prev, [item.label]: val}))
+                        }
+                        style={{
+                          borderColor: formErrors[item.label]
+                            ? 'red'
+                            : undefined,
+                        }}
+                      />
+                      {formErrors[item.label] && (
+                        <Text
+                          style={{color: 'red', marginTop: 4, marginLeft: 4}}>
+                          {formErrors[item.label]}
+                        </Text>
+                      )}
+                    </View>
                   );
                 }
                 if (item.label === 'Date of Visit') {
@@ -198,7 +256,26 @@ export const InputFormField = () => {
                     />
                   );
                 }
-                return <Input label={item.label} key={item.label} />;
+                return (
+                  <View key={item.label}>
+                    <Input
+                      label={item.label}
+                      value={formValues[item.label]}
+                      onChangeText={text =>
+                        setFormValues(prev => ({...prev, [item.label]: text}))
+                      }
+                      containerStyle={{marginTop: scaleHeight(14)}}
+                      style={{
+                        borderColor: formErrors[item.label] ? 'red' : undefined,
+                      }}
+                    />
+                    {formErrors[item.label] && (
+                      <Text style={{color: 'red', marginTop: 4, marginLeft: 4}}>
+                        {formErrors[item.label]}
+                      </Text>
+                    )}
+                  </View>
+                );
               })}
 
           {currentFormKey === 'VendorScreen' && (
@@ -216,7 +293,13 @@ export const InputFormField = () => {
       <View style={styles.footerButton}>
         <TouchableOpacity
           style={styles.clearButton}
-          onPress={() => console.log('Clear All Pressed')}>
+          onPress={() => {
+            setFormValues(initialFormState);
+            setVisitDate(undefined);
+            if (currentFormKey === 'VendorScreen') {
+              setVendorEntries([{id: Date.now()}]);
+            }
+          }}>
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
         <View style={styles.row}>
@@ -230,22 +313,55 @@ export const InputFormField = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
-              <Text style={styles.saveText}>Submit</Text>
-              <RightCheckmark width={12} height={12} />
+              disabled={isLoading}
+              onPress={() => {
+                if (validateForm()) {
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    console.log('Form submitted successfully');
+                    // Replace with actual navigation or logic
+                  }, 2000); // simulate 2s loading
+                }
+              }}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color={Colors.white} />
+              ) : (
+                <>
+                  <Text style={styles.saveText}>Submit</Text>
+                  <RightCheckmark width={12} height={12} />
+                </>
+              )}
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               style={styles.nextButton}
+              disabled={isLoading}
               onPress={() => {
-                if (formIndex < Forms.length - 1) {
-                  setFormIndex(formIndex + 1);
+                if (validateForm()) {
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    if (formIndex < Forms.length - 1) {
+                      setFormIndex(prev => prev + 1);
+                    }
+                  }, 2000); // simulate 2s loading
                 }
               }}>
-              <Text style={styles.nextText}>Next</Text>
-              <View style={styles.iconWrapper}>
-                <RightChevronCircle width={24} height={24} />
-              </View>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={Colors.white}
+                  style={styles.loaderFull}
+                />
+              ) : (
+                <>
+                  <Text style={styles.nextText}>Next</Text>
+                  <View style={styles.iconWrapper}>
+                    <RightChevronCircle width={24} height={24} />
+                  </View>
+                </>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -347,5 +463,8 @@ const styles = StyleSheet.create({
     color: '#6E6E78',
     fontSize: scaleFont(14),
     fontWeight: '600',
+  },
+  loaderFull: {
+    alignSelf: 'center',
   },
 });

@@ -39,6 +39,7 @@ export const KycElectricityBill = () => {
           />
 
           <DashedButton label="Upload Electricity Bill" />
+
           {/* Fixed button row at the bottom */}
           <View style={styles.footerButton}>
             {/* Clear All Button */}

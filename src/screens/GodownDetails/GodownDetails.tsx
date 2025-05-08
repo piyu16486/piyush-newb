@@ -26,6 +26,7 @@ type KycNavigationType = CompositeNavigationProp<
 export const GodownDetails = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
 
   return (
     <Container>
@@ -41,56 +42,66 @@ export const GodownDetails = () => {
             label="Ownership Status"
             data={[
               {label: 'Rented', value: 'rented'},
-              {label: 'Partnership', value: 'partnership'},
               {label: 'Owned', value: 'owned'},
-              {label: 'Private Limited Company', value: 'private_ltd'},
-              {label: 'Public Limited Company', value: 'public_ltd'},
-              {label: 'Limited Liability Company', value: 'llc'},
-              {label: 'Corporation', value: 'corporation'},
-              {label: 'Cooperative', value: 'cooperative'},
-              {label: 'Nonprofit Organization', value: 'nonprofit'},
-              {label: 'Franchise', value: 'franchise'},
             ]}
+            value={ownershipStatus}
+            onChange={val => setOwnershipStatus(val)}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
-          <Input
-            label="Name of Owner"
-            containerStyle={{marginBottom: scaleHeight(14)}}
-          />
-          <DashedButton
-            label="uplaod Agreement Copy"
-            onPress={() => setIsVisible(true)}
-          />
-          <UploadModal
-            visible={isVisible}
-            onClose={() => setIsVisible(false)}
-          />
-          <View style={styles.footerButton}>
-            {/* Clear All Button */}
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={() => console.log('Clear All Pressed')}>
-              <Text style={styles.clearText}>Clear all</Text>
-            </TouchableOpacity>
-            {/* Save Button */}
-            <View style={styles.row}>
-              <TouchableOpacity
-                style={[styles.saveButton, {backgroundColor: Colors.white}]}
-                activeOpacity={0.7}
-                onPress={() => console.log('Save Pressed')}>
-                <Text style={[styles.saveText, {color: Colors.green}]}>
-                  Save
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.saveButton}
-                activeOpacity={0.7}
-                onPress={() => console.log('Next Pressed')}>
-                <Text style={styles.saveText}>Submit</Text>
-                <RightCheckmark width={12} height={12} />
-              </TouchableOpacity>
-            </View>
-          </View>
+
+          {ownershipStatus && (
+            <>
+              <Input
+                label="Name of Owner"
+                containerStyle={{marginBottom: scaleHeight(20)}}
+              />
+
+              {ownershipStatus === 'rented' ? (
+                <DashedButton
+                  label="Upload Agreement Copy"
+                  onPress={() => setIsVisible(true)}
+                />
+              ) : (
+                <DashedButton
+                  label="Upload Electricity Bill"
+                  onPress={() => setIsVisible(true)}
+                />
+              )}
+
+              <UploadModal
+                visible={isVisible}
+                onClose={() => setIsVisible(false)}
+              />
+
+              {/* Fixed button row at the bottom */}
+              <View style={styles.footerButton}>
+                {/* Clear All Button */}
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={() => console.log('Clear All Pressed')}>
+                  <Text style={styles.clearText}>Clear all</Text>
+                </TouchableOpacity>
+                {/* Save Button */}
+                <View style={styles.row}>
+                  <TouchableOpacity
+                    style={[styles.saveButton, {backgroundColor: Colors.white}]}
+                    activeOpacity={0.7}
+                    onPress={() => console.log('Save Pressed')}>
+                    <Text style={[styles.saveText, {color: Colors.green}]}>
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    activeOpacity={0.7}
+                    onPress={() => console.log('Next Pressed')}>
+                    <Text style={styles.saveText}>Submit</Text>
+                    <RightCheckmark width={12} height={12} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Container>

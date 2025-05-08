@@ -10,10 +10,12 @@ import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 export const ResidenceDetail = () => {
+  const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
+
   return (
     <Container>
       <AppBar title="KYC Document" />
@@ -30,42 +32,53 @@ export const ResidenceDetail = () => {
               {label: 'Rented', value: 'rented'},
               {label: 'Owned', value: 'owned'},
             ]}
+            value={ownershipStatus}
+            onChange={val => setOwnershipStatus(val)}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
 
-          <Input
-            label="Name of Owner"
-            containerStyle={{marginBottom: scaleHeight(20)}}
-          />
+          {ownershipStatus && (
+            <>
+              <Input
+                label="Name of Owner"
+                containerStyle={{marginBottom: scaleHeight(20)}}
+              />
 
-          <DashedButton label="Upload Agreement Copy" />
-          {/* Fixed button row at the bottom */}
-          <View style={styles.footerButton}>
-            {/* Clear All Button */}
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={() => console.log('Clear All Pressed')}>
-              <Text style={styles.clearText}>Clear all</Text>
-            </TouchableOpacity>
-            {/* Save Button */}
-            <View style={styles.row}>
-              <TouchableOpacity
-                style={[styles.saveButton, {backgroundColor: Colors.white}]}
-                activeOpacity={0.7}
-                onPress={() => console.log('Save Pressed')}>
-                <Text style={[styles.saveText, {color: Colors.green}]}>
-                  Save
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.saveButton}
-                activeOpacity={0.7}
-                onPress={() => console.log('Next Pressed')}>
-                <Text style={styles.saveText}>Submit</Text>
-                <RightCheckmark width={12} height={12} />
-              </TouchableOpacity>
-            </View>
-          </View>
+              {ownershipStatus === 'rented' ? (
+                <DashedButton label="Upload Agreement Copy" />
+              ) : (
+                <DashedButton label="Upload Electricity Bill" />
+              )}
+
+              {/* Fixed button row at the bottom */}
+              <View style={styles.footerButton}>
+                {/* Clear All Button */}
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={() => console.log('Clear All Pressed')}>
+                  <Text style={styles.clearText}>Clear all</Text>
+                </TouchableOpacity>
+                {/* Save Button */}
+                <View style={styles.row}>
+                  <TouchableOpacity
+                    style={[styles.saveButton, {backgroundColor: Colors.white}]}
+                    activeOpacity={0.7}
+                    onPress={() => console.log('Save Pressed')}>
+                    <Text style={[styles.saveText, {color: Colors.green}]}>
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    activeOpacity={0.7}
+                    onPress={() => console.log('Next Pressed')}>
+                    <Text style={styles.saveText}>Submit</Text>
+                    <RightCheckmark width={12} height={12} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Container>

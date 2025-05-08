@@ -19,8 +19,8 @@ export const KycOwner = () => {
           <CustomDropdown
             label="Ownership Status"
             data={[
-              {label: 'Rented', value: 'rented'},
-              {label: 'Owned', value: 'owned'},
+              {label: 'Rented', value: 'Rented'},
+              {label: 'Owned', value: 'Owned'},
             ]}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
