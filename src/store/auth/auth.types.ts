@@ -1,4 +1,3 @@
-
 export type UserType = 'client' | 'internal';
 export interface IAuthState {
   signupLoader: boolean;
@@ -53,6 +52,17 @@ export interface IOtpVerifyErrorResponse {
   statusCode: number;
   message: string;
   error: string;
+}
+
+/** Create Password */
+export interface ICreatePasswordPayload {
+  token: string;
+  password: string;
+}
+
+export interface ICreatePasswordApiResponse {
+  statusCode: number;
+  message: string;
 }
 
 export interface VerifyPasswordPayload {

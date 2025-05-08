@@ -1,5 +1,8 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
+import {AuthApis} from '@services/api';
+import {Result} from '@utils/TryCatch';
+// Types
 import {
   ForgotPasswordPayload,
   IForgotpasswordResponse,
@@ -11,14 +14,12 @@ import {
   IOtpVerifyPayload,
   PayloadWithCallback,
   SigninOtpVerifyPayload,
-  ISignInPayload,
   ISignupPayload,
   VerifyPasswordPayload,
   IOtpVerifySuccessResponse,
   IOtpVerifyErrorResponse,
 } from './auth.types';
-
-import {AuthApis} from '@services/api';
+// Slice
 import {
   forgotPassword,
   otpVerifyRequest,
@@ -31,44 +32,42 @@ import {
   signupSuccess,
   signupError,
 } from './auth.slice';
-import authApi from '@services/api/auth.api';
+import {setStorage} from '@services/localStorage';
+import StorageKeys from '@constants/StorageKeys';
 import {AxiosError} from 'axios';
-import {storage} from '@services/localStorage';
-import {StorageKeys} from '@constants/index';
-import {Result} from '@utils/TryCatch';
 
 function* handleSignup(action: PayloadAction<ISignupPayload>): unknown {
-  const {data, error}: Result<ISignupSuccessResponse, ISignupErrorResponse> =
-    yield call(AuthApis.apiSignup, action.payload);
+  const {
+    data,
+    error,
+  }: Result<
+    ISignupSuccessResponse,
+    AxiosError<ISignupErrorResponse>
+  > = yield call(AuthApis.apiSignup, action.payload);
   if (!error) {
     yield put(signupSuccess(data.message));
   } else {
-    yield put(signupError(error.message));
+    yield put(
+      signupError(error.response?.data.message ?? 'Something went wrong'),
+    );
   }
 }
 
 function* handleOtpVerify(action: PayloadAction<IOtpVerifyPayload>): unknown {
-  try {
-    const response: IOtpVerifySuccessResponse = yield call(
-      AuthApis.apiOtpVerify,
-      action.payload,
+  const {
+    data,
+    error,
+  }: Result<
+    IOtpVerifySuccessResponse,
+    AxiosError<IOtpVerifyErrorResponse>
+  > = yield call(AuthApis.apiSigninOtpVerify, action.payload);
+  if (!error) {
+    setStorage(StorageKeys.TOKEN, data.data);
+    yield put(otpVerifySuccess(data.message));
+  } else {
+    yield put(
+      otpVerifyError(error.response?.data.message ?? 'Something went wrong'),
     );
-    if (response.statusCode && response.data) {
-      const token = response.data;
-      storage.set(StorageKeys.TOKEN, token);
-      storage.set(StorageKeys.IS_LOGGED_IN, true);
-
-      yield put(otpVerifySuccess(response.message));
-    } else {
-      yield put(otpVerifyError(response.message));
-    }
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const axiosError = error as AxiosError<IOtpVerifyErrorResponse>;
-      yield put(otpVerifyError(axiosError.response?.data?.message));
-    } else {
-      yield put(otpVerifyError(JSON.stringify(error)));
-    }
   }
 }
 

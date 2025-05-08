@@ -1,31 +1,72 @@
-import {View, Text, TouchableOpacity, StyleSheet, AppState} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Container, Header, TnCFooter} from '@components/index';
 import {OtpInput} from 'react-native-otp-entry';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import {Colors, Fonts} from '@constants/index';
+import {AuthScreens, Colors, Fonts} from '@constants/index';
 import {EditIcon} from '@assets/Icons';
 import Toast from 'react-native-toast-message';
-import {useDispatch} from 'react-redux';
-import {otpVerifyRequest} from '@store/auth/auth.slice';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  otpVerifyRequest,
+  signupError,
+  signupSuccess,
+} from '@store/auth/auth.slice';
+import {authSelector} from '@store/auth';
 
 const OTP_TIMER = 60;
+const Strings = {
+  verifyEmail: 'Verify Email',
+  weJustSentCode: 'We Just sent a 6 Digit code to ',
+  edit: 'Edit',
+  didNotGetOTP: 'Didn’t get the OTP? ',
+  resendOTP: 'Resend OTP ',
+  in: 'in ',
+  seconds: ' sec',
+};
 
-export const OTPInputScreen = () => {
+type OTPInputScreenProps = NativeStackScreenProps<
+  AuthNavigatorType,
+  AuthScreens.OTPInputScreen
+>;
+
+export const OTPInputScreen = ({
+  navigation,
+  route: {params},
+}: OTPInputScreenProps) => {
   const [otp, setOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(OTP_TIMER);
   const timerInterval = useRef<NodeJS.Timeout>(null);
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
-  const {params} = useRoute<RouteProp<AuthNavigatorType, 'OTPInputScreen'>>();
+  const dispatch = useDispatch();
+  const otpErrorMessage = useSelector(authSelector.getVerifyOtpError);
+  const otpSuccessMessage = useSelector(authSelector.getVerifyOtpSuccess);
+  const otpLoader = useSelector(authSelector.getVerifyOtpLoader);
 
-  const onPressEdit = () => {
-    navigation.replace('SignupScreen', params);
-  };
+  useEffect(() => {
+    if (otpErrorMessage && !otpLoader) {
+      Toast.show({
+        type: 'error',
+        text1: otpErrorMessage ?? 'Wrong OTP. Please try again',
+        visibilityTime: 2000,
+      });
+    }
+    if (otpSuccessMessage && !otpLoader) {
+      Toast.show({
+        type: 'success',
+        text1: 'OTP verified successfully',
+        visibilityTime: 2000,
+      });
+
+      if (params.showCreatePass) {
+        navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
+      } else {
+        navigation.replace('SuccessScreen', {authMode: 'signin'});
+      }
+    }
+  }, [otpErrorMessage, otpSuccessMessage, otpLoader]);
 
   const startTimer = () => {
     timerInterval.current = setInterval(() => {
@@ -43,12 +84,8 @@ export const OTPInputScreen = () => {
   };
 
   useEffect(() => {
-    const appStateSubscription = AppState.addEventListener('change', state => {
-      console.log(state);
-    });
     startTimer();
     return () => {
-      appStateSubscription.remove();
       if (timerInterval.current) {
         clearInterval(timerInterval.current);
       }
@@ -56,7 +93,6 @@ export const OTPInputScreen = () => {
   }, []);
 
   const onPressResendOTP = () => {
-    console.log('----->>>>>');
     setOtpTimer(OTP_TIMER);
     Toast.show({
       type: 'success',
@@ -69,13 +105,13 @@ export const OTPInputScreen = () => {
     startTimer();
   };
 
-  const dispatch = useDispatch();
+  const onPressEdit = () => {
+    dispatch(signupSuccess(null));
+    dispatch(signupError(null));
+    navigation.replace('SignupScreen', params);
+  };
 
   const onPressVerifyOTP = () => {
-    console.log('------->>>>');
-    console.log('OTP entered:', otp);
-    console.log('Email for OTP:', params.email);
-
     if (otp.length < 6) {
       Toast.show({
         type: 'error',
@@ -84,48 +120,17 @@ export const OTPInputScreen = () => {
       });
       return;
     }
-    console.log('----->>>>>11');
-    dispatch(
-      otpVerifyRequest({
-        payload: {
-          email: params.email, // or route.params.email
-          otp: otp,
-        },
-        callbackSuccess: () => {
-          Toast.show({
-            type: 'success',
-            text1: 'OTP verified successfully',
-            visibilityTime: 2000,
-          });
-
-          if (params.showCreatePass) {
-            navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
-          } else {
-            navigation.replace('SuccessScreen', {authMode: 'signin'});
-          }
-        },
-        callbackError: (errMsg: string) => {
-          console.log('----->>>>>12', errMsg);
-          Toast.show({
-            type: 'error',
-            text1: errMsg || 'Wrong OTP. Please try again',
-            visibilityTime: 2000,
-          });
-        },
-      }),
-    );
+    dispatch(otpVerifyRequest({email: params.email, otp: otp}));
   };
 
   return (
     <Container>
       <View style={styles.flex1}>
         <Header
-          title={'Verify Email'}
+          title={Strings.verifyEmail}
           customSubtitle={
             <View style={styles.subTitleContainer}>
-              <Text style={styles.subTitle}>
-                {'We Just sent a 6 Digit code to '}
-              </Text>
+              <Text style={styles.subTitle}>{Strings.weJustSentCode}</Text>
               <Text
                 numberOfLines={1}
                 style={[styles.subTitle, styles.subTitleInfo]}>
@@ -135,7 +140,7 @@ export const OTPInputScreen = () => {
                 style={styles.editContainer}
                 onPress={onPressEdit}>
                 <EditIcon height={scaleHeight(10)} width={scaleWidth(10)} />
-                <Text style={styles.editText}>Edit</Text>
+                <Text style={styles.editText}>{Strings.edit}</Text>
               </TouchableOpacity>
             </View>
           }
@@ -151,36 +156,28 @@ export const OTPInputScreen = () => {
               accessibilityLabel: 'One-Time Password',
             }}
             theme={{
-              pinCodeContainerStyle: {
-                borderWidth: 2,
-                borderColor: Colors.gray500,
-                borderRadius: 0,
-                height: scaleWidth(30),
-                width: scaleWidth(30),
-              },
-              pinCodeTextStyle: {
-                fontSize: scaleFont(12),
-              },
-              focusedPinCodeContainerStyle: {
-                borderColor: Colors.gray500,
-              },
-              focusStickStyle: {
-                backgroundColor: Colors.primaryColor,
-                height: scaleWidth(20),
-              },
+              pinCodeContainerStyle: styles.pinCodeContainerStyle,
+              pinCodeTextStyle: styles.pinCodeTextStyle,
+              focusedPinCodeContainerStyle: styles.focusedPinCodeContainerStyle,
+              focusStickStyle: styles.focusStickStyle,
             }}
           />
           <Button
             buttonText={'Verify'}
-            style={{marginTop: scaleHeight(20)}}
+            style={styles.verifyButton}
             onPress={onPressVerifyOTP}
+            showLoader={otpLoader}
+            disabled={otpLoader}
           />
         </View>
         <View style={styles.resendContainer}>
-          <Text style={styles.resendText}>{'Didn’t get the OTP? '}</Text>
+          <Text style={styles.resendText}>{Strings.didNotGetOTP}</Text>
           <TouchableOpacity disabled={otpTimer > 0} onPress={onPressResendOTP}>
-            <Text style={[styles.resendText, {color: Colors.tertiaryColor}]}>
-              Resend OTP {otpTimer > 0 ? `in ${otpTimer} sec` : ''}
+            <Text style={[styles.resendText, styles.resendTextColor]}>
+              {Strings.resendOTP}{' '}
+              {otpTimer > 0
+                ? `${Strings.in} ${otpTimer} ${Strings.seconds}`
+                : ''}
             </Text>
           </TouchableOpacity>
         </View>
@@ -230,5 +227,28 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroyMedium,
     color: Colors.darkGray,
     fontSize: scaleFont(16),
+  },
+  resendTextColor: {
+    color: Colors.tertiaryColor,
+  },
+  pinCodeContainerStyle: {
+    borderWidth: 2,
+    borderColor: Colors.gray500,
+    borderRadius: 0,
+    height: scaleWidth(30),
+    width: scaleWidth(30),
+  },
+  pinCodeTextStyle: {
+    fontSize: scaleFont(12),
+  },
+  focusedPinCodeContainerStyle: {
+    borderColor: Colors.gray500,
+  },
+  focusStickStyle: {
+    backgroundColor: Colors.primaryColor,
+    height: scaleWidth(20),
+  },
+  verifyButton: {
+    marginTop: scaleHeight(20),
   },
 });

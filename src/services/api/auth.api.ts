@@ -1,9 +1,12 @@
 import {AxiosResponse} from 'axios';
 import {tryCatch} from '@utils/TryCatch';
 import {Api} from '.';
+import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
   ForgotPasswordPayload,
+  ICreatePasswordApiResponse,
+  ICreatePasswordPayload,
   IForgotpasswordResponse,
   IOtpVerifyPayload,
   IOtpVerifySuccessResponse,
@@ -23,7 +26,7 @@ import {
  */
 const apiSignup = async (payload: ISignupPayload) => {
   const {data, error} = await tryCatch<AxiosResponse<ISignupSuccessResponse>>(
-    Api.post('/auth/signup', payload),
+    Api.post(Endpoints.apiSignup, payload),
   );
   if (error) {
     return {
@@ -39,14 +42,40 @@ const apiSignup = async (payload: ISignupPayload) => {
 
 /**
  * Verify OTP API
- * @param {IOtpVerifyPayload} payload - request payload
- * @returns {Promise<IOtpVerifySuccessResponse>} response of API
  */
-const apiOtpVerify = async (
-  payload: IOtpVerifyPayload,
-): Promise<IOtpVerifySuccessResponse> => {
-  const response = await Api.post('/auth/verify-otp-from-email', payload);
-  return response.data;
+const apiSigninOtpVerify = async (payload: IOtpVerifyPayload) => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<IOtpVerifySuccessResponse>
+  >(Api.post(Endpoints.apiSigninOtpVerify, payload));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+/**
+ * Create Password API
+ */
+const apiCreatePassword = async (payload: ICreatePasswordPayload) => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<ICreatePasswordApiResponse>
+  >(Api.post(Endpoints.apiSigninOtpVerify, payload));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
 };
 
 const apiVerifyPassword = async (
@@ -61,7 +90,7 @@ const apiSignin = async (payload: ISignInPayload): Promise<ISigninResponse> => {
   return response.data;
 };
 
-const apiSigninOtpVerify = async (
+const apiOtpVerify = async (
   payload: SigninOtpVerifyPayload,
 ): Promise<ISigninOtpVerifyResponse> => {
   const response = await Api.post('/auth/verify-otp', payload);
@@ -77,9 +106,9 @@ const apiForgotPassword = async (
 
 export default {
   apiSignup,
+  apiSigninOtpVerify,
   apiOtpVerify,
   apiVerifyPassword,
   apiSignin,
-  apiSigninOtpVerify,
   apiForgotPassword,
 };
