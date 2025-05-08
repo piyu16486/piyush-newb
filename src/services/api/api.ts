@@ -53,7 +53,10 @@ axiosInstance.interceptors.request.use(
     if (!config.isFormData && config.headers) {
       config.headers['Content-Type'] = 'application/json';
     }
-
+    console.group('=========== API REQUEST CONFIG ===========');
+    console.log('URL: ', config.url);
+    console.log('config: ', config.data);
+    console.groupEnd();
     return config;
   },
 );

@@ -105,8 +105,6 @@ export const SignupScreen: React.FC<Props> = ({
   };
 
   const onErrorSignup = (errorMessage: string) => {
-    setLoading(false);
-
     Toast.show({
       type: 'error',
       text1: errorMessage,
