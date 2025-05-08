@@ -3,18 +3,21 @@ import {PayloadAction} from '@reduxjs/toolkit';
 import {
   ForgotPasswordPayload,
   IForgotpasswordResponse,
-  IOtpVerifyResponse,
   ISigninOtpVerifyResponse,
   ISigninResponse,
-  ISignupResponse,
+  ISignupErrorResponse,
+  ISignupSuccessResponse,
   IverifyPasswordResponse,
-  OtpVerifyPayload,
+  IOtpVerifyPayload,
   PayloadWithCallback,
   SigninOtpVerifyPayload,
-  SignInPayload,
-  SignUpPayload,
+  ISignInPayload,
+  ISignupPayload,
   VerifyPasswordPayload,
+  IOtpVerifySuccessResponse,
+  IOtpVerifyErrorResponse,
 } from './auth.types';
+
 import {AuthApis} from '@services/api';
 import {
   forgotPassword,
@@ -24,71 +27,48 @@ import {
   signupRequest,
   verifyPasswordRequest,
   otpVerifySuccess,
+  otpVerifyError,
+  signupSuccess,
+  signupError,
 } from './auth.slice';
 import authApi from '@services/api/auth.api';
+import {AxiosError} from 'axios';
+import {storage} from '@services/localStorage';
+import {StorageKeys} from '@constants/index';
+import {Result} from '@utils/TryCatch';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-function storeData(key: any, value: any) {
-  try {
-    AsyncStorage.setItem(key, value)
-      .then(() => {
-        console.log('Data stored successfully');
-      })
-      .catch(e => {
-        console.log('Failed to save data', e);
-      });
-  } catch (e) {
-    console.log('Unexpected error', e);
+function* handleSignup(action: PayloadAction<ISignupPayload>): unknown {
+  const {data, error}: Result<ISignupSuccessResponse, ISignupErrorResponse> =
+    yield call(AuthApis.apiSignup, action.payload);
+  if (!error) {
+    yield put(signupSuccess(data.message));
+  } else {
+    yield put(signupError(error.message));
   }
 }
 
-function* handleSignup(
-  action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
-): unknown {
+function* handleOtpVerify(action: PayloadAction<IOtpVerifyPayload>): unknown {
   try {
-    const response: ISignupResponse = yield call(
-      AuthApis.apiSignup,
-      action.payload.payload,
-    );
-    if (response.success) {
-      action.payload.callbackSuccess?.();
-    } else {
-      action.payload.callbackError?.(response.message);
-    }
-  } catch (error: any) {
-    action.payload.callbackError?.(error?.message);
-  }
-}
-
-function* handleOtpVerify(
-  action: PayloadAction<PayloadWithCallback<OtpVerifyPayload>>,
-): unknown {
-  try {
-    const response: IOtpVerifyResponse = yield call(
+    const response: IOtpVerifySuccessResponse = yield call(
       AuthApis.apiOtpVerify,
-      action.payload.payload,
+      action.payload,
     );
-
     if (response.statusCode && response.data) {
       const token = response.data;
-      storeData('token', token);
+      storage.set(StorageKeys.TOKEN, token);
+      storage.set(StorageKeys.IS_LOGGED_IN, true);
 
-      console.log('API Response:', response);
-
-      // ✅ Store token in AsyncStorage
-      // yield call(AsyncStorage.setItem, 'authToken', token);
-
-      // ✅ Dispatch success to slice
-      yield put(otpVerifySuccess(token));
-
-      // ✅ Call success callback
-      action.payload.callbackSuccess?.();
+      yield put(otpVerifySuccess(response.message));
     } else {
-      action.payload.callbackError?.(response.message);
+      yield put(otpVerifyError(response.message));
     }
-  } catch (error: any) {
-    action.payload.callbackError?.(error?.message);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const axiosError = error as AxiosError<IOtpVerifyErrorResponse>;
+      yield put(otpVerifyError(axiosError.response?.data?.message));
+    } else {
+      yield put(otpVerifyError(JSON.stringify(error)));
+    }
   }
 }
 

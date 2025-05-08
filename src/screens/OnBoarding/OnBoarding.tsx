@@ -138,7 +138,7 @@ export const OnBoarding = ({
           customSubtitle={
             <RenderSubTitle
               navigation={navigation}
-              showNewUser
+              showNewUser={showNewUser}
               onPressNewUser={() => setShowNewUser(true)}
             />
           }

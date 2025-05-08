@@ -1,5 +1,14 @@
-export interface AuthState {
-  user: ISignupResponse | null;
+
+export type UserType = 'client' | 'internal';
+export interface IAuthState {
+  signupLoader: boolean;
+  signupError: string | null | undefined;
+  signupSuccess: string | null;
+
+  verifyOtpLoader: boolean;
+  verifyOtpError: string | null | undefined;
+  verifyOtpSuccess: string | null;
+  userType: UserType;
 }
 
 export interface LoginPayload {
@@ -7,7 +16,8 @@ export interface LoginPayload {
   password: string;
 }
 
-export interface SignUpPayload {
+/** SignUp  */
+export interface ISignupPayload {
   country_code: string;
   mobile_number: string;
   is_internal?: boolean;
@@ -16,9 +26,33 @@ export interface SignUpPayload {
   last_name: string;
   email: string;
 }
-export interface OtpVerifyPayload {
+
+export interface ISignupSuccessResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ISignupErrorResponse {
+  statusCode: number;
+  message: string;
+}
+
+/** Otp Verify  */
+export interface IOtpVerifyPayload {
   email: string;
   otp: string;
+}
+
+export interface IOtpVerifySuccessResponse {
+  statusCode: number;
+  message: string;
+  data: string;
+}
+
+export interface IOtpVerifyErrorResponse {
+  statusCode: number;
+  message: string;
+  error: string;
 }
 
 export interface VerifyPasswordPayload {
@@ -26,7 +60,7 @@ export interface VerifyPasswordPayload {
   token?: string;
   password: string;
 }
-export interface SignInPayload {
+export interface ISignInPayload {
   email: string;
   password: string;
 }
@@ -45,18 +79,6 @@ export interface PayloadWithCallback<T> {
   callback?: (...args: any[]) => void;
   callbackError?: (...args: any[]) => void;
   callbackSuccess?: (...args: any[]) => void;
-}
-
-export interface ISignupResponse {
-  statusCode?: number;
-  message: string;
-  success?: boolean;
-}
-
-export interface IOtpVerifyResponse {
-  statusCode?: number;
-  message: string;
-  data: string;
 }
 
 export interface IverifyPasswordResponse {

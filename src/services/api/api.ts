@@ -18,14 +18,6 @@ const axiosInstance = axios.create({
   timeout: GENERAL_TIMEOUT,
 });
 
-/**
- * Logs out the user by clearing the access and refresh tokens from storage.
- */
-
-export const logoutUser = () => {
-  // MARK: Logout user
-};
-
 export type CustomRequestConfig = InternalAxiosRequestConfig & {
   authRequired?: boolean;
   isFormData?: boolean;
@@ -96,6 +88,7 @@ axiosInstance.interceptors.response.use(
   },
 );
 
+// TODO: Handle token expiration
 /**
  * Cancels all ongoing API requests by aborting them and clears
  * the list of stored cancellation tokens.
@@ -105,5 +98,11 @@ export const cancelAllRequests = () => {
   cancelTokens.forEach(controller => controller.abort());
   cancelTokens.length = 0;
 };
+
+/**
+ * Logs out the user by clearing the access and refresh tokens from storage.
+ */
+
+export const logoutUser = () => {};
 
 export default axiosInstance;

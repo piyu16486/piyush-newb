@@ -1,6 +1,6 @@
-import {Result} from '@utils/TryCatch';
+import {AxiosResponse} from 'axios';
+import {tryCatch} from '@utils/TryCatch';
 import {Api} from '.';
-import {responseHandler} from './responseHandler';
 // Types
 import {
   ForgotPasswordPayload,
@@ -11,7 +11,6 @@ import {
   ISignInPayload,
   ISigninResponse,
   // Signup
-  ISignupErrorResponse,
   ISignupPayload,
   ISignupSuccessResponse,
   IverifyPasswordResponse,
@@ -20,19 +19,22 @@ import {
 } from '@store/auth';
 
 /**
- * Sends a signup request to the server.
- * @param {ISignupPayload} payload - The payload containing signup details such as email, name, and mobile number.
- * @returns {Promise<Result<ISignupSuccessResponse, ISignupErrorResponse>>} The result of the signup operation, containing either the success response or an error response.
+ * Signup API
  */
-
-const apiSignup = async (
-  payload: ISignupPayload,
-): Promise<Result<ISignupSuccessResponse, ISignupErrorResponse>> => {
-  const resultSet = await responseHandler<
-    ISignupSuccessResponse,
-    ISignupErrorResponse
-  >(Api.post('/auth/signup', payload));
-  return resultSet;
+const apiSignup = async (payload: ISignupPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<ISignupSuccessResponse>>(
+    Api.post('/auth/signup', payload),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
 };
 
 /**
