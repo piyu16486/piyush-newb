@@ -65,7 +65,7 @@ const apiSigninOtpVerify = async (payload: IOtpVerifyPayload) => {
 const apiCreatePassword = async (payload: ICreatePasswordPayload) => {
   const {data, error} = await tryCatch<
     AxiosResponse<ICreatePasswordApiResponse>
-  >(Api.post(Endpoints.apiSigninOtpVerify, payload));
+  >(Api.post(Endpoints.apiCreatePassword, payload));
   if (error) {
     return {
       data: null,
@@ -107,6 +107,7 @@ const apiForgotPassword = async (
 export default {
   apiSignup,
   apiSigninOtpVerify,
+  apiCreatePassword,
   apiOtpVerify,
   apiVerifyPassword,
   apiSignin,

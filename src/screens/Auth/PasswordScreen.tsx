@@ -1,39 +1,70 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthNavigatorType} from '@type/NavigatorTypes';
+
 import {StyleSheet, Text, View} from 'react-native';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {CircleCheck, EyeClose, EyeOpen} from '@assets/Icons';
-import {Colors, Fonts} from '@constants/index';
+import {AuthScreens, Colors, Fonts, StorageKeys} from '@constants/index';
 import Toast from 'react-native-toast-message';
-import {forgotPassword, verifyPasswordRequest} from '@store/auth/auth.slice';
-import {useDispatch} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const PasswordScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+import {useDispatch, useSelector} from 'react-redux';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AuthNavigatorType} from '@type/NavigatorTypes';
+import {authSelector} from '@store/auth';
+import {createNewPassword} from '@store/auth/auth.slice';
+import {getStorage} from '@services/localStorage';
 
-  const {params} = useRoute<RouteProp<AuthNavigatorType, 'PasswordScreen'>>();
+type PasswordScreenProps = NativeStackScreenProps<
+  AuthNavigatorType,
+  AuthScreens.PasswordScreen
+>;
 
-  useEffect(() => {
-    if (params?.token) {
-      AsyncStorage.setItem('token', params.token);
-      console.log('Token from deep link saved to AsyncStorage:', params.token);
-    }
-  }, [params?.token]);
+const Strings = {
+  createPassTitle: 'Create your password',
+  forgotPassTitle: 'Re-set your Password',
+  createPassSubtitle:
+    'Your password must be at least 8 characters long and \ninclude 1 symbol and 1 number.',
+  forgotPassSubtitle:
+    'Enter your Email Address, and you got the updates link to change the Password.',
+  sendResetLinkButtonText: 'Send Reset Link',
+  createPasswordButtonText: 'Create Password',
+  updatePasswordButtonText: 'Update Password',
+};
 
-  const dispatch = useDispatch();
-
+export const PasswordScreen = ({
+  navigation,
+  route: {params},
+}: PasswordScreenProps) => {
   const [email, setEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector(authSelector.getGlobalLoader);
+  const SuccessMessage = useSelector(authSelector.getCreatePasswordSuccess);
+  const errorMessage = useSelector(authSelector.getCreatePasswordError);
+
+  useEffect(() => {
+    if (params.screenMode !== 'createPass') return;
+    if (!isLoading && SuccessMessage) {
+      Toast.show({
+        type: 'success',
+        text1: 'Password created successfully',
+        visibilityTime: 2000,
+      });
+      navigation.replace('SuccessScreen', {authMode: 'signup'});
+    }
+    if (!isLoading && errorMessage) {
+      Toast.show({
+        type: 'error',
+        text1: errorMessage || 'Something went wrong',
+        visibilityTime: 2000,
+      });
+    }
+  }, [isLoading, SuccessMessage, errorMessage]);
 
   const passwordError = useMemo(() => {
     const error = {
@@ -75,72 +106,23 @@ export const PasswordScreen = () => {
       });
       return;
     }
-
-    async function getData(key: string) {
-      try {
-        const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-          console.log('Retrieved value:', value);
-          return value;
-        }
-      } catch (e) {
-        console.log('Failed to fetch data', e);
-      }
-    }
-    async function getToken() {
-      let token = await getData('token');
-      console.log('Retrieved token:', token);
-      return token;
-    }
-
-    // ✅ Get email from params (or decode token if you prefer)
-    //const email = params.email; // make sure this is passed when navigating to this screen
-    const rawToken = await AsyncStorage.getItem('token');
-
-    if (!rawToken) {
+    const token: string = getStorage(StorageKeys.TOKEN);
+    if (!token) {
       Toast.show({
         type: 'error',
-        text1: 'Token not found. Please log in again.',
+        text1: 'Something went wrong',
         visibilityTime: 2000,
       });
       return;
     }
-
-    const token: string = rawToken; // now it's definitely a string
-
-    dispatch(
-      verifyPasswordRequest({
-        payload: {
-          token,
-          password,
-        },
-        callbackSuccess: () => {
-          Toast.show({
-            type: 'success',
-            text1: 'Password created successfully',
-            visibilityTime: 2000,
-          });
-
-          if (params.screenMode === 'createPass') {
-            navigation.replace('SuccessScreen', {authMode: 'signup'});
-          } else {
-            navigation.replace('SuccessScreen', {authMode: 'password'});
-          }
-        },
-        callbackError: (errorMessage: string) => {
-          Toast.show({
-            type: 'error',
-            text1: errorMessage || 'Something went wrong',
-            visibilityTime: 2000,
-          });
-        },
-      }),
-    );
+    const payload = {
+      password: password,
+      token: token,
+    };
+    dispatch(createNewPassword(payload));
   };
 
   const onPressSendResetLink = () => {
-    console.log('Email entered: ', email);
-
     if (!email) {
       Toast.show({
         type: 'error',
@@ -149,32 +131,12 @@ export const PasswordScreen = () => {
       });
       return;
     }
-
-    dispatch(
-      forgotPassword({
-        payload: {email},
-        callbackSuccess: () => {
-          Toast.show({
-            type: 'success',
-            text1: 'Reset link sent successfully',
-            visibilityTime: 2000,
-          });
-
-          navigation.navigate('PasswordScreen', {
-            screenMode: 'forgotPass',
-            email: email,
-          });
-        },
-        callbackError: errorMessage => {
-          Toast.show({
-            type: 'error',
-            text1: 'Failed to send reset link',
-            text2: errorMessage,
-            visibilityTime: 2000,
-          });
-        },
-      }),
-    );
+    Toast.show({
+      type: 'success',
+      text1: 'Reset link sent successfully',
+      visibilityTime: 2000,
+    });
+    navigation.goBack();
   };
 
   return (
@@ -182,31 +144,30 @@ export const PasswordScreen = () => {
       <Header
         title={
           params.screenMode === 'createPass'
-            ? 'Create your password'
-            : 'Re-set your Password'
+            ? Strings.createPassTitle
+            : Strings.forgotPassTitle
         }
         subtitle={
           params.screenMode === 'forgotPass'
-            ? 'Enter your Email Address, and you got the updates link to change the Password.'
-            : 'Your password must be at least 8 characters long and \ninclude 1 symbol and 1 number.'
+            ? Strings.forgotPassSubtitle
+            : Strings.createPassSubtitle
         }
       />
 
       <View style={styles.flex1}>
         {params.screenMode === 'forgotPass' ? (
           <>
-            <View style={{marginHorizontal: scaleWidth(43)}}>
+            <View style={styles.inputContainer}>
               <Input
                 label="Email"
                 placeholder="Enter your email"
                 keyboardType="email-address"
                 value={email}
                 onChangeText={setEmail}
-                containerStyle={{marginTop: scaleHeight(54)}}
               />
             </View>
             <Button
-              buttonText="Send Reset Link"
+              buttonText={Strings.sendResetLinkButtonText}
               style={styles.buttonStyle}
               onPress={onPressSendResetLink}
             />
@@ -217,6 +178,7 @@ export const PasswordScreen = () => {
               <Input
                 label="Password"
                 placeholder="Enter your password"
+                editable={!isLoading}
                 renderRightIcon={
                   showPassword ? (
                     <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
@@ -232,7 +194,8 @@ export const PasswordScreen = () => {
               <Input
                 label="Confirm Password"
                 placeholder="Repeat your password"
-                containerStyle={{marginTop: scaleHeight(24)}}
+                containerStyle={styles.inputMargin}
+                editable={!isLoading}
                 renderRightIcon={
                   showConfirmPassword ? (
                     <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
@@ -247,12 +210,10 @@ export const PasswordScreen = () => {
               />
               {confirmPassword.length > 0 && (
                 <Text
-                  style={{
-                    marginTop: scaleHeight(8),
-                    marginLeft: scaleWidth(8),
-                    fontSize: scaleWidth(12),
-                    color: password === confirmPassword ? '#028D3E' : 'red',
-                  }}>
+                  style={[
+                    styles.passwordMatchText,
+                    password !== confirmPassword && styles.colorRed,
+                  ]}>
                   {password === confirmPassword
                     ? 'Passwords match'
                     : 'Passwords do not match'}
@@ -263,7 +224,9 @@ export const PasswordScreen = () => {
             <View style={styles.passwordInfoContainer}>
               <View style={styles.passwordInfo}>
                 <CircleCheck
-                  color={passwordError.lengthError ? Colors.gray400 : '#028D3E'}
+                  color={
+                    passwordError.lengthError ? Colors.gray400 : Colors.green
+                  }
                   height={scaleHeight(16)}
                   width={scaleWidth(16)}
                 />
@@ -273,7 +236,9 @@ export const PasswordScreen = () => {
               </View>
               <View style={styles.passwordInfo}>
                 <CircleCheck
-                  color={passwordError.symbolError ? Colors.gray400 : '#028D3E'}
+                  color={
+                    passwordError.symbolError ? Colors.gray400 : Colors.green
+                  }
                   height={scaleHeight(16)}
                   width={scaleWidth(16)}
                 />
@@ -281,7 +246,9 @@ export const PasswordScreen = () => {
               </View>
               <View style={styles.passwordInfo}>
                 <CircleCheck
-                  color={passwordError.numberError ? Colors.gray400 : '#028D3E'}
+                  color={
+                    passwordError.numberError ? Colors.gray400 : Colors.green
+                  }
                   height={scaleHeight(16)}
                   width={scaleWidth(16)}
                 />
@@ -292,11 +259,13 @@ export const PasswordScreen = () => {
             <Button
               buttonText={
                 params.screenMode === 'createPass'
-                  ? 'Create Password'
-                  : 'Update Password'
+                  ? Strings.createPasswordButtonText
+                  : Strings.updatePasswordButtonText
               }
               style={styles.buttonStyle}
               onPress={onPressCreatePassword}
+              showLoader={isLoading}
+              disabled={isLoading}
             />
           </>
         )}
@@ -309,6 +278,13 @@ export const PasswordScreen = () => {
 
 const styles = StyleSheet.create({
   flex1: {flex: 1},
+  inputContainer: {
+    marginHorizontal: scaleWidth(43),
+    marginTop: scaleHeight(54),
+  },
+  inputMargin: {
+    marginTop: scaleHeight(24),
+  },
   passwordContainer: {
     marginHorizontal: scaleWidth(43),
     marginTop: scaleHeight(64),
@@ -327,6 +303,15 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.GilroySemiBold,
     fontSize: scaleFont(12),
     color: Colors.gray400,
+  },
+  passwordMatchText: {
+    marginTop: scaleHeight(8),
+    marginLeft: scaleWidth(8),
+    fontSize: scaleWidth(12),
+    color: Colors.green,
+  },
+  colorRed: {
+    color: 'red',
   },
   buttonStyle: {marginHorizontal: scaleWidth(43), marginTop: scaleHeight(68)},
 });

@@ -4,13 +4,11 @@ export type AuthNavigatorType = {
   OnBoarding: undefined;
   SignupScreen: SignupScreenParams | undefined;
   OTPInputScreen: OTPInputScreenParams;
-
-  SigninScreen: SigninScreenParams | undefined;
   PasswordScreen: {
     screenMode: 'forgotPass' | 'createPass';
-    email?: string;
-    token?: string; // <-- Add this
   };
+
+  SigninScreen: SigninScreenParams | undefined;
   TermsOfService: undefined;
   SuccessScreen: {
     authMode: 'signin' | 'signup' | 'password';

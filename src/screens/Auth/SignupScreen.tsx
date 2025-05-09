@@ -56,7 +56,7 @@ export const SignupScreen: React.FC<Props> = ({
   // Redux
   const dispatch = useDispatch();
   const userType = useSelector(authSelector.getUserType);
-  const isLoading = useSelector(authSelector.getSignupLoader);
+  const isLoading = useSelector(authSelector.getGlobalLoader);
   const errorMessage = useSelector(authSelector.getSignupError);
   const SuccessMessage = useSelector(authSelector.getSignupSuccess);
 

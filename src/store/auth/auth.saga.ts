@@ -10,14 +10,14 @@ import {
   ISigninResponse,
   ISignupErrorResponse,
   ISignupSuccessResponse,
-  IverifyPasswordResponse,
   IOtpVerifyPayload,
   PayloadWithCallback,
   SigninOtpVerifyPayload,
   ISignupPayload,
-  VerifyPasswordPayload,
   IOtpVerifySuccessResponse,
   IOtpVerifyErrorResponse,
+  ICreatePasswordPayload,
+  ICreatePasswordApiResponse,
 } from './auth.types';
 // Slice
 import {
@@ -26,11 +26,13 @@ import {
   signInOtpVerify,
   signinRequest,
   signupRequest,
-  verifyPasswordRequest,
   otpVerifySuccess,
   otpVerifyError,
   signupSuccess,
   signupError,
+  createNewPassword,
+  createPasswordSuccess,
+  createPasswordError,
 } from './auth.slice';
 import {setStorage} from '@services/localStorage';
 import StorageKeys from '@constants/StorageKeys';
@@ -71,23 +73,24 @@ function* handleOtpVerify(action: PayloadAction<IOtpVerifyPayload>): unknown {
   }
 }
 
-function* handleVerifyPassword(
-  action: PayloadAction<PayloadWithCallback<VerifyPasswordPayload>>,
+function* handleCreateNewPassword(
+  action: PayloadAction<ICreatePasswordPayload>,
 ): unknown {
-  try {
-    console.log('req:    ', action);
-    const response: IverifyPasswordResponse = yield call(
-      authApi.apiVerifyPassword,
-      action.payload.payload,
+  const {
+    data,
+    error,
+  }: Result<
+    ICreatePasswordApiResponse,
+    AxiosError<ICreatePasswordApiResponse>
+  > = yield call(AuthApis.apiCreatePassword, action.payload);
+  if (!error) {
+    yield put(createPasswordSuccess(data.message));
+  } else {
+    yield put(
+      createPasswordError(
+        error.response?.data.message ?? 'Something went wrong',
+      ),
     );
-    if (response.statusCode) {
-      action.payload.callbackSuccess?.();
-    } else {
-      action.payload.callbackError?.(response.message);
-    }
-  } catch (error: any) {
-    console.log(error);
-    action.payload.callbackError?.(error?.message);
   }
 }
 
@@ -148,7 +151,7 @@ function* handleForgotPassword(
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);
-  yield takeLatest(verifyPasswordRequest.type, handleVerifyPassword);
+  yield takeLatest(createNewPassword.type, handleCreateNewPassword);
   yield takeLatest(signinRequest.type, handleSignin);
   yield takeLatest(signInOtpVerify.type, handleSignInOtpVerify);
   yield takeLatest(forgotPassword.type, handleForgotPassword);

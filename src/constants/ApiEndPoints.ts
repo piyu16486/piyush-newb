@@ -1,7 +1,7 @@
 const Endpoints = {
   apiSignup: '/auth/signup',
   apiSigninOtpVerify: '/auth/verify-otp-from-email',
-  apiCreatePassword: 'auth/create-password',
+  apiCreatePassword: '/auth/create-password',
   
   apiSignin: '/auth/signin',
   apiOtpVerify: '/auth/verify-otp',

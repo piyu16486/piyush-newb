@@ -4,6 +4,11 @@ import {RootState} from '@store/app/store';
 const _selectState = (state: RootState) => state.auth;
 const getUserType = createSelector(_selectState, _state => _state.userType);
 
+const getGlobalLoader = createSelector(
+  _selectState,
+  _state => _state.globalLoader,
+);
+
 // Signup
 const getSignupError = createSelector(
   _selectState,
@@ -13,11 +18,6 @@ const getSignupError = createSelector(
 const getSignupSuccess = createSelector(
   _selectState,
   _state => _state.signupSuccess,
-);
-
-const getSignupLoader = createSelector(
-  _selectState,
-  _state => _state.signupLoader,
 );
 
 // OTP Verify
@@ -31,17 +31,24 @@ const getVerifyOtpSuccess = createSelector(
   _state => _state.verifyOtpSuccess,
 );
 
-const getVerifyOtpLoader = createSelector(
+// Create New Password
+const getCreatePasswordError = createSelector(
   _selectState,
-  _state => _state.verifyOtpLoader,
+  _state => _state.createPasswordError,
+);
+
+const getCreatePasswordSuccess = createSelector(
+  _selectState,
+  _state => _state.createPasswordSuccess,
 );
 
 export default {
   getUserType,
+  getGlobalLoader,
   getSignupError,
   getSignupSuccess,
-  getSignupLoader,
   getVerifyOtpError,
   getVerifyOtpSuccess,
-  getVerifyOtpLoader,
+  getCreatePasswordError,
+  getCreatePasswordSuccess,
 };

@@ -43,7 +43,7 @@ export const OTPInputScreen = ({
   const dispatch = useDispatch();
   const otpErrorMessage = useSelector(authSelector.getVerifyOtpError);
   const otpSuccessMessage = useSelector(authSelector.getVerifyOtpSuccess);
-  const otpLoader = useSelector(authSelector.getVerifyOtpLoader);
+  const otpLoader = useSelector(authSelector.getGlobalLoader);
 
   useEffect(() => {
     if (otpErrorMessage && !otpLoader) {

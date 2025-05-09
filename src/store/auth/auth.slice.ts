@@ -8,19 +8,21 @@ import {
   ISignInPayload,
   ISignupPayload,
   UserType,
-  VerifyPasswordPayload,
+  ICreatePasswordPayload,
 } from './auth.types';
 
 const initialState: IAuthState = {
+  globalLoader: false,
+  userType: 'client',
+
   signupError: null,
-  signupLoader: false,
   signupSuccess: null,
 
-  verifyOtpLoader: false,
   verifyOtpError: null,
   verifyOtpSuccess: null,
 
-  userType: 'client',
+  createPasswordError: null,
+  createPasswordSuccess: null,
 };
 
 const authSlice = createSlice({
@@ -33,33 +35,47 @@ const authSlice = createSlice({
     },
     // Signup
     signupRequest: (state, _action: PayloadAction<ISignupPayload>) => {
-      state.signupLoader = true;
+      state.globalLoader = true;
     },
     signupSuccess: (state, action: PayloadAction<string | null>) => {
       state.signupSuccess = action.payload;
-      state.signupLoader = false;
+      state.globalLoader = false;
     },
     signupError: (state, action: PayloadAction<string | undefined | null>) => {
       state.signupError = action.payload;
-      state.signupLoader = false;
+      state.globalLoader = false;
     },
     // OTP Verify
     otpVerifyRequest: (state, _action: PayloadAction<IOtpVerifyPayload>) => {
-      state.verifyOtpLoader = true;
+      state.globalLoader = true;
     },
     otpVerifySuccess: (state, action: PayloadAction<string>) => {
       state.verifyOtpSuccess = action.payload;
-      state.verifyOtpLoader = false;
+      state.globalLoader = false;
     },
     otpVerifyError: (state, action: PayloadAction<string | undefined>) => {
       state.verifyOtpError = action.payload;
-      state.verifyOtpLoader = false;
+      state.globalLoader = false;
     },
-
-    verifyPasswordRequest: (
+    // Create New Password
+    createNewPassword: (
       state,
-      action: PayloadAction<PayloadWithCallback<VerifyPasswordPayload>>,
-    ) => {},
+      _action: PayloadAction<ICreatePasswordPayload>,
+    ) => {
+      state.globalLoader = true;
+    },
+    createPasswordSuccess: (state, action: PayloadAction<string | null>) => {
+      state.createPasswordSuccess = action.payload;
+      state.globalLoader = false;
+    },
+    createPasswordError: (
+      state,
+      action: PayloadAction<string | undefined | null>,
+    ) => {
+      state.createPasswordError = action.payload;
+      state.globalLoader = false;
+    },
+    //
     signinRequest: (
       state,
       action: PayloadAction<PayloadWithCallback<ISignInPayload>>,
@@ -82,7 +98,9 @@ export const {
   otpVerifyRequest,
   otpVerifySuccess,
   otpVerifyError,
-  verifyPasswordRequest,
+  createNewPassword,
+  createPasswordSuccess,
+  createPasswordError,
   signinRequest,
   signInOtpVerify,
   forgotPassword,
