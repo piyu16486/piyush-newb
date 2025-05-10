@@ -16,7 +16,7 @@ import {
   resetPassword,
   sendResetLinkRequest,
 } from '@store/auth/auth.slice';
-import {getStorage} from '@services/localStorage';
+import {setStorage} from '@services/localStorage';
 
 type PasswordScreenProps = NativeStackScreenProps<
   AuthNavigatorType,
@@ -73,6 +73,10 @@ export const PasswordScreen = ({
       text1: successMessage,
       visibilityTime: 2000,
     });
+    if (params.screenMode === 'createPass') {
+      setStorage(StorageKeys.IS_LOGGED_IN, 'true');
+      setStorage(StorageKeys.TOKEN, params.token);
+    }
     navigation.replace('SuccessScreen', {
       authMode: params.screenMode === 'createPass' ? 'signup' : 'password',
     });
@@ -129,14 +133,6 @@ export const PasswordScreen = ({
   };
 
   const onPressPasswordBtn = () => {
-    if (params.screenMode === 'createPass') {
-      onPressCreatePassword();
-    } else {
-      onPressUpdatePassword();
-    }
-  };
-
-  const onPressUpdatePassword = () => {
     if (!validatePassword()) return;
     if (!params?.token) {
       Toast.show({
@@ -155,29 +151,11 @@ export const PasswordScreen = ({
       callbackSuccess: onSuccessPasswordCreate,
       callbackError: onFailPasswordCreate,
     };
-    dispatch(resetPassword(payload));
-  };
-  const onPressCreatePassword = () => {
-    if (!validatePassword()) return;
-    const token: string = getStorage(StorageKeys.TOKEN);
-    if (!token) {
-      Toast.show({
-        type: 'error',
-        text1: 'Something went wrong',
-        visibilityTime: 2000,
-      });
-      return;
+    if (params.screenMode === 'createPass') {
+      dispatch(createNewPassword(payload));
+    } else {
+      dispatch(resetPassword(payload));
     }
-    const data = {
-      password: password,
-      token: token,
-    };
-    const payload = {
-      payload: data,
-      callbackSuccess: onSuccessPasswordCreate,
-      callbackError: onFailPasswordCreate,
-    };
-    dispatch(createNewPassword(payload));
   };
 
   const onPressSendResetLink = () => {

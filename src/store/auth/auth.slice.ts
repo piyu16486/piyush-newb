@@ -2,10 +2,11 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
   IAuthState,
   UserType,
-  SignUpPayloadWithCallback,
+  SignupPayloadWithCallback,
   OtpVerifyPayloadWithCallback,
   CreatePasswordPayloadWithCallback,
   ResetLinkPayloadWithCallback,
+  SigninPayloadWithCallback,
 } from './auth.types';
 
 const initialState: IAuthState = {
@@ -28,7 +29,7 @@ const authSlice = createSlice({
     // Signup
     signupRequest: (
       state,
-      _action: PayloadAction<SignUpPayloadWithCallback>,
+      _action: PayloadAction<SignupPayloadWithCallback>,
     ) => {
       state.globalLoader = true;
     },
@@ -60,6 +61,13 @@ const authSlice = createSlice({
     ) => {
       state.globalLoader = true;
     },
+    // Signin
+    signinRequest: (
+      state,
+      _action: PayloadAction<SigninPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
   },
 });
 
@@ -72,5 +80,6 @@ export const {
   createNewPassword,
   sendResetLinkRequest,
   resetPassword,
+  signinRequest,
 } = authSlice.actions;
 export default authSlice.reducer;

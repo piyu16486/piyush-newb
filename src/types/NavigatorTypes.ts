@@ -28,7 +28,16 @@ export type SigninScreenParams = {
 
 export type OTPInputScreenParams = {
   showCreatePass: boolean;
-} & SignupScreenParams;
+} & (
+  | {
+      screen: 'signup';
+      data: SignupScreenParams;
+    }
+  | {
+      screen: 'signin';
+      data: SigninScreenParams;
+    }
+);
 
 export type PasswordScreenParams = {
   token?: string;

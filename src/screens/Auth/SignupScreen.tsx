@@ -71,23 +71,27 @@ export const SignupScreen: React.FC<Props> = ({
   const onSuccessSignup = () => {
     Toast.show({
       type: 'success',
-      text1: 'OTP sent to your mobile no.',
+      text1: 'OTP sent to your email.',
       visibilityTime: 2000,
     });
-    const params = {
+    const data = {
       mobile: mobileNumber,
-      showCreatePass: true,
       email,
       country,
       firstName,
       lastName,
+    };
+    const params = {
+      showCreatePass: true,
+      screen: 'signup',
+      data,
     };
     navigation.reset({
       index: 0,
       routes: [
         {
           name: AuthScreens.OTPInputScreen,
-          params,
+          params: params,
         },
       ],
     });
@@ -108,10 +112,10 @@ export const SignupScreen: React.FC<Props> = ({
     if (isEmailValid && isMobileValid && isNameValid) {
       const payload = {
         country_code: country.callingCode[0],
-        mobile_number: mobileNumber,
-        email,
-        first_name: firstName,
-        last_name: lastName,
+        mobile_number: mobileNumber.trim(),
+        email: email.trim(),
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
         is_client: userType === 'client',
         is_internal: userType === 'internal',
       };

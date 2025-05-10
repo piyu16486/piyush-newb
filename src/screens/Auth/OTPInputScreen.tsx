@@ -48,7 +48,7 @@ export const OTPInputScreen = ({
     };
   }, []);
 
-  const onSuccessOTPVerify = () => {
+  const onSuccessOTPVerify = (token?: string) => {
     Toast.show({
       type: 'success',
       text1: 'OTP verified successfully',
@@ -56,7 +56,10 @@ export const OTPInputScreen = ({
     });
 
     if (params.showCreatePass) {
-      navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
+      navigation.navigate('PasswordScreen', {
+        screenMode: 'createPass',
+        token: token,
+      });
     } else {
       navigation.replace('SuccessScreen', {authMode: 'signin'});
     }
@@ -99,7 +102,11 @@ export const OTPInputScreen = ({
   };
 
   const onPressEdit = () => {
-    navigation.replace('SignupScreen', params);
+    if (params.screen === 'signup') {
+      navigation.replace(AuthScreens.SignupScreen, params.data);
+    } else {
+      navigation.replace(AuthScreens.SigninScreen, params.data);
+    }
   };
 
   const onPressVerifyOTP = () => {
@@ -112,7 +119,7 @@ export const OTPInputScreen = ({
       return;
     }
     const data = {
-      email: params.email,
+      email: params.data.email,
       otp,
     };
     const payload = {
@@ -134,7 +141,7 @@ export const OTPInputScreen = ({
               <Text
                 numberOfLines={1}
                 style={[styles.subTitle, styles.subTitleInfo]}>
-                {params.email}
+                {params.data.email}
               </Text>
               <TouchableOpacity
                 style={styles.editContainer}

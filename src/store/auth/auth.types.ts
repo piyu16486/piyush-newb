@@ -7,11 +7,26 @@ export interface IAuthState {
   userType: UserType;
 }
 
-/** Login  */
-
-export interface LoginPayload {
-  username: string;
+/** Signin  */
+export interface ISigninPayload {
+  email: string;
   password: string;
+}
+
+export type SigninPayloadWithCallback = PayloadWithCallback<
+  ISigninPayload,
+  [],
+  [string]
+>;
+
+export interface ISigninSuccessResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ISigninErrorResponse {
+  statusCode: number;
+  message: string;
 }
 
 /** SignUp  */
@@ -25,7 +40,7 @@ export interface ISignupPayload {
   email: string;
 }
 
-export type SignUpPayloadWithCallback = PayloadWithCallback<
+export type SignupPayloadWithCallback = PayloadWithCallback<
   ISignupPayload,
   [],
   [string]
@@ -49,7 +64,7 @@ export interface IOtpVerifyPayload {
 
 export type OtpVerifyPayloadWithCallback = PayloadWithCallback<
   IOtpVerifyPayload,
-  [],
+  [string | undefined],
   [string]
 >;
 

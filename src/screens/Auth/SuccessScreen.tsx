@@ -1,20 +1,28 @@
 import React, {useEffect, useMemo} from 'react';
 import {Container, Header} from '@components/index';
 import {BackHandler, StyleSheet, Text, View} from 'react-native';
-import {Colors, Fonts} from '@constants/index';
+import {AuthScreens, Colors, Fonts} from '@constants/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import LottieView from 'lottie-react-native';
 import {successLottie} from '@assets/Lottie';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useDispatch} from 'react-redux';
 import {userActions} from '@store/user';
+import moment from 'moment';
 
-export const SuccessScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
-  const {params} = useRoute<RouteProp<AuthNavigatorType, 'SuccessScreen'>>();
+const Strings = {
+  copyright: `Copyright ${moment().year()}, CashnTech Pvt Ltd., All Rights Reserved`,
+};
+
+type SuccessScreenProps = NativeStackScreenProps<
+  AuthNavigatorType,
+  AuthScreens.SuccessScreen
+>;
+export const SuccessScreen = ({
+  navigation,
+  route: {params},
+}: SuccessScreenProps) => {
   const dispatch = useDispatch();
 
   const message = useMemo(() => {
@@ -43,7 +51,7 @@ export const SuccessScreen = () => {
     }, 2500);
 
     return () => backHandler.remove();
-  }, [params.authMode, navigation, dispatch]);
+  }, [params.authMode]);
 
   return (
     <Container>
@@ -56,9 +64,7 @@ export const SuccessScreen = () => {
           style={styles.checkMark}
         />
       </View>
-      <Text style={styles.copyRightText}>
-        Copyright 2024, CashnTech Pvt Ltd., All Rights Reserved
-      </Text>
+      <Text style={styles.copyRightText}>{Strings.copyright}</Text>
     </Container>
   );
 };

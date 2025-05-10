@@ -10,6 +10,8 @@ import {
   IOtpVerifySuccessResponse,
   IResetLinkPayload,
   IResetLinkSuccessResponse,
+  ISigninPayload,
+  ISigninSuccessResponse,
   ISignupPayload,
   ISignupSuccessResponse,
 } from '@store/auth';
@@ -93,11 +95,29 @@ const apiSendResetLink = async (payload: IResetLinkPayload) => {
 /**
  * Reset Password API
  */
-
 const apiResetPassword = async (payload: ICreatePasswordPayload) => {
   const {data, error} = await tryCatch<
     AxiosResponse<ICreatePasswordApiResponse>
   >(Api.post(Endpoints.apiResetPassword, payload));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+/**
+ * Signin API
+ */
+const apiSignin = async (payload: ISigninPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<ISigninSuccessResponse>>(
+    Api.post(Endpoints.apiSignin, payload),
+  );
   if (error) {
     return {
       data: null,
@@ -116,4 +136,5 @@ export default {
   apiCreatePassword,
   apiSendResetLink,
   apiResetPassword,
+  apiSignin,
 };

@@ -2,8 +2,6 @@ import {call, put, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {AuthApis} from '@services/api';
 import {Result} from '@utils/TryCatch';
-import {setStorage} from '@services/localStorage';
-import StorageKeys from '@constants/StorageKeys';
 import {AxiosError} from 'axios';
 // Types
 import {
@@ -12,11 +10,14 @@ import {
   IOtpVerifySuccessResponse,
   IOtpVerifyErrorResponse,
   ICreatePasswordApiResponse,
-  SignUpPayloadWithCallback,
+  SignupPayloadWithCallback,
   OtpVerifyPayloadWithCallback,
   CreatePasswordPayloadWithCallback,
   ResetLinkPayloadWithCallback,
   IResetLinkSuccessResponse,
+  ISigninSuccessResponse,
+  ISigninErrorResponse,
+  SigninPayloadWithCallback,
 } from './auth.types';
 // Slice
 import {
@@ -26,10 +27,11 @@ import {
   setGlobalLoader,
   sendResetLinkRequest,
   resetPassword,
+  signinRequest,
 } from './auth.slice';
 
 function* handleSignup(
-  action: PayloadAction<SignUpPayloadWithCallback>,
+  action: PayloadAction<SignupPayloadWithCallback>,
 ): unknown {
   const {
     error,
@@ -58,8 +60,7 @@ function* handleOtpVerify(
   > = yield call(AuthApis.apiSigninOtpVerify, action.payload.payload);
   yield put(setGlobalLoader(false));
   if (!error) {
-    setStorage(StorageKeys.TOKEN, data.data);
-    action.payload.callbackSuccess?.();
+    action.payload.callbackSuccess?.(data.data);
   } else {
     const errorMessage = error.response?.data.message ?? 'Something went wrong';
     action.payload.callbackError?.(errorMessage);
@@ -123,23 +124,23 @@ function* handleResetPassword(
   }
 }
 
-// function* handleSignin(
-//   action: PayloadAction<PayloadWithCallback<SignInPayload>>,
-// ): unknown {
-//   try {
-//     const response: ISigninResponse = yield call(
-//       AuthApis.apiSignin,
-//       action.payload.payload,
-//     );
-//     if (response.message) {
-//       action.payload.callbackSuccess?.();
-//     } else {
-//       action.payload.callbackError?.(response.message);
-//     }
-//   } catch (error: any) {
-//     action.payload.callbackError?.(error?.message);
-//   }
-// }
+function* handleSignin(
+  action: PayloadAction<SigninPayloadWithCallback>,
+): unknown {
+  const {
+    error,
+  }: Result<
+    ISigninSuccessResponse,
+    AxiosError<ISigninErrorResponse>
+  > = yield call(AuthApis.apiSignin, action.payload.payload);
+  yield put(setGlobalLoader(false));
+  if (!error) {
+    action.payload.callbackSuccess?.();
+  } else {
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
+  }
+}
 
 // function* handleSignInOtpVerify(
 //   action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
@@ -159,28 +160,11 @@ function* handleResetPassword(
 //   }
 // }
 
-// function* handleForgotPassword(
-//   action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
-// ): unknown {
-//   try {
-//     const response: IForgotpasswordResponse = yield call(
-//       authApi.apiForgotPassword,
-//       action.payload.payload,
-//     );
-//     if (response.message) {
-//       action.payload.callbackSuccess?.();
-//     } else {
-//       action.payload.callbackError?.(response.message);
-//     }
-//   } catch (error: any) {
-//     action.payload.callbackError?.(error?.message);
-//   }
-// }
-
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);
   yield takeLatest(createNewPassword.type, handleCreateNewPassword);
   yield takeLatest(sendResetLinkRequest.type, handleSendResetLink);
   yield takeLatest(resetPassword.type, handleResetPassword);
+  yield takeLatest(signinRequest.type, handleSignin);
 }
