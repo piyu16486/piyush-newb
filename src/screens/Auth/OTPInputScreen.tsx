@@ -9,11 +9,7 @@ import {AuthScreens, Colors, Fonts} from '@constants/index';
 import {EditIcon} from '@assets/Icons';
 import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  otpVerifyRequest,
-  signupError,
-  signupSuccess,
-} from '@store/auth/auth.slice';
+import {otpVerifyRequest} from '@store/auth/auth.slice';
 import {authSelector} from '@store/auth';
 
 const OTP_TIMER = 60;
@@ -41,32 +37,38 @@ export const OTPInputScreen = ({
   const timerInterval = useRef<NodeJS.Timeout>(null);
 
   const dispatch = useDispatch();
-  const otpErrorMessage = useSelector(authSelector.getVerifyOtpError);
-  const otpSuccessMessage = useSelector(authSelector.getVerifyOtpSuccess);
-  const otpLoader = useSelector(authSelector.getGlobalLoader);
+  const isLoading = useSelector(authSelector.getGlobalLoader);
 
   useEffect(() => {
-    if (otpErrorMessage && !otpLoader) {
-      Toast.show({
-        type: 'error',
-        text1: otpErrorMessage ?? 'Wrong OTP. Please try again',
-        visibilityTime: 2000,
-      });
-    }
-    if (otpSuccessMessage && !otpLoader) {
-      Toast.show({
-        type: 'success',
-        text1: 'OTP verified successfully',
-        visibilityTime: 2000,
-      });
-
-      if (params.showCreatePass) {
-        navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
-      } else {
-        navigation.replace('SuccessScreen', {authMode: 'signin'});
+    startTimer();
+    return () => {
+      if (timerInterval.current) {
+        clearInterval(timerInterval.current);
       }
+    };
+  }, []);
+
+  const onSuccessOTPVerify = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'OTP verified successfully',
+      visibilityTime: 2000,
+    });
+
+    if (params.showCreatePass) {
+      navigation.navigate('PasswordScreen', {screenMode: 'createPass'});
+    } else {
+      navigation.replace('SuccessScreen', {authMode: 'signin'});
     }
-  }, [otpErrorMessage, otpSuccessMessage, otpLoader]);
+  };
+
+  const onFailOTPVerify = (otpErrorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: otpErrorMessage,
+      visibilityTime: 2000,
+    });
+  };
 
   const startTimer = () => {
     timerInterval.current = setInterval(() => {
@@ -83,15 +85,6 @@ export const OTPInputScreen = ({
     }, 1000);
   };
 
-  useEffect(() => {
-    startTimer();
-    return () => {
-      if (timerInterval.current) {
-        clearInterval(timerInterval.current);
-      }
-    };
-  }, []);
-
   const onPressResendOTP = () => {
     setOtpTimer(OTP_TIMER);
     Toast.show({
@@ -106,8 +99,6 @@ export const OTPInputScreen = ({
   };
 
   const onPressEdit = () => {
-    dispatch(signupSuccess(null));
-    dispatch(signupError(null));
     navigation.replace('SignupScreen', params);
   };
 
@@ -120,7 +111,16 @@ export const OTPInputScreen = ({
       });
       return;
     }
-    dispatch(otpVerifyRequest({email: params.email, otp: otp}));
+    const data = {
+      email: params.email,
+      otp,
+    };
+    const payload = {
+      payload: data,
+      callbackSuccess: onSuccessOTPVerify,
+      callbackError: onFailOTPVerify,
+    };
+    dispatch(otpVerifyRequest(payload));
   };
 
   return (
@@ -166,8 +166,8 @@ export const OTPInputScreen = ({
             buttonText={'Verify'}
             style={styles.verifyButton}
             onPress={onPressVerifyOTP}
-            showLoader={otpLoader}
-            disabled={otpLoader}
+            showLoader={isLoading}
+            disabled={isLoading}
           />
         </View>
         <View style={styles.resendContainer}>

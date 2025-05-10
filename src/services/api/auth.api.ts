@@ -4,21 +4,14 @@ import {Api} from '.';
 import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
-  ForgotPasswordPayload,
   ICreatePasswordApiResponse,
   ICreatePasswordPayload,
-  IForgotpasswordResponse,
   IOtpVerifyPayload,
   IOtpVerifySuccessResponse,
-  ISigninOtpVerifyResponse,
-  ISignInPayload,
-  ISigninResponse,
-  // Signup
+  IResetLinkPayload,
+  IResetLinkSuccessResponse,
   ISignupPayload,
   ISignupSuccessResponse,
-  IverifyPasswordResponse,
-  SigninOtpVerifyPayload,
-  VerifyPasswordPayload,
 } from '@store/auth';
 
 /**
@@ -78,38 +71,28 @@ const apiCreatePassword = async (payload: ICreatePasswordPayload) => {
   };
 };
 
-const apiVerifyPassword = async (
-  payload: VerifyPasswordPayload,
-): Promise<IverifyPasswordResponse> => {
-  const response = await Api.post('/auth/create-password', payload);
-  return response.data;
-};
-
-const apiSignin = async (payload: ISignInPayload): Promise<ISigninResponse> => {
-  const response = await Api.post('/auth/login', payload);
-  return response.data;
-};
-
-const apiOtpVerify = async (
-  payload: SigninOtpVerifyPayload,
-): Promise<ISigninOtpVerifyResponse> => {
-  const response = await Api.post('/auth/verify-otp', payload);
-  return response.data;
-};
-
-const apiForgotPassword = async (
-  payload: ForgotPasswordPayload,
-): Promise<IForgotpasswordResponse> => {
-  const response = await Api.post('/auth/forgot-password', payload);
-  return response.data;
+/**
+ * Forgot Password API
+ */
+const apiSendResetLink = async (payload: IResetLinkPayload) => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<IResetLinkSuccessResponse>
+  >(Api.post(Endpoints.apiForgotPassword, payload));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
 };
 
 export default {
   apiSignup,
   apiSigninOtpVerify,
   apiCreatePassword,
-  apiOtpVerify,
-  apiVerifyPassword,
-  apiSignin,
-  apiForgotPassword,
+  apiSendResetLink,
 };

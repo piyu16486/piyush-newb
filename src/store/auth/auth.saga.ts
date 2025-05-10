@@ -2,79 +2,71 @@ import {call, put, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {AuthApis} from '@services/api';
 import {Result} from '@utils/TryCatch';
-// Types
-import {
-  ForgotPasswordPayload,
-  IForgotpasswordResponse,
-  ISigninOtpVerifyResponse,
-  ISigninResponse,
-  ISignupErrorResponse,
-  ISignupSuccessResponse,
-  IOtpVerifyPayload,
-  PayloadWithCallback,
-  SigninOtpVerifyPayload,
-  ISignupPayload,
-  IOtpVerifySuccessResponse,
-  IOtpVerifyErrorResponse,
-  ICreatePasswordPayload,
-  ICreatePasswordApiResponse,
-} from './auth.types';
-// Slice
-import {
-  forgotPassword,
-  otpVerifyRequest,
-  signInOtpVerify,
-  signinRequest,
-  signupRequest,
-  otpVerifySuccess,
-  otpVerifyError,
-  signupSuccess,
-  signupError,
-  createNewPassword,
-  createPasswordSuccess,
-  createPasswordError,
-} from './auth.slice';
 import {setStorage} from '@services/localStorage';
 import StorageKeys from '@constants/StorageKeys';
 import {AxiosError} from 'axios';
+// Types
+import {
+  ISignupErrorResponse,
+  ISignupSuccessResponse,
+  IOtpVerifySuccessResponse,
+  IOtpVerifyErrorResponse,
+  ICreatePasswordApiResponse,
+  SignUpPayloadWithCallback,
+  OtpVerifyPayloadWithCallback,
+  CreatePasswordPayloadWithCallback,
+  ResetLinkPayloadWithCallback,
+  IResetLinkSuccessResponse,
+} from './auth.types';
+// Slice
+import {
+  otpVerifyRequest,
+  signupRequest,
+  createNewPassword,
+  setGlobalLoader,
+  sendResetLinkRequest,
+} from './auth.slice';
 
-function* handleSignup(action: PayloadAction<ISignupPayload>): unknown {
+function* handleSignup(
+  action: PayloadAction<SignUpPayloadWithCallback>,
+): unknown {
   const {
-    data,
     error,
   }: Result<
     ISignupSuccessResponse,
     AxiosError<ISignupErrorResponse>
-  > = yield call(AuthApis.apiSignup, action.payload);
+  > = yield call(AuthApis.apiSignup, action.payload.payload);
+  yield put(setGlobalLoader(false));
   if (!error) {
-    yield put(signupSuccess(data.message));
+    action.payload.callbackSuccess?.();
   } else {
-    yield put(
-      signupError(error.response?.data.message ?? 'Something went wrong'),
-    );
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
   }
 }
 
-function* handleOtpVerify(action: PayloadAction<IOtpVerifyPayload>): unknown {
+function* handleOtpVerify(
+  action: PayloadAction<OtpVerifyPayloadWithCallback>,
+): unknown {
   const {
     data,
     error,
   }: Result<
     IOtpVerifySuccessResponse,
     AxiosError<IOtpVerifyErrorResponse>
-  > = yield call(AuthApis.apiSigninOtpVerify, action.payload);
+  > = yield call(AuthApis.apiSigninOtpVerify, action.payload.payload);
+  yield put(setGlobalLoader(false));
   if (!error) {
     setStorage(StorageKeys.TOKEN, data.data);
-    yield put(otpVerifySuccess(data.message));
+    action.payload.callbackSuccess?.();
   } else {
-    yield put(
-      otpVerifyError(error.response?.data.message ?? 'Something went wrong'),
-    );
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
   }
 }
 
 function* handleCreateNewPassword(
-  action: PayloadAction<ICreatePasswordPayload>,
+  action: PayloadAction<CreatePasswordPayloadWithCallback>,
 ): unknown {
   const {
     data,
@@ -82,77 +74,92 @@ function* handleCreateNewPassword(
   }: Result<
     ICreatePasswordApiResponse,
     AxiosError<ICreatePasswordApiResponse>
-  > = yield call(AuthApis.apiCreatePassword, action.payload);
+  > = yield call(AuthApis.apiCreatePassword, action.payload.payload);
+  yield put(setGlobalLoader(false));
   if (!error) {
-    yield put(createPasswordSuccess(data.message));
+    action.payload.callbackSuccess?.(data.message);
   } else {
-    yield put(
-      createPasswordError(
-        error.response?.data.message ?? 'Something went wrong',
-      ),
-    );
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
   }
 }
 
-function* handleSignin(
-  action: PayloadAction<PayloadWithCallback<SignInPayload>>,
+function* handleSendResetLink(
+  action: PayloadAction<ResetLinkPayloadWithCallback>,
 ): unknown {
-  try {
-    const response: ISigninResponse = yield call(
-      AuthApis.apiSignin,
-      action.payload.payload,
-    );
-    if (response.message) {
-      action.payload.callbackSuccess?.();
-    } else {
-      action.payload.callbackError?.(response.message);
-    }
-  } catch (error: any) {
-    action.payload.callbackError?.(error?.message);
+  const {
+    data,
+    error,
+  }: Result<
+    IResetLinkSuccessResponse,
+    AxiosError<IResetLinkSuccessResponse>
+  > = yield call(AuthApis.apiSendResetLink, action.payload.payload);
+  yield put(setGlobalLoader(false));
+  if (!error) {
+    action.payload.callbackSuccess?.(data.message);
+  } else {
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
   }
 }
 
-function* handleSignInOtpVerify(
-  action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
-): unknown {
-  try {
-    const response: ISigninOtpVerifyResponse = yield call(
-      authApi.apiSigninOtpVerify,
-      action.payload.payload,
-    );
-    if (response.message) {
-      action.payload.callbackSuccess?.();
-    } else {
-      action.payload.callbackError?.(response.message);
-    }
-  } catch (error: any) {
-    action.payload.callbackError?.(error?.message);
-  }
-}
+// function* handleSignin(
+//   action: PayloadAction<PayloadWithCallback<SignInPayload>>,
+// ): unknown {
+//   try {
+//     const response: ISigninResponse = yield call(
+//       AuthApis.apiSignin,
+//       action.payload.payload,
+//     );
+//     if (response.message) {
+//       action.payload.callbackSuccess?.();
+//     } else {
+//       action.payload.callbackError?.(response.message);
+//     }
+//   } catch (error: any) {
+//     action.payload.callbackError?.(error?.message);
+//   }
+// }
 
-function* handleForgotPassword(
-  action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
-): unknown {
-  try {
-    const response: IForgotpasswordResponse = yield call(
-      authApi.apiForgotPassword,
-      action.payload.payload,
-    );
-    if (response.message) {
-      action.payload.callbackSuccess?.();
-    } else {
-      action.payload.callbackError?.(response.message);
-    }
-  } catch (error: any) {
-    action.payload.callbackError?.(error?.message);
-  }
-}
+// function* handleSignInOtpVerify(
+//   action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
+// ): unknown {
+//   try {
+//     const response: ISigninOtpVerifyResponse = yield call(
+//       authApi.apiSigninOtpVerify,
+//       action.payload.payload,
+//     );
+//     if (response.message) {
+//       action.payload.callbackSuccess?.();
+//     } else {
+//       action.payload.callbackError?.(response.message);
+//     }
+//   } catch (error: any) {
+//     action.payload.callbackError?.(error?.message);
+//   }
+// }
+
+// function* handleForgotPassword(
+//   action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
+// ): unknown {
+//   try {
+//     const response: IForgotpasswordResponse = yield call(
+//       authApi.apiForgotPassword,
+//       action.payload.payload,
+//     );
+//     if (response.message) {
+//       action.payload.callbackSuccess?.();
+//     } else {
+//       action.payload.callbackError?.(response.message);
+//     }
+//   } catch (error: any) {
+//     action.payload.callbackError?.(error?.message);
+//   }
+// }
 
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);
   yield takeLatest(createNewPassword.type, handleCreateNewPassword);
-  yield takeLatest(signinRequest.type, handleSignin);
-  yield takeLatest(signInOtpVerify.type, handleSignInOtpVerify);
-  yield takeLatest(forgotPassword.type, handleForgotPassword);
+  yield takeLatest(sendResetLinkRequest.type, handleSendResetLink);
 }

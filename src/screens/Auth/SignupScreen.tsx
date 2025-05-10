@@ -57,8 +57,6 @@ export const SignupScreen: React.FC<Props> = ({
   const dispatch = useDispatch();
   const userType = useSelector(authSelector.getUserType);
   const isLoading = useSelector(authSelector.getGlobalLoader);
-  const errorMessage = useSelector(authSelector.getSignupError);
-  const SuccessMessage = useSelector(authSelector.getSignupSuccess);
 
   useEffect(() => {
     if (params) {
@@ -69,15 +67,6 @@ export const SignupScreen: React.FC<Props> = ({
       setCountry(params.country);
     }
   }, [params]);
-
-  useEffect(() => {
-    if (errorMessage && !isLoading) {
-      onErrorSignup(errorMessage);
-    }
-    if (SuccessMessage && !isLoading) {
-      onSuccessSignup();
-    }
-  }, [errorMessage, SuccessMessage, isLoading]);
 
   const onSuccessSignup = () => {
     Toast.show({
@@ -126,7 +115,12 @@ export const SignupScreen: React.FC<Props> = ({
         is_client: userType === 'client',
         is_internal: userType === 'internal',
       };
-      dispatch(signupRequest(payload));
+      const dispatchPayload = {
+        payload: payload,
+        callbackSuccess: onSuccessSignup,
+        callbackError: onErrorSignup,
+      };
+      dispatch(signupRequest(dispatchPayload));
     }
   };
 

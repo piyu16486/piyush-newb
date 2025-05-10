@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
 
 import {StyleSheet, Text, View} from 'react-native';
@@ -11,7 +11,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {authSelector} from '@store/auth';
-import {createNewPassword} from '@store/auth/auth.slice';
+import {createNewPassword, sendResetLinkRequest} from '@store/auth/auth.slice';
 import {getStorage} from '@services/localStorage';
 
 type PasswordScreenProps = NativeStackScreenProps<
@@ -44,27 +44,6 @@ export const PasswordScreen = ({
   const dispatch = useDispatch();
 
   const isLoading = useSelector(authSelector.getGlobalLoader);
-  const SuccessMessage = useSelector(authSelector.getCreatePasswordSuccess);
-  const errorMessage = useSelector(authSelector.getCreatePasswordError);
-
-  useEffect(() => {
-    if (params.screenMode !== 'createPass') return;
-    if (!isLoading && SuccessMessage) {
-      Toast.show({
-        type: 'success',
-        text1: 'Password created successfully',
-        visibilityTime: 2000,
-      });
-      navigation.replace('SuccessScreen', {authMode: 'signup'});
-    }
-    if (!isLoading && errorMessage) {
-      Toast.show({
-        type: 'error',
-        text1: errorMessage || 'Something went wrong',
-        visibilityTime: 2000,
-      });
-    }
-  }, [isLoading, SuccessMessage, errorMessage]);
 
   const passwordError = useMemo(() => {
     const error = {
@@ -84,14 +63,48 @@ export const PasswordScreen = ({
     return error;
   }, [password]);
 
-  const onPressCreatePassword = async () => {
+  const onSuccessPasswordCreate = (successMessage: string) => {
+    Toast.show({
+      type: 'success',
+      text1: successMessage,
+      visibilityTime: 2000,
+    });
+    navigation.replace('SuccessScreen', {authMode: 'signup'});
+  };
+
+  const onFailPasswordCreate = (errorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: errorMessage,
+      visibilityTime: 2000,
+    });
+  };
+
+  const onSuccessEmailSend = (successMessage: string) => {
+    Toast.show({
+      type: 'success',
+      text1: successMessage,
+      visibilityTime: 2000,
+    });
+    navigation.goBack();
+  };
+
+  const onFailEmailSend = (errorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: errorMessage,
+      visibilityTime: 2000,
+    });
+  };
+
+  const validatePassword = () => {
     if (password !== confirmPassword) {
       Toast.show({
         type: 'error',
         text1: 'Passwords do not match',
         visibilityTime: 2000,
       });
-      return;
+      return false;
     }
 
     if (
@@ -104,8 +117,13 @@ export const PasswordScreen = ({
         text1: 'Please enter a valid password',
         visibilityTime: 2000,
       });
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const onPressCreatePassword = () => {
+    if (!validatePassword()) return;
     const token: string = getStorage(StorageKeys.TOKEN);
     if (!token) {
       Toast.show({
@@ -115,9 +133,14 @@ export const PasswordScreen = ({
       });
       return;
     }
-    const payload = {
+    const data = {
       password: password,
       token: token,
+    };
+    const payload = {
+      payload: data,
+      callbackSuccess: onSuccessPasswordCreate,
+      callbackError: onFailPasswordCreate,
     };
     dispatch(createNewPassword(payload));
   };
@@ -131,12 +154,15 @@ export const PasswordScreen = ({
       });
       return;
     }
-    Toast.show({
-      type: 'success',
-      text1: 'Reset link sent successfully',
-      visibilityTime: 2000,
-    });
-    navigation.goBack();
+    const data = {
+      email: email,
+    };
+    const payload = {
+      payload: data,
+      callbackSuccess: onSuccessEmailSend,
+      callbackError: onFailEmailSend,
+    };
+    dispatch(sendResetLinkRequest(payload));
   };
 
   return (
@@ -163,6 +189,7 @@ export const PasswordScreen = ({
                 placeholder="Enter your email"
                 keyboardType="email-address"
                 value={email}
+                editable={!isLoading}
                 onChangeText={setEmail}
               />
             </View>
@@ -170,6 +197,7 @@ export const PasswordScreen = ({
               buttonText={Strings.sendResetLinkButtonText}
               style={styles.buttonStyle}
               onPress={onPressSendResetLink}
+              showLoader={isLoading}
             />
           </>
         ) : (

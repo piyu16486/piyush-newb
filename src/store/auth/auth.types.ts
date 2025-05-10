@@ -1,14 +1,13 @@
+import {PayloadWithCallback} from '@type/global.types';
+
+/** Auth State */
 export type UserType = 'client' | 'internal';
 export interface IAuthState {
-  signupLoader: boolean;
-  signupError: string | null | undefined;
-  signupSuccess: string | null;
-
-  verifyOtpLoader: boolean;
-  verifyOtpError: string | null | undefined;
-  verifyOtpSuccess: string | null;
+  globalLoader: boolean;
   userType: UserType;
 }
+
+/** Login  */
 
 export interface LoginPayload {
   username: string;
@@ -26,6 +25,12 @@ export interface ISignupPayload {
   email: string;
 }
 
+export type SignUpPayloadWithCallback = PayloadWithCallback<
+  ISignupPayload,
+  [],
+  [string]
+>;
+
 export interface ISignupSuccessResponse {
   message: string;
   success: boolean;
@@ -41,6 +46,12 @@ export interface IOtpVerifyPayload {
   email: string;
   otp: string;
 }
+
+export type OtpVerifyPayloadWithCallback = PayloadWithCallback<
+  IOtpVerifyPayload,
+  [],
+  [string]
+>;
 
 export interface IOtpVerifySuccessResponse {
   statusCode: number;
@@ -60,10 +71,40 @@ export interface ICreatePasswordPayload {
   password: string;
 }
 
+export type CreatePasswordPayloadWithCallback = PayloadWithCallback<
+  ICreatePasswordPayload,
+  [string],
+  [string]
+>;
+
 export interface ICreatePasswordApiResponse {
   statusCode: number;
   message: string;
 }
+
+/** Forgot Password */
+export interface IResetLinkPayload {
+  email: string;
+}
+
+export type ResetLinkPayloadWithCallback = PayloadWithCallback<
+  IResetLinkPayload,
+  [string],
+  [string]
+>;
+
+export interface IResetLinkSuccessResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface IResetLinkErrorResponse {
+  statusCode: number;
+  message: string;
+  error: string;
+}
+
+//
 
 export interface VerifyPasswordPayload {
   //email: string;
@@ -80,17 +121,6 @@ export interface SigninOtpVerifyPayload {
   otp: string;
 }
 
-export interface ForgotPasswordPayload {
-  email: string;
-}
-
-export interface PayloadWithCallback<T> {
-  payload: T;
-  callback?: (...args: any[]) => void;
-  callbackError?: (...args: any[]) => void;
-  callbackSuccess?: (...args: any[]) => void;
-}
-
 export interface IverifyPasswordResponse {
   statusCode?: number;
   message: string;
@@ -104,9 +134,4 @@ export interface ISigninResponse {
 export interface ISigninOtpVerifyResponse {
   message: string;
   statusCode?: number;
-}
-
-export interface IForgotpasswordResponse {
-  success?: boolean;
-  message: string;
 }
