@@ -90,9 +90,30 @@ const apiSendResetLink = async (payload: IResetLinkPayload) => {
   };
 };
 
+/**
+ * Reset Password API
+ */
+
+const apiResetPassword = async (payload: ICreatePasswordPayload) => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<ICreatePasswordApiResponse>
+  >(Api.post(Endpoints.apiResetPassword, payload));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 export default {
   apiSignup,
   apiSigninOtpVerify,
   apiCreatePassword,
   apiSendResetLink,
+  apiResetPassword,
 };

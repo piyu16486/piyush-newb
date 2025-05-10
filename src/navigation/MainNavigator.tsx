@@ -22,14 +22,11 @@ export const MainNavigator = () => {
   }
 
   const linking = {
-    prefixes: ['myapp://'],
+    prefixes: ['cashntech://', 'https://cashntech.nikhilmakwana.in'],
     config: {
       screens: {
         PasswordScreen: {
           path: 'reset-password',
-          parse: {
-            token: (token: string) => token,
-          },
         },
       },
     },
@@ -37,7 +34,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer linking={linking}>
-      {!userInfo ? <HomeNavigator /> : <AuthNavigator />}
+      {userInfo ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

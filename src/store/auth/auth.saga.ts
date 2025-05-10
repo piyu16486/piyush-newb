@@ -25,6 +25,7 @@ import {
   createNewPassword,
   setGlobalLoader,
   sendResetLinkRequest,
+  resetPassword,
 } from './auth.slice';
 
 function* handleSignup(
@@ -103,6 +104,25 @@ function* handleSendResetLink(
   }
 }
 
+function* handleResetPassword(
+  action: PayloadAction<CreatePasswordPayloadWithCallback>,
+): unknown {
+  const {
+    data,
+    error,
+  }: Result<
+    ICreatePasswordApiResponse,
+    AxiosError<ICreatePasswordApiResponse>
+  > = yield call(AuthApis.apiResetPassword, action.payload.payload);
+  yield put(setGlobalLoader(false));
+  if (!error) {
+    action.payload.callbackSuccess?.(data.message);
+  } else {
+    const errorMessage = error.response?.data.message ?? 'Something went wrong';
+    action.payload.callbackError?.(errorMessage);
+  }
+}
+
 // function* handleSignin(
 //   action: PayloadAction<PayloadWithCallback<SignInPayload>>,
 // ): unknown {
@@ -162,4 +182,5 @@ export default function* authSaga() {
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);
   yield takeLatest(createNewPassword.type, handleCreateNewPassword);
   yield takeLatest(sendResetLinkRequest.type, handleSendResetLink);
+  yield takeLatest(resetPassword.type, handleResetPassword);
 }

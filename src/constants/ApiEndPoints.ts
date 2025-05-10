@@ -3,6 +3,7 @@ const Endpoints = {
   apiSigninOtpVerify: '/auth/verify-otp-from-email',
   apiCreatePassword: '/auth/create-password',
   apiForgotPassword: '/auth/forgot-password',
+  apiResetPassword: '/auth/reset-password',
 
   apiSignin: '/auth/signin',
   apiOtpVerify: '/auth/verify-otp',

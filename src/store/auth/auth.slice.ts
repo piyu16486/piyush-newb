@@ -53,6 +53,13 @@ const authSlice = createSlice({
     ) => {
       state.globalLoader = true;
     },
+    // Reset Password
+    resetPassword: (
+      state,
+      _action: PayloadAction<CreatePasswordPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
   },
 });
 
@@ -64,5 +71,6 @@ export const {
   otpVerifyRequest,
   createNewPassword,
   sendResetLinkRequest,
+  resetPassword,
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -11,7 +11,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {authSelector} from '@store/auth';
-import {createNewPassword, sendResetLinkRequest} from '@store/auth/auth.slice';
+import {
+  createNewPassword,
+  resetPassword,
+  sendResetLinkRequest,
+} from '@store/auth/auth.slice';
 import {getStorage} from '@services/localStorage';
 
 type PasswordScreenProps = NativeStackScreenProps<
@@ -69,7 +73,9 @@ export const PasswordScreen = ({
       text1: successMessage,
       visibilityTime: 2000,
     });
-    navigation.replace('SuccessScreen', {authMode: 'signup'});
+    navigation.replace('SuccessScreen', {
+      authMode: params.screenMode === 'createPass' ? 'signup' : 'password',
+    });
   };
 
   const onFailPasswordCreate = (errorMessage: string) => {
@@ -122,6 +128,35 @@ export const PasswordScreen = ({
     return true;
   };
 
+  const onPressPasswordBtn = () => {
+    if (params.screenMode === 'createPass') {
+      onPressCreatePassword();
+    } else {
+      onPressUpdatePassword();
+    }
+  };
+
+  const onPressUpdatePassword = () => {
+    if (!validatePassword()) return;
+    if (!params?.token) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        visibilityTime: 2000,
+      });
+      return;
+    }
+    const data = {
+      password: password,
+      token: params.token,
+    };
+    const payload = {
+      payload: data,
+      callbackSuccess: onSuccessPasswordCreate,
+      callbackError: onFailPasswordCreate,
+    };
+    dispatch(resetPassword(payload));
+  };
   const onPressCreatePassword = () => {
     if (!validatePassword()) return;
     const token: string = getStorage(StorageKeys.TOKEN);
@@ -291,7 +326,7 @@ export const PasswordScreen = ({
                   : Strings.updatePasswordButtonText
               }
               style={styles.buttonStyle}
-              onPress={onPressCreatePassword}
+              onPress={onPressPasswordBtn}
               showLoader={isLoading}
               disabled={isLoading}
             />
