@@ -5,6 +5,7 @@ export type UserType = 'client' | 'internal';
 export interface IAuthState {
   globalLoader: boolean;
   userType: UserType;
+  isLoggedIn: boolean | undefined;
 }
 
 /** Signin  */

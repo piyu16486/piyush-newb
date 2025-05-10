@@ -8,8 +8,8 @@ import {successLottie} from '@assets/Lottie';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useDispatch} from 'react-redux';
-import {userActions} from '@store/user';
 import moment from 'moment';
+import {authActions} from '@store/auth';
 
 const Strings = {
   copyright: `Copyright ${moment().year()}, CashnTech Pvt Ltd., All Rights Reserved`,
@@ -43,7 +43,7 @@ export const SuccessScreen = ({
     );
     const timer = setTimeout(() => {
       if (params.authMode === 'signin' || params.authMode === 'signup') {
-        dispatch(userActions.setUserInfo('token'));
+        dispatch(authActions.setIsLoggedIn(true));
       } else {
         navigation.goBack();
       }

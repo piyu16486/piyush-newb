@@ -15,10 +15,14 @@ export const setStorage = <T>(key: string, value: T) => {
 };
 
 export const getStorage = (key: string, toJson?: boolean) => {
-  if (toJson) {
-    return JSON.parse(storage.getString(key) ?? '{}');
+  try {
+    if (toJson) {
+      return JSON.parse(storage.getString(key) ?? '');
+    }
+    return storage.getString(key);
+  } catch (error) {
+    return undefined;
   }
-  return storage.getString(key);
 };
 
 export const removeStorage = (key: string) => {

@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-native/no-inline-styles */
 import {
   View,
   Text,
   Image,
   StyleSheet,
   TouchableOpacity,
-  Platform,
-  UIManager,
-  LayoutAnimation,
   Dimensions,
   ScrollView,
 } from 'react-native';
@@ -24,12 +19,10 @@ import {
   Logout,
 } from '@assets/Icons';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
-import {Colors, Fonts} from '@constants/index';
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
+import {Colors, Fonts, StorageKeys} from '@constants/index';
+import {useDispatch} from 'react-redux';
+import {removeStorage} from '@services/localStorage';
+import {authActions} from '@store/auth';
 
 export const DrawerContent = (props: DrawerContentComponentProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -37,10 +30,17 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
   const [selectedItem, setSelectedItem] = React.useState<string | null>(null); // State for selected item
   const {navigation} = props;
   const {top, bottom} = useSafeAreaInsets();
+  const dispatch = useDispatch();
 
   const handlePress = (item: string) => {
     setSelectedItem(item); // Set the selected item
     // You can navigate or perform any other actions here based on the selected item
+  };
+
+  const handleLogout = () => {
+    removeStorage(StorageKeys.IS_LOGGED_IN);
+    removeStorage(StorageKeys.TOKEN);
+    dispatch(authActions.setIsLoggedIn(false));
   };
 
   return (
@@ -73,7 +73,6 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               <TouchableOpacity
                 style={[styles.button, {backgroundColor: '#E9EBE9'}]}
                 onPress={() => {
-                  LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
                   setDIsOpen(!DisOpen);
                 }}>
                 <View style={styles.rowCenter}>
@@ -133,7 +132,6 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
               <TouchableOpacity
                 style={[styles.button, {backgroundColor: '#E9EBE9'}]}
                 onPress={() => {
-                  LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
                   setIsOpen(!isOpen);
                 }}>
                 <View style={styles.rowCenter}>
@@ -186,7 +184,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
           </ScrollView>
         </View>
         {/* Logout Button*/}
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleLogout}>
           <View style={styles.logOut}>
             <View style={styles.row}>
               <Logout height={scaleHeight(24)} width={scaleWidth(24)} />

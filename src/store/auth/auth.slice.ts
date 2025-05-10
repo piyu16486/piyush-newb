@@ -8,10 +8,13 @@ import {
   ResetLinkPayloadWithCallback,
   SigninPayloadWithCallback,
 } from './auth.types';
+import {getStorage} from '@services/localStorage';
+import StorageKeys from '@constants/StorageKeys';
 
 const initialState: IAuthState = {
   globalLoader: false,
   userType: 'client',
+  isLoggedIn: getStorage(StorageKeys.IS_LOGGED_IN, true),
 };
 
 const authSlice = createSlice({
@@ -25,6 +28,10 @@ const authSlice = createSlice({
     // User Type
     setUserType: (state, action: PayloadAction<UserType>) => {
       state.userType = action.payload;
+    },
+    // Is Logged In
+    setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
     },
     // Signup
     signupRequest: (
@@ -74,7 +81,7 @@ const authSlice = createSlice({
 export const {
   setUserType,
   setGlobalLoader,
-
+  setIsLoggedIn,
   signupRequest,
   otpVerifyRequest,
   createNewPassword,

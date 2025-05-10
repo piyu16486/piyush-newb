@@ -9,7 +9,13 @@ const getGlobalLoader = createSelector(
   _state => _state.globalLoader,
 );
 
+const getLoggedInState = createSelector(
+  _selectState,
+  _state => _state.isLoggedIn,
+);
+
 export default {
   getUserType,
   getGlobalLoader,
+  getLoggedInState,
 };
