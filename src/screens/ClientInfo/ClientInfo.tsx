@@ -35,7 +35,7 @@ const clientsData = [
   },
   {
     id: '0002',
-    name: 'S D Verma',
+    name: 'K D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
     source: 'Source D',
@@ -47,7 +47,7 @@ const clientsData = [
   },
   {
     id: '0003',
-    name: 'S D Verma',
+    name: 'A D Verma',
     location: 'Delhi',
     initiator: 'Delhi',
     source: 'Source D',
@@ -59,7 +59,7 @@ const clientsData = [
   },
   {
     id: '0004',
-    name: 'S D Verma',
+    name: 'S P Verma',
     location: 'Delhi',
     initiator: 'Delhi',
     source: 'Source D',
@@ -83,6 +83,23 @@ export const ClientInfo = () => {
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
   }, []);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredClients = clientsData.filter(
+    item =>
+      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.initiator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.source.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.referenceDetails.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.monthlyTurnover.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.sanctionRequested
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      item.financier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.status.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <Container>
@@ -107,8 +124,10 @@ export const ClientInfo = () => {
               <Search height={12} width={12} />
               <TextInput
                 style={styles.input}
-                placeholder="Search Leads"
+                placeholder="Search Clients"
                 placeholderTextColor="#999"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
               />
             </View>
             <View style={styles.Filterbox}>
@@ -119,7 +138,7 @@ export const ClientInfo = () => {
           </View>
           <View style={styles.Cardlist}>
             <FlatList
-              data={clientsData}
+              data={filteredClients}
               keyExtractor={item => item.id}
               renderItem={({item}) => (
                 <ClientCard
