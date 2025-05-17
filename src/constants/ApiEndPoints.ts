@@ -10,6 +10,9 @@ const Endpoints = {
   // TODO
   apiOtpVerify: '/auth/verify-otp',
   apiResendOtp: '/auth/resend-otp',
+
+  // Client apis
+  apiGetAllClients: '/client-info-master/list',
 } as const;
 
 export default Endpoints;

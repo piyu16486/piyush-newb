@@ -142,24 +142,6 @@ function* handleSignin(
   }
 }
 
-// function* handleSignInOtpVerify(
-//   action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
-// ): unknown {
-//   try {
-//     const response: ISigninOtpVerifyResponse = yield call(
-//       authApi.apiSigninOtpVerify,
-//       action.payload.payload,
-//     );
-//     if (response.message) {
-//       action.payload.callbackSuccess?.();
-//     } else {
-//       action.payload.callbackError?.(response.message);
-//     }
-//   } catch (error: any) {
-//     action.payload.callbackError?.(error?.message);
-//   }
-// }
-
 export default function* authSaga() {
   yield takeLatest(signupRequest.type, handleSignup);
   yield takeLatest(otpVerifyRequest.type, handleOtpVerify);

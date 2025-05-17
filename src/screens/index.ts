@@ -16,7 +16,7 @@ export * from './FormSelectionScreen/FormSelectionScreen';
 export * from './GodownDetails/GodownDetails';
 export * from './GodownDetails2/GodownDetails2';
 export * from './GSTDocument/GSTDocument';
-export * from './InputFields/InputFormField';
+export * from './CreateClientForm/CreateClientForm';
 export * from './KYCDocument/KycDocument';
 export * from './KYCFormSelection/KYCFormSelection';
 export * from './KYCOwnerStatus/KycOwner';

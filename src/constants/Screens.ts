@@ -8,4 +8,16 @@ enum AuthScreens {
   SuccessScreen = 'SuccessScreen',
 }
 
-export {AuthScreens};
+enum DrawerScreens {
+  Dashboard = 'Dashboard',
+  ClientNavigator = 'ClientNavigator',
+}
+
+enum ClientScreens {
+  ClientInfo = 'ClientInfo',
+  FormSelectionScreen = 'FormSelectionScreen',
+  CreateClientForm = 'CreateClientForm',
+  ClientLeadInfoTab = 'ClientLeadInfoTab',
+}
+
+export {AuthScreens, DrawerScreens, ClientScreens};

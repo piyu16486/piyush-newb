@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {LeftChevronCircle, Plus, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
 import {
@@ -11,14 +10,21 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {
+  DrawerNavigationProp,
+  DrawerScreenProps,
+} from '@react-navigation/drawer';
 import {
   CompositeNavigationProp,
+  CompositeScreenProps,
   RouteProp,
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
@@ -70,14 +76,20 @@ const Forms = Object.keys(formInputDetails) as Array<
   keyof typeof formInputDetails
 >;
 
-type NavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType, 'InputFormField'>
+type NavigationType = CompositeScreenProps<
+  NativeStackScreenProps<ClientNavigatorType>,
+  DrawerScreenProps<HomeNavigatorType>
 >;
 
-export const InputFormField = () => {
-  const navigation = useNavigation<NavigationType>();
-  const {params} = useRoute<RouteProp<ClientNavigatorType, 'InputFormField'>>();
+type CreateClientFormProps = {
+  navigation: NavigationType['navigation'];
+  route: RouteProp<ClientNavigatorType, 'CreateClientForm'>;
+};
+
+export const CreateClientForm: React.FC<CreateClientFormProps> = ({
+  navigation,
+  route: {params},
+}) => {
   const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
 
   const [formIndex, setFormIndex] = React.useState(
@@ -101,7 +113,7 @@ export const InputFormField = () => {
       <AppBar title="Client Information Master" navigation={navigation} />
       <View>
         <TouchableOpacity
-          style={styles.subcontainer}
+          style={styles.subContainer}
           onPress={navigation.goBack}>
           <LeftChevronCircle height={26} width={26} />
           <Text style={styles.subheader}>{currentTitle}</Text>
@@ -260,7 +272,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: scaleWidth(10),
   },
-  subcontainer: {
+  subContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.LimeGray,
