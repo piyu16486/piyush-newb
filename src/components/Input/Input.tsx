@@ -53,7 +53,12 @@ export const Input = forwardRef<TextInput, InputProps>((props, ref) => {
             {renderLeftIcon}
           </TouchableOpacity>
         )}
-        <TextInput ref={ref} {...rest} style={[styles.inputStyle, style]} />
+        <TextInput
+          ref={ref}
+          {...rest}
+          style={[styles.inputStyle, style]}
+          placeholderTextColor={Colors.gray300}
+        />
         {renderRightIcon && (
           <TouchableOpacity
             style={[styles.rightContainerStyle, rightIconStyle]}

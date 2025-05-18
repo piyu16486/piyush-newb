@@ -1,4 +1,7 @@
-import {ListItemProps} from '@screens/FormSelectionScreen/FormSelection.type';
+import {
+  FormTitlesType,
+  FormTypes,
+} from '@screens/CreateClientForm/CreateClientForm.type';
 import {Country} from 'react-native-country-picker-modal';
 
 export type AuthNavigatorType = {
@@ -58,8 +61,8 @@ export type ClientNavigatorType = {
   ClientInfo: undefined;
   FormSelectionScreen: undefined;
   CreateClientForm: {
-    screen: ListItemProps['screen'];
-    title: ListItemProps['title'];
+    screen: FormTypes;
+    title: FormTitlesType;
   };
   ClientLeadInfoTab: {clientId: number};
   ClientCardReadMore: undefined;

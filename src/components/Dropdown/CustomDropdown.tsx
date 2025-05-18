@@ -4,19 +4,10 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 
-// Default dummy data if none is passed
-const dummyData = [
-  {label: 'A', value: 'A'},
-  {label: 'B', value: 'B'},
-  {label: 'C', value: 'C'},
-  {label: 'C', value: 'C'},
-  {label: 'E', value: 'E'},
-];
-
 type Props = {
   label: string;
   data?: Array<{label: string; value: string}>;
-  value?: string | null;
+  value?: string;
   placeholder?: string;
   onChange?: (value: string) => void;
   containerStyle?: StyleProp<ViewStyle>;
@@ -24,23 +15,19 @@ type Props = {
 
 export const CustomDropdown = ({
   label,
-  data = dummyData,
-  value: selectedValue = null,
+  data = [],
+  value = '',
   placeholder = 'Choose one',
   onChange,
   containerStyle,
 }: Props) => {
-  const [value, setValue] = useState<string | null>(selectedValue);
-
   const handleChange = (item: {label: string; value: string}) => {
-    setValue(item.value);
     onChange?.(item.value);
   };
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-
       <Dropdown
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
@@ -50,8 +37,13 @@ export const CustomDropdown = ({
         labelField="label"
         valueField="value"
         placeholder={placeholder}
-        value={value}
+        value={{
+          label: value,
+          value: value,
+        }}
         onChange={handleChange}
+        search
+        searchPlaceholder="Search"
       />
     </View>
   );
@@ -59,7 +51,6 @@ export const CustomDropdown = ({
 
 const styles = StyleSheet.create({
   container: {
-    // margin: 16,
     marginBottom: scaleHeight(4),
   },
   label: {

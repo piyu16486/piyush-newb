@@ -46,6 +46,7 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
   }, []);
 
   const onPressFAB = () => {
+    dispatch(clientActions.resetAllClientFormData());
     navigation.navigate(ClientScreens.FormSelectionScreen);
   };
 

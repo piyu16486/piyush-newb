@@ -2,14 +2,14 @@ import {LeftChevronCircle, RightChevron} from '@assets/Icons';
 import {AppBar, Container} from '@components/index';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
-import {DrawerScreenProps} from '@react-navigation/drawer';
-import {CompositeScreenProps} from '@react-navigation/native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ALL_FORMS, ListItemProps} from './FormSelection.type';
+import {
+  ALL_FORMS,
+  FormSelectionProps,
+  ListItemProps,
+} from './FormSelection.type';
 import {ClientScreens} from '@constants/Screens';
 
 const Strings = {
@@ -18,15 +18,6 @@ const Strings = {
   textColor: '#333',
   itemBgColor: '#fff',
   borderColor: '#CBCED5',
-};
-
-type NavigationType = CompositeScreenProps<
-  NativeStackScreenProps<ClientNavigatorType>,
-  DrawerScreenProps<HomeNavigatorType>
->;
-
-type FormSelectionProps = {
-  navigation: NavigationType['navigation'];
 };
 
 export const FormSelectionScreen: React.FC<FormSelectionProps> = ({

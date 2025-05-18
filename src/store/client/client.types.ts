@@ -1,7 +1,48 @@
+import {
+  BasicDetailsNames,
+  ClientFirmNames,
+  VendorNames,
+  VisitNames,
+} from '@screens/CreateClientForm/CreateClientForm.type';
+
 export type ClientState = {
   clientLoader: boolean;
   clientList: Array<IClientInfoResponseDatum>;
+  clientFormData: ClientFormType;
 };
+
+type BasicDetailsType = Record<BasicDetailsNames, string>;
+type ClientFirmScreenType = Record<ClientFirmNames, string>;
+type VendorScreenType = Record<VendorNames, string>;
+type VisitScreenType = Record<VisitNames, string>;
+export type ClientFormType = {
+  BasicDetails: BasicDetailsType;
+  ClientFirmScreen: ClientFirmScreenType;
+  VendorScreen: VendorScreenType;
+  VisitScreen: VisitScreenType;
+};
+
+export type ClientFormPayload =
+  | {
+      formName: 'BasicDetails';
+      name: BasicDetailsNames;
+      value: string;
+    }
+  | {
+      formName: 'ClientFirmScreen';
+      name: ClientFirmNames;
+      value: string;
+    }
+  | {
+      formName: 'VendorScreen';
+      name: VendorNames;
+      value: string;
+    }
+  | {
+      formName: 'VisitScreen';
+      name: VisitNames;
+      value: string;
+    };
 
 //
 

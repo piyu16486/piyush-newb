@@ -1,11 +1,7 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {getClients} from './client.slice';
 import {ClientApis} from '@services/api';
-import {
-  clientActions,
-  IClientInfoResponseDatum,
-  IClientInfoSuccessResponse,
-} from '.';
+import {clientActions, IClientInfoSuccessResponse} from '.';
 import {Result} from '@utils/TryCatch';
 
 function* handleGetClient(): unknown {

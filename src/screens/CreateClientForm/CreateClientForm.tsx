@@ -1,4 +1,4 @@
-import {LeftChevronCircle, Plus, RightCheckmark} from '@assets/Icons';
+import {LeftChevronCircle, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
 import {
   AppBar,
@@ -10,103 +10,116 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
-import {
-  DrawerNavigationProp,
-  DrawerScreenProps,
-} from '@react-navigation/drawer';
-import {
-  CompositeNavigationProp,
-  CompositeScreenProps,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+import {
+  CreateClientFormProps,
+  DataFieldsType,
+  dropDownData,
+  FieldType,
+  formInputDetails,
+  formNames,
+  formTitles,
+  FormTypes,
+} from './CreateClientForm.type';
+import {useDispatch, useSelector} from 'react-redux';
+import {clientActions, ClientFormType, clientSelector} from '@store/client';
 
-const formInputDetails = {
-  BasicDetails: [
-    {label: 'Source of Lead'},
-    {label: 'Location'},
-    {label: 'City'},
-    {label: 'State'},
-    {label: 'Type of Visit'},
-    {label: 'Visit Number'},
-    {label: 'Date of Visit'},
-    {label: 'File By'},
-  ],
-  ClientFirmScreen: [
-    {label: 'Name of Client'},
-    {label: 'Firm Name'},
-    {label: 'Contact number'},
-    {label: 'Type of Firm'},
-    {label: 'Business Vintage'},
-    {label: 'Sector'},
-    {label: 'Bank Name'},
-    {label: 'CIBIL Score'},
-    {label: 'Facility Type'},
-    {label: 'Existing Funding Sanctioned Amt'},
-    {label: 'Estimated Funding Required'},
-    {label: 'Credit Period Offer'},
-  ],
-  VendorScreen: [
-    {label: 'Product'},
-    {label: 'Vendor Name'},
-    {label: 'Vendor Contact number'},
-    {label: 'Vendor Contact Email'},
-    {label: 'Monthly Sales Value'},
-  ],
-  VisitScreen: [
-    {label: 'Intent'},
-    {label: 'Visit Remarks'},
-    {label: 'Date of Next Visit'},
-    {label: 'Reason for Not Interested'},
-    {label: 'Are you interested for?'},
-  ],
+const CurrentForm = ({currentFormKey}: {currentFormKey: FormTypes}) => {
+  const formData: ClientFormType = useSelector(
+    clientSelector.getClientFormData,
+  );
+  const dispatch = useDispatch();
+  const inputDetails = formInputDetails[currentFormKey];
+  return inputDetails.map((item, index) => (
+    <FormInput
+      key={index}
+      item={item}
+      // @ts-expect-error: name is correctly typed per currentFormKey in ClientFormType
+      value={formData[currentFormKey][item.name]}
+      onUpdate={value => {
+        dispatch(
+          // @ts-expect-error: name is correctly typed per currentFormKey in ClientFormType
+          clientActions.setClientFormData({
+            formName: currentFormKey,
+            name: item.name,
+            value,
+          }),
+        );
+      }}
+    />
+  ));
 };
 
-const Forms = Object.keys(formInputDetails) as Array<
-  keyof typeof formInputDetails
->;
-
-type NavigationType = CompositeScreenProps<
-  NativeStackScreenProps<ClientNavigatorType>,
-  DrawerScreenProps<HomeNavigatorType>
->;
-
-type CreateClientFormProps = {
-  navigation: NavigationType['navigation'];
-  route: RouteProp<ClientNavigatorType, 'CreateClientForm'>;
+const FormInput = ({
+  item,
+  value,
+  onUpdate,
+}: {
+  item: DataFieldsType;
+  value: string;
+  onUpdate: (value: string) => void;
+}) => {
+  if (item.type === FieldType.INPUT) {
+    return (
+      <Input
+        label={item.label}
+        placeholder="Value"
+        value={value}
+        onChangeText={onUpdate}
+      />
+    );
+  }
+  if (item.type === FieldType.DROPDOWN) {
+    return (
+      <CustomDropdown
+        label={item.label}
+        data={dropDownData[item.name]}
+        value={value}
+        onChange={onUpdate}
+      />
+    );
+  }
+  if (item.type === FieldType.DATE) {
+    return (
+      <DateNTimePicker
+        label={item.label}
+        onConfirm={date => {
+          onUpdate(date.toDateString());
+        }}
+        value={value}
+        placeholder="Select Date"
+        datePickerProps={{
+          date: new Date(),
+          mode: 'date',
+        }}
+      />
+    );
+  }
+  return null;
 };
 
 export const CreateClientForm: React.FC<CreateClientFormProps> = ({
   navigation,
   route: {params},
 }) => {
-  const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
-
-  const [formIndex, setFormIndex] = React.useState(
-    Forms.indexOf(params.screen),
+  const dispatch = useDispatch();
+  const [formIndex, setFormIndex] = React.useState(() =>
+    formNames.indexOf(params.screen),
   );
-
-  const formTitles: Record<string, string> = {
-    BasicDetails: 'Basic Details',
-    ClientFirmScreen: 'Client & Firm Details',
-    VendorScreen: 'Vendor Details',
-    VisitScreen: 'Visit Details',
+  const currentFormKey: FormTypes = formNames[formIndex];
+  const currentTitle = formTitles[currentFormKey];
+  const onPressSaveNext = () => {
+    if (formIndex < formNames.length - 1) {
+      setFormIndex(formIndex + 1);
+    }
   };
 
-  const currentFormKey = Forms[formIndex];
-  const currentTitle = formTitles[currentFormKey] || 'Form Section';
-
-  const [vendorEntries, setVendorEntries] = React.useState([{id: Date.now()}]);
+  const onPressClearAll = () => {
+    dispatch(clientActions.resetClientFormData(currentFormKey));
+  };
 
   return (
     <Container>
@@ -121,146 +134,26 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
       </View>
       <ScrollView>
         <View style={styles.inputContainer}>
-          {currentFormKey === 'VendorScreen'
-            ? vendorEntries.map((vendor, index) => (
-                <View key={vendor.id} style={{marginBottom: 20}}>
-                  {formInputDetails.VendorScreen.map(field => {
-                    const isDropdown = ['Product'].includes(field.label);
-                    if (isDropdown) {
-                      const dropdownData = [
-                        {label: 'Option 1', value: 'option1'},
-                        {label: 'Option 2', value: 'option2'},
-                      ];
-                      return (
-                        <CustomDropdown
-                          key={`${field.label}-${index}`}
-                          label={`${field.label} ${
-                            vendorEntries.length > 1 ? index + 1 : ''
-                          }`}
-                          data={dropdownData}
-                          placeholder="Select Type"
-                          onChange={val =>
-                            console.log(`${field.label} selected:`, val)
-                          }
-                        />
-                      );
-                    }
-                    return (
-                      <Input
-                        key={`${field.label}-${index}`}
-                        label={`${field.label} ${
-                          vendorEntries.length > 1 ? index + 1 : ''
-                        }`}
-                        containerStyle={{marginTop: scaleHeight(14)}}
-                      />
-                    );
-                  })}
-                </View>
-              ))
-            : formInputDetails[Forms[formIndex]].map(item => {
-                const dropdownFields = [
-                  'Type of Visit',
-                  'City',
-                  'State',
-                  'Sector',
-                  'Source of Lead',
-                  'Are you interested for?',
-                  'File By',
-                  'Type of Firm',
-                  'Facility Type',
-                  'Intent',
-                ];
-                if (dropdownFields.includes(item.label)) {
-                  const dropdownData = [
-                    {label: 'Option 1', value: 'option1'},
-                    {label: 'Option 2', value: 'option2'},
-                  ];
-                  return (
-                    <CustomDropdown
-                      key={item.label}
-                      label={item.label}
-                      data={dropdownData}
-                      placeholder="Select Type"
-                      onChange={val =>
-                        console.log(`${item.label} selected:`, val)
-                      }
-                    />
-                  );
-                }
-                if (item.label === 'Date of Visit') {
-                  return (
-                    <DateNTimePicker
-                      key={item.label}
-                      label="Date of Visit"
-                      mode="date"
-                      value={visitDate}
-                      onConfirm={val => setVisitDate(val)}
-                    />
-                  );
-                }
-
-                if (item.label === 'Date of Next Visit') {
-                  return (
-                    <DateNTimePicker
-                      key={item.label}
-                      label="Date of Next Visit"
-                      mode="date"
-                      value={visitDate}
-                      onConfirm={val => setVisitDate(val)}
-                    />
-                  );
-                }
-                return <Input label={item.label} key={item.label} />;
-              })}
-
-          {currentFormKey === 'VendorScreen' && (
-            <TouchableOpacity
-              style={styles.vendorButton}
-              onPress={() =>
-                setVendorEntries(prev => [...prev, {id: Date.now()}])
-              }>
-              <Text style={styles.vendorButtonText}>Add Vendor</Text>
-              <Plus width={18} height={18} />
-            </TouchableOpacity>
-          )}
+          <CurrentForm currentFormKey={currentFormKey} />
         </View>
       </ScrollView>
       <View style={styles.footerButton}>
-        <TouchableOpacity
-          style={styles.clearButton}
-          onPress={() => console.log('Clear All Pressed')}>
+        <TouchableOpacity style={styles.clearButton} onPress={onPressClearAll}>
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[styles.saveButton, {backgroundColor: Colors.white}]}
-            activeOpacity={0.7}
-            onPress={() => console.log('Save Pressed')}>
-            <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
+        {formIndex === formNames.length - 1 ? (
+          <TouchableOpacity style={styles.saveButton}>
+            <Text style={styles.saveText}>Submit</Text>
+            <RightCheckmark width={12} height={12} />
           </TouchableOpacity>
-          {formIndex === Forms.length - 1 ? (
-            <TouchableOpacity
-              style={styles.saveButton}
-              activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
-              <Text style={styles.saveText}>Submit</Text>
-              <RightCheckmark width={12} height={12} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={() => {
-                if (formIndex < Forms.length - 1) {
-                  setFormIndex(formIndex + 1);
-                }
-              }}>
-              <Text style={styles.nextText}>Next</Text>
-              <View style={styles.iconWrapper}>
-                <RightChevronCircle width={24} height={24} />
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
+        ) : (
+          <TouchableOpacity style={styles.nextButton} onPress={onPressSaveNext}>
+            <Text style={styles.nextText}>Save & Next</Text>
+            <View style={styles.iconWrapper}>
+              <RightChevronCircle width={24} height={24} />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </Container>
   );
