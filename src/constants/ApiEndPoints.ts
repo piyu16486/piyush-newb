@@ -13,6 +13,9 @@ const Endpoints = {
 
   // Client apis
   apiGetAllClients: '/client-info-master/list',
+
+  // Report apis
+  apiGetReport: '/client-info-master/remark-reports',
 } as const;
 
 export default Endpoints;

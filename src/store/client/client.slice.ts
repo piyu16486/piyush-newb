@@ -4,6 +4,7 @@ import {
   ClientFormType,
   ClientState,
   IClientInfoResponseDatum,
+  IRemarkReportResponseDatum,
 } from './client.types';
 
 const clientFormData: ClientFormType = {
@@ -50,6 +51,9 @@ const initialState: ClientState = {
   clientLoader: false,
   clientList: [],
   clientFormData: clientFormData,
+  // New Remark Report fields
+  reportLoader: false,
+  reportList: [],
 };
 
 const clientSlice = createSlice({
@@ -89,6 +93,21 @@ const clientSlice = createSlice({
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
     },
+    // 🚀 New Remark Report Actions
+    getReport: state => {
+      state.reportLoader = true;
+    },
+    setReportList: (
+      state,
+      action: PayloadAction<IRemarkReportResponseDatum[]>,
+    ) => {
+      state.reportLoader = false;
+      state.reportList = action.payload;
+    },
+    resetReportList: state => {
+      state.reportList = [];
+      state.reportLoader = false;
+    },
   },
 });
 
@@ -99,5 +118,8 @@ export const {
   setClientFormData,
   resetClientFormData,
   resetAllClientFormData,
+  getReport,
+  setReportList,
+  resetReportList,
 } = clientSlice.actions;
 export default clientSlice.reducer;

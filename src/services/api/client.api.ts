@@ -3,7 +3,7 @@ import {AxiosResponse} from 'axios';
 import {Api} from '.';
 import Endpoints from '@constants/ApiEndPoints';
 // Types
-import {IClientInfoSuccessResponse} from '@store/client';
+import {IClientInfoSuccessResponse, IRemarkReportResponse} from '@store/client';
 
 const getAllClients = async () => {
   const {data, error} = await tryCatch<
@@ -21,4 +21,20 @@ const getAllClients = async () => {
   };
 };
 
-export default {getAllClients};
+const getRemarkReport = async () => {
+  const {data, error} = await tryCatch<AxiosResponse<IRemarkReportResponse>>(
+    Api.get(Endpoints.apiGetReport),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+export default {getAllClients, getRemarkReport};

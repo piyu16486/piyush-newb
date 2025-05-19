@@ -19,3 +19,4 @@ export * from './RightCheckmark';
 export * from './Download';
 export * from './Upload';
 export * from './File';
+export * from './Tasklog';

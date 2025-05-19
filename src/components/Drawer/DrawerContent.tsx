@@ -17,6 +17,7 @@ import {
   UpChevron,
   LeadManagment,
   Logout,
+  Tasklog,
 } from '@assets/Icons';
 import {DrawerContentComponentProps} from '@react-navigation/drawer';
 import {Colors, Fonts, StorageKeys} from '@constants/index';
@@ -71,7 +72,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View>
               <TouchableOpacity
-                style={[styles.button, {backgroundColor: '#E9EBE9'}]}
+                style={styles.button}
                 onPress={() => {
                   setDIsOpen(!DisOpen);
                 }}>
@@ -109,6 +110,24 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() =>
+                      navigation.navigate('KycNavigator', {
+                        screen: 'KycDocument',
+                      })
+                    }>
+                    <Text style={styles.buttonText}>KYC Document</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigation.navigate('DocNavigator', {
+                        screen: 'DocumentValidation',
+                      })
+                    }>
+                    <Text style={styles.buttonText}>Document Validation</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
                       navigation.navigate('LeadNavigator', {
                         screen: 'LeadProgress',
                       })
@@ -130,18 +149,17 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
 
             <View>
               <TouchableOpacity
-                style={[styles.button, {backgroundColor: '#E9EBE9'}]}
-                onPress={() => {
-                  setIsOpen(!isOpen);
-                }}>
+                style={styles.button}
+                onPress={() =>
+                  navigation.navigate('DocNavigator', {
+                    screen: 'TaskLogTabs',
+                  })
+                }>
                 <View style={styles.rowCenter}>
-                  <LeadManagment
-                    height={scaleHeight(24)}
-                    width={scaleWidth(24)}
-                  />
-                  <Text style={styles.buttonText}>Lead Management</Text>
+                  <Tasklog height={scaleHeight(20)} width={scaleWidth(20)} />
+                  <Text style={styles.buttonText}>Task log</Text>
                 </View>
-                <UpChevron rotation={isOpen ? 0 : 180} />
+                {/* <UpChevron rotation={isOpen ? 0 : 180} /> */}
               </TouchableOpacity>
               {isOpen && (
                 <View style={{marginLeft: scaleWidth(24)}}>
@@ -154,24 +172,6 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                   <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Follow up Action</Text>
                   </TouchableOpacity> */}
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      navigation.navigate('KycNavigator', {
-                        screen: 'KycDocument',
-                      })
-                    }>
-                    <Text style={styles.buttonText}>KYC Document</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      navigation.navigate('DocNavigator', {
-                        screen: 'DocumentValidation',
-                      })
-                    }>
-                    <Text style={styles.buttonText}>Document Validation</Text>
-                  </TouchableOpacity>
                   {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Pre Screening</Text>
                   </TouchableOpacity>

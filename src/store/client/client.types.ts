@@ -9,6 +9,9 @@ export type ClientState = {
   clientLoader: boolean;
   clientList: Array<IClientInfoResponseDatum>;
   clientFormData: ClientFormType;
+
+  reportLoader: boolean;
+  reportList: Array<IRemarkReportResponseDatum>;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -67,4 +70,26 @@ export interface IClientInfoResponseDatum {
 export interface Vendor {
   id: number;
   monthly_sales_value: number;
+}
+
+export interface IRemarkReportResponse {
+  statusCode: number;
+  message: string;
+  data: Array<IRemarkReportResponseDatum>;
+}
+
+export interface IRemarkReportResponseDatum {
+  id: number;
+  client_name: string;
+  user: null;
+  task: Array<Task>;
+}
+
+export interface Task {
+  id: number;
+  task_type: string;
+  task_description: string;
+  task_status: string;
+  remark: null;
+  completed_at: null;
 }
