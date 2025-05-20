@@ -127,6 +127,8 @@ export const Report = () => {
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.container}
+        refreshing={false}
+        onRefresh={callGetReport}
         ListEmptyComponent={
           <Text style={styles.emptyList}>No Reports Found</Text>
         }

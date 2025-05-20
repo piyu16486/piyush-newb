@@ -4,7 +4,9 @@ import {
   ClientFormType,
   ClientState,
   IClientInfoResponseDatum,
+  ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
+  ITaskHistoryResponseDatum,
 } from './client.types';
 
 const clientFormData: ClientFormType = {
@@ -51,9 +53,15 @@ const initialState: ClientState = {
   clientLoader: false,
   clientList: [],
   clientFormData: clientFormData,
-  // New Remark Report fields
+  //Remark Report fields
   reportLoader: false,
   reportList: [],
+  //Lead Progress fields
+  leadLoader: false,
+  leadList: [],
+  //Task History fields
+  TaskHistoryLoader: false,
+  TaskHistoryList: [],
 };
 
 const clientSlice = createSlice({
@@ -93,7 +101,7 @@ const clientSlice = createSlice({
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
     },
-    // 🚀 New Remark Report Actions
+    // Remark Report Actions
     getReport: state => {
       state.reportLoader = true;
     },
@@ -108,6 +116,36 @@ const clientSlice = createSlice({
       state.reportList = [];
       state.reportLoader = false;
     },
+    // Lead Progress Actions
+    getLead: state => {
+      state.leadLoader = true;
+    },
+    setLeadList: (
+      state,
+      action: PayloadAction<ILeadProgressResponseDatum[]>,
+    ) => {
+      state.leadLoader = false;
+      state.leadList = action.payload;
+    },
+    resetLeadList: state => {
+      state.leadList = [];
+      state.leadLoader = false;
+    },
+    // Task History Actions
+    getTaskHistory: state => {
+      state.TaskHistoryLoader = true;
+    },
+    setTaskHistoryList: (
+      state,
+      action: PayloadAction<ITaskHistoryResponseDatum[]>,
+    ) => {
+      state.TaskHistoryLoader = false;
+      state.TaskHistoryList = action.payload;
+    },
+    resetTaskHistoryList: state => {
+      state.TaskHistoryList = [];
+      state.TaskHistoryLoader = false;
+    },
   },
 });
 
@@ -121,5 +159,11 @@ export const {
   getReport,
   setReportList,
   resetReportList,
+  getLead,
+  setLeadList,
+  resetLeadList,
+  getTaskHistory,
+  setTaskHistoryList,
+  resetTaskHistoryList,
 } = clientSlice.actions;
 export default clientSlice.reducer;

@@ -14,13 +14,15 @@ import {
 import {TaskCard} from '@components/TaskCard/TaskCard';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
+import FontWeight from '@constants/FontWeight';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions, clientSelector} from '@store/client';
 import {HomeNavigatorType, DocNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -29,6 +31,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
 const TaskData = [
   {
@@ -85,6 +88,14 @@ export const TaskLogTabs = () => {
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [startTime, setStartTime] = useState<Date | undefined>();
   const [schedule, setSchedule] = useState<Date | undefined>();
+  const dispatch = useDispatch();
+  const TaskHitoryData = useSelector(clientSelector.getTaskHistory);
+  const callgetTaskhistory = () => {
+    dispatch(clientActions.getTaskHistory());
+  };
+  useEffect(() => {
+    callgetTaskhistory();
+  }, []);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -95,13 +106,13 @@ export const TaskLogTabs = () => {
               <View style={styles.Subrowcontainer}>
                 <Text style={styles.Subrowcontainertxt}>Task</Text>
                 <View style={styles.Badge}>
-                  <Text style={styles.Badgetext}>{TaskData.length}</Text>
+                  <Text style={styles.Badgetext}>{TaskHitoryData.length}</Text>
                 </View>
               </View>
             </View>
             <View style={styles.Cardlist}>
               <FlatList
-                data={TaskData}
+                data={TaskHitoryData}
                 keyExtractor={item => item.clientId}
                 renderItem={({item}) => <TaskCard {...item} />}
                 contentContainerStyle={{flexGrow: 1}}
@@ -198,13 +209,13 @@ export const TaskLogTabs = () => {
               <View style={styles.Subrowcontainer}>
                 <Text style={styles.Subrowcontainertxt}>Task History</Text>
                 <View style={styles.Badge}>
-                  <Text style={styles.Badgetext}>{TaskData.length}</Text>
+                  <Text style={styles.Badgetext}>{TaskHitoryData.length}</Text>
                 </View>
               </View>
             </View>
             <View style={styles.Cardlist}>
               <FlatList
-                data={TaskData}
+                data={TaskHitoryData}
                 keyExtractor={item => item.clientId}
                 renderItem={({item}) => (
                   <TaskCard
@@ -216,6 +227,10 @@ export const TaskLogTabs = () => {
                   />
                 )}
                 contentContainerStyle={{flexGrow: 1}}
+                onRefresh={callgetTaskhistory}
+                ListEmptyComponent={
+                  <Text style={styles.emptyList}>No Task History Found</Text>
+                }
               />
             </View>
           </View>
@@ -264,6 +279,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  emptyList: {
+    fontSize: scaleFont(16),
+    fontWeight: FontWeight.SemiBold,
+    color: Colors.SteelGray,
+    textAlign: 'center',
   },
   Subcontainer: {
     backgroundColor: '#fff',

@@ -16,6 +16,12 @@ const Endpoints = {
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',
+
+  // Lead apis
+  apiGetLeadProgress: '/client-info-master/6/lead-progress',
+
+  // Tasks apis
+  apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
 } as const;
 
 export default Endpoints;

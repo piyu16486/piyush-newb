@@ -12,6 +12,12 @@ export type ClientState = {
 
   reportLoader: boolean;
   reportList: Array<IRemarkReportResponseDatum>;
+
+  leadLoader: boolean;
+  leadList: Array<ILeadProgressResponseDatum>;
+
+  TaskHistoryLoader: boolean;
+  TaskHistoryList: Array<ITaskHistoryResponseDatum>;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -92,4 +98,32 @@ export interface Task {
   task_status: string;
   remark: null;
   completed_at: null;
+}
+
+export interface ILeadProgressResponse {
+  statusCode: number;
+  message: string;
+  data: Array<ILeadProgressResponseDatum>;
+}
+
+export interface ILeadProgressResponseDatum {}
+
+export interface ITaskHistoryResponse {
+  statusCode: number;
+  message: string;
+  data: Array<ITaskHistoryResponseDatum>;
+}
+
+export interface ITaskHistoryResponseDatum {
+  id: number;
+  assigned_by: string;
+  assigned_to: string;
+  client_name: string;
+  assigned_at: string;
+  task_type: string;
+  task_description: string;
+  task_status: string;
+  remark: null;
+  completed_at: null;
+  client: number;
 }

@@ -1,12 +1,15 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getClients, getReport} from './client.slice';
+import {getClients, getLead, getReport, getTaskHistory} from './client.slice';
 import {ClientApis} from '@services/api';
 import {
   clientActions,
   IClientInfoSuccessResponse,
+  ILeadProgressResponse,
   IRemarkReportResponse,
+  ITaskHistoryResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
+import clientApi from '@services/api/client.api';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -30,7 +33,31 @@ function* handleGetRemarkReport(): unknown {
   }
 }
 
+function* handleGetLeadProgress(): unknown {
+  const {data, error}: Result<ILeadProgressResponse> = yield call(
+    clientApi.getLeadProgress,
+  );
+  if (!error) {
+    yield put(clientActions.setLeadList(data.data));
+  } else {
+    yield put(clientActions.setLeadList([]));
+  }
+}
+
+function* handleGetTaskHistory(): unknown {
+  const {data, error}: Result<ITaskHistoryResponse> = yield call(
+    clientApi.getTaskHistory,
+  );
+  if (!error) {
+    yield put(clientActions.setTaskHistoryList(data.data));
+  } else {
+    yield put(clientActions.setTaskHistoryList([]));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
+  yield takeLatest(getLead.type, handleGetLeadProgress);
+  yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
 }

@@ -8,6 +8,21 @@ const getClientFormData = createSelector(
   _selectState,
   _state => _state.clientFormData,
 );
-const getRemarkReport = createSelector(_selectState, _state => _state.reportList);
+const getRemarkReport = createSelector(
+  _selectState,
+  _state => _state.reportList,
+);
+const getLeadProgress = createSelector(_selectState, _state => _state.leadList);
 
-export default {getClientList, getClientFormData, getRemarkReport};
+const getTaskHistory = createSelector(
+  _selectState,
+  _state => _state.TaskHistoryList,
+);
+
+export default {
+  getClientList,
+  getClientFormData,
+  getRemarkReport,
+  getLeadProgress,
+  getTaskHistory,
+};
