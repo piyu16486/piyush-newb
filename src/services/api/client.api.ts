@@ -4,6 +4,8 @@ import {Api} from '.';
 import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
+  BasicDetailPayload,
+  IbasicDetailResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
@@ -74,9 +76,26 @@ const getTaskHistory = async () => {
   };
 };
 
+const postBasicDetails = async (payload: BasicDetailPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IbasicDetailResponse>>(
+    Api.post(Endpoints.apiBasicDetailPost, payload),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data, // assuming `data` is just a clientId number
+    error: null,
+  };
+};
+
 export default {
   getAllClients,
   getRemarkReport,
   getLeadProgress,
   getTaskHistory,
+  postBasicDetails,
 };

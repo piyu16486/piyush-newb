@@ -18,6 +18,9 @@ export type ClientState = {
 
   TaskHistoryLoader: boolean;
   TaskHistoryList: Array<ITaskHistoryResponseDatum>;
+
+  basicLoader: boolean;
+  clientId: null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -126,4 +129,20 @@ export interface ITaskHistoryResponseDatum {
   remark: null;
   completed_at: null;
   client: number;
+}
+
+export interface BasicDetailPayload {
+  source_of_lead: string;
+  location: string;
+  city: string;
+  state: string;
+  type_of_visit: string;
+  visit: number;
+  date_of_visit: string;
+}
+
+export interface IbasicDetailResponse {
+  statusCode: number;
+  message: string;
+  data: number;
 }

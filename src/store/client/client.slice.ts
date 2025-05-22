@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
+  BasicDetailPayload,
   ClientFormPayload,
   ClientFormType,
   ClientState,
@@ -62,6 +63,9 @@ const initialState: ClientState = {
   //Task History fields
   TaskHistoryLoader: false,
   TaskHistoryList: [],
+  //Basic Detail fields
+  basicLoader: false,
+  clientId: null,
 };
 
 const clientSlice = createSlice({
@@ -146,6 +150,18 @@ const clientSlice = createSlice({
       state.TaskHistoryList = [];
       state.TaskHistoryLoader = false;
     },
+    basicdetailRequest(state, action: PayloadAction<BasicDetailPayload>) {
+      state.basicLoader = true;
+      state.clientId = null;
+    },
+    basicdetailSuccess(state, action: PayloadAction<number>) {
+      state.basicLoader = false;
+      action.clientId = action.payload;
+    },
+    basicdetailFailure(state, action: PayloadAction<string>) {
+      state.basicLoader = false;
+      action.clientId = action.payload;
+    },
   },
 });
 
@@ -165,5 +181,8 @@ export const {
   getTaskHistory,
   setTaskHistoryList,
   resetTaskHistoryList,
+  basicdetailRequest,
+  basicdetailSuccess,
+  basicdetailFailure,
 } = clientSlice.actions;
 export default clientSlice.reducer;

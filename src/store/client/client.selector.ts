@@ -19,10 +19,25 @@ const getTaskHistory = createSelector(
   _state => _state.TaskHistoryList,
 );
 
+const getBasicDetailLoading = createSelector(
+  _selectState,
+  state => state.clientLoader,
+);
+
+const getBasicDetailError = createSelector(
+  _selectState,
+  state => state.clientList,
+);
+
+const getClientId = createSelector(_selectState, state => state.clientId);
+
 export default {
   getClientList,
   getClientFormData,
   getRemarkReport,
   getLeadProgress,
   getTaskHistory,
+  getBasicDetailLoading,
+  getBasicDetailError,
+  getClientId,
 };

@@ -1,7 +1,16 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
-import {getClients, getLead, getReport, getTaskHistory} from './client.slice';
-import {ClientApis} from '@services/api';
 import {
+  basicdetailFailure,
+  basicdetailRequest,
+  basicdetailSuccess,
+  getClients,
+  getLead,
+  getReport,
+  getTaskHistory,
+} from './client.slice';
+import {Api, ClientApis} from '@services/api';
+import {
+  BasicDetailPayload,
   clientActions,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
@@ -10,6 +19,7 @@ import {
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
+import {PayloadAction} from '@reduxjs/toolkit';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -55,9 +65,23 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
+function* handleBasicDetailRequest(action: PayloadAction<BasicDetailPayload>) {
+  try {
+    const {data, error} = yield call(Api.postBasicDetails, action.payload);
+    if (data) {
+      yield put(basicdetailSuccess(data)); // assuming data is clientId
+    } else {
+      yield put(basicdetailFailure(error?.message || 'Something went wrong'));
+    }
+  } catch (err: any) {
+    yield put(basicdetailFailure(err.message));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
+  yield takeLatest(basicdetailRequest.type, handleBasicDetailRequest);
 }

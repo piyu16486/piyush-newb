@@ -22,6 +22,9 @@ const Endpoints = {
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
+
+  // Clients Post apis
+  apiBasicDetailPost: '/client-info-master/basic-details',
 } as const;
 
 export default Endpoints;
