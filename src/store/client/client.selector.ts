@@ -31,6 +31,15 @@ const getBasicDetailError = createSelector(
 
 const getClientId = createSelector(_selectState, state => state.clientId);
 
+const getUploadKycLoading = createSelector(
+  _selectState,
+  state => state.loading,
+);
+
+const getUploadKycData = createSelector(_selectState, state => state.data);
+
+const getUploadKycError = createSelector(_selectState, state => state.error);
+
 export default {
   getClientList,
   getClientFormData,
@@ -40,4 +49,7 @@ export default {
   getBasicDetailLoading,
   getBasicDetailError,
   getClientId,
+  getUploadKycLoading,
+  getUploadKycData,
+  getUploadKycError,
 };

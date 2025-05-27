@@ -47,16 +47,21 @@ type ClientFirmInputNames =
   | 'bankName';
 export type ClientFirmNames = ClientFirmDropDownNames | ClientFirmInputNames;
 
-type VendorDropDownNames = 'product';
+type VendorDropDownNames = '';
 type VendorInputNames =
+  | 'product'
   | 'vendorName'
   | 'vendorContact'
   | 'vendorEmail'
   | 'monthlySales';
 export type VendorNames = VendorDropDownNames | VendorInputNames;
 
-type VisitDropDownNames = 'intent' | 'interested';
-type VisitInputNames = 'visitRemarks' | 'nextVisitDate' | 'reason';
+type VisitDropDownNames = 'intent';
+type VisitInputNames =
+  | 'visitRemarks'
+  | 'nextVisitDate'
+  | 'reason'
+  | 'interested';
 export type VisitNames = VisitDropDownNames | VisitInputNames;
 
 // Form Data Type
@@ -302,7 +307,7 @@ export const formInputDetails: FormInputListType = {
     {label: 'Credit Period Offer', name: 'creditPeriod', type: FieldType.INPUT},
   ],
   VendorScreen: [
-    {label: 'Product', name: 'product', type: FieldType.DROPDOWN},
+    {label: 'Product', name: 'product', type: FieldType.INPUT},
     {label: 'Vendor Name', name: 'vendorName', type: FieldType.INPUT},
     {
       label: 'Vendor Contact number',
@@ -320,7 +325,7 @@ export const formInputDetails: FormInputListType = {
     {
       label: 'Are you interested for?',
       name: 'interested',
-      type: FieldType.DROPDOWN,
+      type: FieldType.INPUT,
     },
   ],
 };

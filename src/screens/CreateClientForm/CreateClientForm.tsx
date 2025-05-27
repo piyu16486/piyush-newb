@@ -141,14 +141,25 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
         <TouchableOpacity style={styles.clearButton} onPress={onPressClearAll}>
           <Text style={styles.clearText}>Clear all</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.saveButton, {backgroundColor: Colors.white}]}
+          activeOpacity={0.7}
+          onPress={() => console.log('Save Pressed')}>
+          <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
+        </TouchableOpacity>
         {formIndex === formNames.length - 1 ? (
-          <TouchableOpacity style={styles.saveButton}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => {
+              // Navigate to ClientInfo screen
+              navigation.navigate('ClientInfo'); // Make sure 'ClientInfo' matches your route name
+            }}>
             <Text style={styles.saveText}>Submit</Text>
             <RightCheckmark width={12} height={12} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.nextButton} onPress={onPressSaveNext}>
-            <Text style={styles.nextText}>Save & Next</Text>
+            <Text style={styles.nextText}>Next</Text>
             <View style={styles.iconWrapper}>
               <RightChevronCircle width={24} height={24} />
             </View>

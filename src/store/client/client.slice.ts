@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
   BasicDetailPayload,
@@ -8,6 +9,8 @@ import {
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
   ITaskHistoryResponseDatum,
+  IUploadKycDocumentPayload,
+  IUploadKycDocumentResponse,
 } from './client.types';
 
 const clientFormData: ClientFormType = {
@@ -66,6 +69,10 @@ const initialState: ClientState = {
   //Basic Detail fields
   basicLoader: false,
   clientId: null,
+  // kyc
+  loading: false,
+  data: null,
+  error: null,
 };
 
 const clientSlice = createSlice({
@@ -150,17 +157,22 @@ const clientSlice = createSlice({
       state.TaskHistoryList = [];
       state.TaskHistoryLoader = false;
     },
-    basicdetailRequest(state, action: PayloadAction<BasicDetailPayload>) {
-      state.basicLoader = true;
-      state.clientId = null;
+    uploadKycRequest(state, action: PayloadAction<IUploadKycDocumentPayload>) {
+      state.loading = true;
+      state.error = null;
     },
-    basicdetailSuccess(state, action: PayloadAction<number>) {
-      state.basicLoader = false;
-      action.clientId = action.payload;
+    uploadKycSuccess(state, action: PayloadAction<IUploadKycDocumentResponse>) {
+      state.loading = false;
+      state.data = action.payload;
     },
-    basicdetailFailure(state, action: PayloadAction<string>) {
-      state.basicLoader = false;
-      action.clientId = action.payload;
+    uploadKycFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    clearUploadKyc(state) {
+      state.loading = false;
+      state.data = null;
+      state.error = null;
     },
   },
 });
@@ -181,8 +193,9 @@ export const {
   getTaskHistory,
   setTaskHistoryList,
   resetTaskHistoryList,
-  basicdetailRequest,
-  basicdetailSuccess,
-  basicdetailFailure,
+  uploadKycRequest,
+  uploadKycSuccess,
+  uploadKycFailure,
+  clearUploadKyc,
 } = clientSlice.actions;
 export default clientSlice.reducer;

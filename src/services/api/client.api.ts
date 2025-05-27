@@ -87,7 +87,29 @@ const postBasicDetails = async (payload: BasicDetailPayload) => {
     };
   }
   return {
-    data: data.data, // assuming `data` is just a clientId number
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadKycDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycProfilePic, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
+  );
+
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
     error: null,
   };
 };
@@ -98,4 +120,5 @@ export default {
   getLeadProgress,
   getTaskHistory,
   postBasicDetails,
+  uploadKycDocument,
 };

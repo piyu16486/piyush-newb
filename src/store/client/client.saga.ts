@@ -1,21 +1,22 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {
-  basicdetailFailure,
-  basicdetailRequest,
-  basicdetailSuccess,
   getClients,
   getLead,
   getReport,
   getTaskHistory,
+  uploadKycFailure,
+  uploadKycRequest,
+  uploadKycSuccess,
 } from './client.slice';
-import {Api, ClientApis} from '@services/api';
+import {ClientApis} from '@services/api';
 import {
-  BasicDetailPayload,
   clientActions,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
   ITaskHistoryResponse,
+  IUploadKycDocumentPayload,
+  IUploadKycDocumentResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -65,16 +66,29 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
-function* handleBasicDetailRequest(action: PayloadAction<BasicDetailPayload>) {
+function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   try {
-    const {data, error} = yield call(Api.postBasicDetails, action.payload);
+    const formData = new FormData();
+    formData.append('doc', {
+      uri: action.payload.doc.uri,
+      name: action.payload.doc.name,
+      type: action.payload.doc.type,
+    } as any); // React Native file input
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+    formData.append('params', action.payload.params);
+    formData.append('client_name', action.payload.client_name);
+
+    const {data, error}: {data: IUploadKycDocumentResponse | null; error: any} =
+      yield call(uploadKycDocument, formData);
+
     if (data) {
-      yield put(basicdetailSuccess(data)); // assuming data is clientId
+      yield put(uploadKycSuccess(data));
     } else {
-      yield put(basicdetailFailure(error?.message || 'Something went wrong'));
+      yield put(uploadKycFailure(error?.message ?? 'Upload failed'));
     }
   } catch (err: any) {
-    yield put(basicdetailFailure(err.message));
+    yield put(uploadKycFailure(err?.message ?? 'Something went wrong'));
   }
 }
 
@@ -83,5 +97,5 @@ export default function* clientSaga() {
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
-  yield takeLatest(basicdetailRequest.type, handleBasicDetailRequest);
+  yield takeLatest(uploadKycRequest.type, handleUploadKyc);
 }

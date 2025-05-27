@@ -25,6 +25,11 @@ const Endpoints = {
 
   // Clients Post apis
   apiBasicDetailPost: '/client-info-master/basic-details',
+
+  // Kyc Apis
+  apiKycProfilePic: '/client-info-master/personal-kyc/profile',
+  apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
+  apiKycPanUpload: '/client-info-master/personal-kyc/pan',
 } as const;
 
 export default Endpoints;

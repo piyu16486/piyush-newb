@@ -21,6 +21,10 @@ export type ClientState = {
 
   basicLoader: boolean;
   clientId: null;
+
+  loading: boolean;
+  data: IUploadKycDocumentResponse | null;
+  error: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -145,4 +149,24 @@ export interface IbasicDetailResponse {
   statusCode: number;
   message: string;
   data: number;
+}
+
+export interface IUploadKycDocumentPayload {
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  };
+  clientId: number;
+  uploaded_by: string;
+  params: string;
+  client_name: string;
+}
+
+export interface IUploadKycDocumentResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_url: string;
+  };
 }
