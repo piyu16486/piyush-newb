@@ -70,7 +70,7 @@ export const UploadModal = ({
                 <File width={20} height={26} />
                 <Text style={styles.info}>Max file size 15MB</Text>
                 {/* <Text style={styles.info}>Drag & Drop your file or</Text> */}
-
+ 
                 <View style={{alignItems: 'center'}}>
                   <TouchableOpacity
                     style={styles.browseButton}
