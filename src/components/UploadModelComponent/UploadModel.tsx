@@ -1,5 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {File, RightCheckmark} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
@@ -15,6 +13,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
+import {launchCamera} from 'react-native-image-picker';
 
 export const UploadModal = ({
   visible,
@@ -23,22 +22,35 @@ export const UploadModal = ({
   visible: boolean;
   onClose: () => void;
 }) => {
+  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const handleBrowseFile = async () => {
-    // You can trigger DocumentPicker here
     try {
       const files = await pick({
         mode: 'import',
-        allowMultiSelection: true,
+        allowMultiSelection: false,
       });
-      console.log(files);
-    } catch (error) {}
+      if (files && files[0]) {
+        setSelectedFile(files[0].name || 'Document Selected');
+      }
+    } catch (error) {
+      console.log('Document picking error:', error);
+    }
+  };
+
+  const handleOpenCamera = async () => {
+    const result = await launchCamera({mediaType: 'photo', saveToPhotos: true});
+    if (result?.assets && result.assets.length > 0) {
+      setSelectedImageUri(result.assets[0].uri || null);
+      setSelectedFile(null); // clear file name if using camera
+    }
   };
 
   const handleSubmit = () => {
-    // Upload logic here
-    onClose(); // Close after submit
+    // TODO: upload selectedImageUri or selectedFile
+    console.log('Submitting file or image');
+    onClose();
   };
 
   return (
@@ -47,16 +59,9 @@ export const UploadModal = ({
       visible={visible}
       animationType="fade"
       onRequestClose={onClose}>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          console.log('Outside modal pressed - closing');
-          onClose();
-        }}>
+      <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              console.log('Inside modal - do not close');
-            }}>
+          <TouchableWithoutFeedback>
             <View style={styles.popup}>
               <Text style={styles.title}>Upload your File</Text>
               <Text style={styles.subtitle}>Supports JPG, PNG and PDF</Text>
@@ -64,7 +69,7 @@ export const UploadModal = ({
               <View style={styles.uploadBox}>
                 <File width={20} height={26} />
                 <Text style={styles.info}>Max file size 15MB</Text>
-                <Text style={styles.info}>Drag & Drop your file or</Text>
+                {/* <Text style={styles.info}>Drag & Drop your file or</Text> */}
 
                 <View style={{alignItems: 'center'}}>
                   <TouchableOpacity
@@ -73,21 +78,41 @@ export const UploadModal = ({
                     <Text style={styles.browseText}>Browse File</Text>
                   </TouchableOpacity>
 
+                  <TouchableOpacity
+                    style={[
+                      styles.browseButton,
+                      {backgroundColor: '#28a745', marginTop: 10},
+                    ]}
+                    onPress={handleOpenCamera}>
+                    <Text style={styles.browseText}>Take Photo</Text>
+                  </TouchableOpacity>
+
                   {selectedFile && (
                     <Text style={{marginTop: 8, color: '#444', fontSize: 14}}>
                       Selected: {selectedFile}
                     </Text>
+                  )}
+
+                  {selectedImageUri && (
+                    <Image
+                      source={{uri: selectedImageUri}}
+                      style={{
+                        marginTop: 10,
+                        width: 120,
+                        height: 120,
+                        borderRadius: 6,
+                        borderWidth: 1,
+                        borderColor: '#ccc',
+                      }}
+                      resizeMode="cover"
+                    />
                   )}
                 </View>
               </View>
 
               <TouchableOpacity
                 style={styles.saveButton}
-                activeOpacity={0.7}
-                onPress={() => {
-                  console.log('Submit pressed');
-                  handleSubmit();
-                }}>
+                onPress={handleSubmit}>
                 <Text style={styles.saveText}>Submit</Text>
                 <RightCheckmark width={12} height={12} />
               </TouchableOpacity>
@@ -125,7 +150,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FAFAFA',
   },
-  icon: {width: 40, height: 40, marginBottom: 10},
   info: {fontSize: 14, color: '#666', textAlign: 'center'},
   browseButton: {
     backgroundColor: '#007bff',
