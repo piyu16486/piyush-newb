@@ -1,21 +1,20 @@
+import {
+  FormTitlesType,
+  FormTypes,
+} from '@screens/CreateClientForm/CreateClientForm.type';
 import {Country} from 'react-native-country-picker-modal';
 
 export type AuthNavigatorType = {
   OnBoarding: undefined;
   SignupScreen: SignupScreenParams | undefined;
   OTPInputScreen: OTPInputScreenParams;
-  OTPInputScreenLogin: OTPInputScreenLoginParams;
+  PasswordScreen: PasswordScreenParams;
+
   SigninScreen: SigninScreenParams | undefined;
-  PasswordScreen: {
-    screenMode: 'forgotPass' | 'createPass';
-    email?: string;
-    token?: string; // <-- Add this
-  };
   TermsOfService: undefined;
   SuccessScreen: {
     authMode: 'signin' | 'signup' | 'password';
   };
-  Login: undefined;
 };
 
 export type SignupScreenParams = {
@@ -33,11 +32,21 @@ export type SigninScreenParams = {
 
 export type OTPInputScreenParams = {
   showCreatePass: boolean;
-} & SignupScreenParams;
+} & (
+  | {
+      screen: 'signup';
+      data: SignupScreenParams;
+    }
+  | {
+      screen: 'signin';
+      data: SigninScreenParams;
+    }
+);
 
-export type OTPInputScreenLoginParams = {
-  showCreatePass: boolean;
-} & SigninScreenParams;
+export type PasswordScreenParams = {
+  token?: string;
+  screenMode?: 'forgotPass' | 'createPass';
+};
 
 export type HomeNavigatorType = {
   ClientNavigator: undefined;
@@ -51,19 +60,11 @@ export type HomeNavigatorType = {
 export type ClientNavigatorType = {
   ClientInfo: undefined;
   FormSelectionScreen: undefined;
-  InputFormField: {
-    screen:
-      | 'BasicDetails'
-      | 'ClientFirmScreen'
-      | 'VendorScreen'
-      | 'VisitScreen';
-    title:
-      | 'Basic Details'
-      | 'Client & Firm Details'
-      | 'Vendor Details'
-      | 'Visit Details';
+  CreateClientForm: {
+    screen: FormTypes;
+    title: FormTitlesType;
   };
-  ClientLeadInfoTab: {clientId: string};
+  ClientLeadInfoTab: {clientId: number};
   ClientCardReadMore: undefined;
 };
 

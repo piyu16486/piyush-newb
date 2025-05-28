@@ -9,11 +9,13 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 import React from 'react';
-import {Colors, Fonts} from '@constants/index';
+import {Colors, DrawerScreens, Fonts} from '@constants/index';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import {MenuIcon} from '@assets/Icons';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {HomeNavigatorType} from '@type/NavigatorTypes';
+import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
+import {CompositeNavigationProp} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export type AppBarProps = {
   title?: string;
@@ -25,7 +27,10 @@ export type AppBarProps = {
   leftIconProps?: TouchableOpacityProps;
   leftIconContainerStyle?: StyleProp<ViewStyle>;
 
-  navigation?: DrawerNavigationProp<HomeNavigatorType>;
+  navigation?: CompositeNavigationProp<
+    NativeStackNavigationProp<ClientNavigatorType>,
+    DrawerNavigationProp<HomeNavigatorType>
+  >;
 };
 
 export const AppBar: React.FC<AppBarProps> = ({

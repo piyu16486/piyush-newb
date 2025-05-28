@@ -1,65 +1,92 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
-  ForgotPasswordPayload,
-  OtpVerifyPayload,
-  PayloadWithCallback,
-  SigninOtpVerifyPayload,
-  SignInPayload,
-  SignUpPayload,
-  VerifyPasswordPayload,
+  IAuthState,
+  UserType,
+  SignupPayloadWithCallback,
+  OtpVerifyPayloadWithCallback,
+  CreatePasswordPayloadWithCallback,
+  ResetLinkPayloadWithCallback,
+  SigninPayloadWithCallback,
 } from './auth.types';
-import {State} from 'react-native-gesture-handler';
+import {getStorage} from '@services/localStorage';
+import StorageKeys from '@constants/StorageKeys';
 
-interface AuthState {
-  token: string | null;
-}
-
-const initialState: AuthState = {
-  token: null,
+const initialState: IAuthState = {
+  globalLoader: false,
+  userType: 'client',
+  isLoggedIn: getStorage(StorageKeys.IS_LOGGED_IN, true),
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    // Global Loader
+    setGlobalLoader: (state, action: PayloadAction<boolean>) => {
+      state.globalLoader = action.payload;
+    },
+    // User Type
+    setUserType: (state, action: PayloadAction<UserType>) => {
+      state.userType = action.payload;
+    },
+    // Is Logged In
+    setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
+    },
+    // Signup
     signupRequest: (
       state,
-      action: PayloadAction<PayloadWithCallback<SignUpPayload>>,
-    ) => {},
+      _action: PayloadAction<SignupPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
+    // OTP Verify
     otpVerifyRequest: (
       state,
-      action: PayloadAction<PayloadWithCallback<OtpVerifyPayload>>,
-    ) => {},
-    otpVerifySuccess: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
+      _action: PayloadAction<OtpVerifyPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
     },
-    verifyPasswordRequest: (
+    // Create New Password
+    createNewPassword: (
       state,
-      action: PayloadAction<PayloadWithCallback<VerifyPasswordPayload>>,
-    ) => {},
+      _action: PayloadAction<CreatePasswordPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
+    // Send Password Reset Link
+    sendResetLinkRequest: (
+      state,
+      _action: PayloadAction<ResetLinkPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
+    // Reset Password
+    resetPassword: (
+      state,
+      _action: PayloadAction<CreatePasswordPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
+    // Signin
     signinRequest: (
       state,
-      action: PayloadAction<PayloadWithCallback<SignInPayload>>,
-    ) => {},
-    signInOtpVerify: (
-      state,
-      action: PayloadAction<PayloadWithCallback<SigninOtpVerifyPayload>>,
-    ) => {},
-    forgotPassword: (
-      state,
-      action: PayloadAction<PayloadWithCallback<ForgotPasswordPayload>>,
-    ) => {},
+      _action: PayloadAction<SigninPayloadWithCallback>,
+    ) => {
+      state.globalLoader = true;
+    },
   },
 });
 
 export const {
+  setUserType,
+  setGlobalLoader,
+  setIsLoggedIn,
   signupRequest,
   otpVerifyRequest,
-  otpVerifySuccess,
-  verifyPasswordRequest,
+  createNewPassword,
+  sendResetLinkRequest,
+  resetPassword,
   signinRequest,
-  signInOtpVerify,
-  forgotPassword,
 } = authSlice.actions;
 export default authSlice.reducer;

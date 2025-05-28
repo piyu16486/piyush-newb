@@ -1,208 +1,140 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {EyeClose, EyeOpen} from '@assets/Icons';
 import {Button, Container, Header, Input, TnCFooter} from '@components/index';
-import {Colors, Fonts} from '@constants/index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {SignInPayload} from '@store/auth';
-import {signinRequest} from '@store/auth/auth.slice';
+import {AuthScreens, Colors, Fonts} from '@constants/index';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {authSelector, ISignInPayload} from '@store/auth';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import {isValidEmail, isValidMobile} from '@utils/Utils';
-import React, {useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import CountryPicker, {Country} from 'react-native-country-picker-modal';
+import {handleEmailVerification} from '@utils/Utils';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Feather';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {signinRequest} from '@store/auth/auth.slice';
 
-export const SigninScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<AuthNavigatorType>>();
+type SigninProps = NativeStackScreenProps<
+  AuthNavigatorType,
+  AuthScreens.SigninScreen
+>;
 
-  const [signupMode] = useState<'email' | 'mobile'>('email');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showCountryModal, setShowCountryModal] = useState(false);
-  const [country, setCountry] = useState<Country>({
-    cca2: 'IN',
-    currency: ['INR'],
-    callingCode: ['91'],
-    region: 'Asia',
-    subregion: 'Southern Asia',
-    flag: 'flag-in',
-    name: 'India',
-  });
+const Strings = {
+  welcomeBackTitle: 'Welcome back to CashnTech',
+  loginSubtitle: 'Log In to your account',
+  emailLabel: 'Email Address',
+  passwordLabel: 'Password',
+  rememberMe: 'Remember me for faster login',
+  forgotPassword: 'Forgot Password?',
+  getVerificationCode: 'Get Verification Code',
+  noAccountText: "Don't have an account? ",
+  signupLinkText: 'Sign up',
+  otpSent: 'OTP sent to your email.',
+};
 
-  const [contactInfo, setContactInfo] = useState('');
+export const SigninScreen = ({navigation, route: {params}}: SigninProps) => {
+  const [email, setEmail] = useState('');
   const [passwordValue, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleEmailVerification = () => {
-    if (!contactInfo.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: 'Email is required',
-        visibilityTime: 2000,
-      });
-      return false;
+  useEffect(() => {
+    if (params) {
+      setEmail(params.email);
+      setPassword(params.password);
     }
-    if (!isValidEmail(contactInfo.trim())) {
-      Toast.show({
-        type: 'error',
-        text1: 'Email is not valid',
-        visibilityTime: 2000,
-      });
-      return false;
-    }
-    Toast.show({
-      type: 'success',
-      text1: 'OTP sent to your email',
-      visibilityTime: 2000,
-    });
-    return true;
-  };
+  }, [params]);
 
-  const handleMobileVerification = () => {
-    if (!contactInfo.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: 'Mobile no. is required',
-        visibilityTime: 2000,
-      });
-      return false;
-    }
-    if (!isValidMobile(contactInfo.trim(), country.callingCode[0])) {
-      Toast.show({
-        type: 'error',
-        text1: 'Mobile no. is not valid',
-        visibilityTime: 2000,
-      });
-      return false;
-    }
-    Toast.show({
-      type: 'success',
-      text1: 'OTP sent to your mobile no.',
-      visibilityTime: 2000,
-    });
-    return true;
-  };
-
+  const isLoading = useSelector(authSelector.getGlobalLoader);
   const dispatch = useDispatch();
 
-  const onPressVerify = async () => {
-    console.log('-------->>>>>');
-    if (signupMode === 'email') {
-      console.log('-------->>>>>1');
-      const isEmailValid = handleEmailVerification();
-      if (isEmailValid) {
-        console.log('-------->>>>>2');
-        const payload: SignInPayload = {
-          email: contactInfo,
-          password: passwordValue,
-        };
-        console.log('----->>>>3', payload);
-        setLoading(true); // Show loader
+  const onSignupSuccess = () => {
+    Toast.show({
+      type: 'success',
+      text1: Strings.otpSent,
+      visibilityTime: 2000,
+    });
+    const data = {
+      email: email,
+      password: passwordValue,
+    };
+    const params = {
+      showCreatePass: true,
+      screen: 'signin',
+      data,
+    };
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: AuthScreens.OTPInputScreen,
+          params,
+        },
+      ],
+    });
+  };
 
-        dispatch(
-          signinRequest({
-            payload,
-            callbackSuccess: () => {
-              console.log('Login successful. Navigating to OTP screen...');
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'OTPInputScreenLogin',
-                    params: {
-                      signupMode: 'email',
-                      email: contactInfo,
-                      showCreatePass: false,
-                    },
-                  },
-                ],
-              });
-            },
-            callbackError: errorMessage => {
-              console.log('error', errorMessage);
-              console.warn('Login failed:', errorMessage);
-              // Optionally show alert or toast
-              Alert.alert(
-                'Login Failed',
-                errorMessage || 'Something went wrong',
-              );
-            },
-          }),
-        );
-      }
-    }
+  const onSignupError = (errorMessage: string) => {
+    Toast.show({
+      type: 'error',
+      text1: errorMessage,
+      visibilityTime: 2000,
+    });
+  };
+
+  const onPressVerify = async () => {
+    const isEmailValid = handleEmailVerification(email);
+    if (!isEmailValid) return;
+    const data = {
+      email: email.trim(),
+      password: passwordValue.trim(),
+    };
+    const payload = {
+      payload: data,
+      callbackSuccess: onSignupSuccess,
+      callbackError: onSignupError,
+    };
+    dispatch(signinRequest(payload));
+  };
+
+  const onPressForgotPassword = () => {
+    navigation.navigate(AuthScreens.PasswordScreen, {screenMode: 'forgotPass'});
+  };
+
+  const onPressSignup = () => {
+    navigation.navigate(AuthScreens.SignupScreen);
   };
 
   return (
     <Container>
       <Header
-        title="Welcome back to CashnTech"
-        subtitle="Log In to your account"
+        title={Strings.welcomeBackTitle}
+        subtitle={Strings.loginSubtitle}
       />
       <View style={styles.inputContainer}>
         <Input
-          label={
-            signupMode === 'email'
-              ? 'Email Address'
-              : 'Enter your Mobile Number'
-          }
-          renderLeftIcon={
-            signupMode === 'email' ? undefined : (
-              <View style={styles.countryCodeContainer}>
-                <CountryPicker
-                  visible={showCountryModal}
-                  countryCode={country.cca2}
-                  onSelect={item => {
-                    setShowCountryModal(false);
-                    setCountry(item);
-                  }}
-                  withEmoji
-                  withFlag
-                  withCallingCode
-                  withAlphaFilter
-                  withFilter
-                  withFlagButton
-                  withCallingCodeButton
-                />
-              </View>
-            )
-          }
+          label={Strings.emailLabel}
           leftIconStyle={styles.leftIcon}
-          onPressLeftIcon={() => {
-            setShowCountryModal(prv => !prv);
-          }}
           maxLength={32}
-          value={contactInfo}
-          onChangeText={setContactInfo}
-          keyboardType={signupMode === 'email' ? 'email-address' : 'number-pad'}
+          value={email}
+          onChangeText={setEmail}
+          editable={!isLoading}
+          keyboardType={'email-address'}
         />
         <Input
-          label="Password"
+          label={Strings.passwordLabel}
           onChangeText={setPassword}
           value={passwordValue}
           renderRightIcon={
             showPassword ? (
-              <EyeOpen height={scaleWidth(20)} width={scaleWidth(20)} />
+              <EyeOpen style={styles.icon} />
             ) : (
-              <EyeClose height={scaleWidth(20)} width={scaleWidth(20)} />
+              <EyeClose style={styles.icon} />
             )
           }
           onPressRightIcon={() => setShowPassword(prv => !prv)}
           secureTextEntry={!showPassword}
-          containerStyle={{marginTop: scaleHeight(24)}}
+          editable={!isLoading}
+          containerStyle={styles.passwordInputContainer}
         />
         <View style={styles.extraInfoContainer}>
           <TouchableOpacity
@@ -213,36 +145,30 @@ export const SigninScreen = () => {
               size={scaleWidth(12)}
               color={Colors.gray300}
             />
+            <Text style={styles.rememberText}>{Strings.rememberMe}</Text>
+          </TouchableOpacity>
 
-            <Text style={styles.rememberText}>
-              Remember me for faster login
+          <TouchableOpacity onPress={onPressForgotPassword}>
+            <Text style={styles.forgotPasswordText}>
+              {Strings.forgotPassword}
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('PasswordScreen', {screenMode: 'forgotPass'})
-            }>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
         </View>
-        <Button buttonText="Get Verification Code" onPress={onPressVerify} />
+        <Button
+          buttonText={Strings.getVerificationCode}
+          onPress={onPressVerify}
+          showLoader={isLoading}
+        />
         <View style={styles.accountContainer}>
-          <Text style={styles.accountText}>{"Don't have an account? "}</Text>
-          <TouchableOpacity onPress={() => navigation.replace('SignupScreen')}>
+          <Text style={styles.accountText}>{Strings.noAccountText}</Text>
+          <TouchableOpacity onPress={onPressSignup}>
             <Text style={[styles.accountText, styles.accountLinkText]}>
-              Sign up
+              {Strings.signupLinkText}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
       <TnCFooter navigation={navigation} />
-      {/* Activity Indicator Overlay - Show when loading */}
-      {loading && (
-        <View style={styles.loaderOverlay}>
-          <ActivityIndicator size="large" color="blue" />
-        </View>
-      )}
     </Container>
   );
 };
@@ -252,6 +178,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: scaleWidth(43),
     marginTop: scaleHeight(36),
+  },
+  passwordInputContainer: {
+    marginTop: scaleHeight(24),
   },
   extraInfoContainer: {
     flexDirection: 'row',
@@ -308,5 +237,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 999,
+  },
+  icon: {
+    height: scaleWidth(20),
+    width: scaleWidth(20),
   },
 });

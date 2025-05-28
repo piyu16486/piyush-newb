@@ -1,5 +1,5 @@
+import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {OTPInputScreenlogin} from '@screens/Auth/OTPInputScreenlogin';
 import {
   OTPInputScreen,
   PasswordScreen,
@@ -10,24 +10,38 @@ import {
 } from '@screens/index';
 import {OnBoarding} from '@screens/OnBoarding/OnBoarding';
 import {AuthNavigatorType} from '@type/NavigatorTypes';
-import React from 'react';
+import {AuthScreens} from '@constants/Screens';
 
 const AuthStack = createNativeStackNavigator<AuthNavigatorType>();
 
 export const AuthNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
-      <AuthStack.Screen name="OnBoarding" component={OnBoarding} />
-      <AuthStack.Screen name="SignupScreen" component={SignupScreen} />
-      <AuthStack.Screen name="SigninScreen" component={SigninScreen} />
-      <AuthStack.Screen name="OTPInputScreen" component={OTPInputScreen} />
+      <AuthStack.Screen name={AuthScreens.OnBoarding} component={OnBoarding} />
       <AuthStack.Screen
-        name="OTPInputScreenLogin"
-        component={OTPInputScreenlogin}
+        name={AuthScreens.SignupScreen}
+        component={SignupScreen}
       />
-      <AuthStack.Screen name="PasswordScreen" component={PasswordScreen} />
-      <AuthStack.Screen name="SuccessScreen" component={SuccessScreen} />
-      <AuthStack.Screen name="TermsOfService" component={TermsOfService} />
+      <AuthStack.Screen
+        name={AuthScreens.SigninScreen}
+        component={SigninScreen}
+      />
+      <AuthStack.Screen
+        name={AuthScreens.OTPInputScreen}
+        component={OTPInputScreen}
+      />
+      <AuthStack.Screen
+        name={AuthScreens.PasswordScreen}
+        component={PasswordScreen}
+      />
+      <AuthStack.Screen
+        name={AuthScreens.SuccessScreen}
+        component={SuccessScreen}
+      />
+      <AuthStack.Screen
+        name={AuthScreens.TermsOfService}
+        component={TermsOfService}
+      />
     </AuthStack.Navigator>
   );
 };

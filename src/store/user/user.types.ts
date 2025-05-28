@@ -1,8 +1,7 @@
 export interface UserState {
-  userType: UserType;
-  userInfo: {
-    token: string;
-  } | null;
+  email: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  countryCode: string;
 }
-
-export type UserType = 'client' | 'internal';

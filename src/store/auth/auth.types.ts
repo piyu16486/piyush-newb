@@ -1,13 +1,37 @@
-export interface AuthState {
-  user: ISignupResponse | null;
+import {PayloadWithCallback} from '@type/global.types';
+
+/** Auth State */
+export type UserType = 'client' | 'internal';
+export interface IAuthState {
+  globalLoader: boolean;
+  userType: UserType;
+  isLoggedIn: boolean | undefined;
 }
 
-export interface LoginPayload {
-  username: string;
+/** Signin  */
+export interface ISigninPayload {
+  email: string;
   password: string;
 }
 
-export interface SignUpPayload {
+export type SigninPayloadWithCallback = PayloadWithCallback<
+  ISigninPayload,
+  [],
+  [string]
+>;
+
+export interface ISigninSuccessResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ISigninErrorResponse {
+  statusCode: number;
+  message: string;
+}
+
+/** SignUp  */
+export interface ISignupPayload {
   country_code: string;
   mobile_number: string;
   is_internal?: boolean;
@@ -16,17 +40,94 @@ export interface SignUpPayload {
   last_name: string;
   email: string;
 }
-export interface OtpVerifyPayload {
+
+export type SignupPayloadWithCallback = PayloadWithCallback<
+  ISignupPayload,
+  [],
+  [string]
+>;
+
+export interface ISignupSuccessResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ISignupErrorResponse {
+  statusCode: number;
+  message: string;
+}
+
+/** Otp Verify  */
+export interface IOtpVerifyPayload {
   email: string;
   otp: string;
 }
+
+export type OtpVerifyPayloadWithCallback = PayloadWithCallback<
+  IOtpVerifyPayload,
+  [string | undefined],
+  [string]
+>;
+
+export interface IOtpVerifySuccessResponse {
+  statusCode: number;
+  message: string;
+  data: string;
+}
+
+export interface IOtpVerifyErrorResponse {
+  statusCode: number;
+  message: string;
+  error: string;
+}
+
+/** Create Password */
+export interface ICreatePasswordPayload {
+  token: string;
+  password: string;
+}
+
+export type CreatePasswordPayloadWithCallback = PayloadWithCallback<
+  ICreatePasswordPayload,
+  [string],
+  [string]
+>;
+
+export interface ICreatePasswordApiResponse {
+  statusCode: number;
+  message: string;
+}
+
+/** Forgot Password */
+export interface IResetLinkPayload {
+  email: string;
+}
+
+export type ResetLinkPayloadWithCallback = PayloadWithCallback<
+  IResetLinkPayload,
+  [string],
+  [string]
+>;
+
+export interface IResetLinkSuccessResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface IResetLinkErrorResponse {
+  statusCode: number;
+  message: string;
+  error: string;
+}
+
+//
 
 export interface VerifyPasswordPayload {
   //email: string;
   token?: string;
   password: string;
 }
-export interface SignInPayload {
+export interface ISignInPayload {
   email: string;
   password: string;
 }
@@ -34,29 +135,6 @@ export interface SignInPayload {
 export interface SigninOtpVerifyPayload {
   mobile_number: string;
   otp: string;
-}
-
-export interface ForgotPasswordPayload {
-  email: string;
-}
-
-export interface PayloadWithCallback<T> {
-  payload: T;
-  callback?: (...args: any[]) => void;
-  callbackError?: (...args: any[]) => void;
-  callbackSuccess?: (...args: any[]) => void;
-}
-
-export interface ISignupResponse {
-  statusCode?: number;
-  message: string;
-  success?: boolean;
-}
-
-export interface IOtpVerifyResponse {
-  statusCode?: number;
-  message: string;
-  data: string;
 }
 
 export interface IverifyPasswordResponse {
@@ -72,9 +150,4 @@ export interface ISigninResponse {
 export interface ISigninOtpVerifyResponse {
   message: string;
   statusCode?: number;
-}
-
-export interface IForgotpasswordResponse {
-  success?: boolean;
-  message: string;
 }

@@ -1,68 +1,53 @@
-import React from 'react';
-import {AppBar, Container} from '@components/index';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {scaleFont} from '@utils/Scale';
-import fontWeight from '@constants/FontWeight';
-import Colors from '@constants/Colors';
 import {LeftChevronCircle, RightChevron} from '@assets/Icons';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AppBar, Container} from '@components/index';
+import Colors from '@constants/Colors';
+import fontWeight from '@constants/FontWeight';
+import {scaleFont} from '@utils/Scale';
+import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ALL_FORMS,
+  FormSelectionProps,
+  ListItemProps,
+} from './FormSelection.type';
+import {ClientScreens} from '@constants/Screens';
 
-// Type Definition for Navigation and Data
-type ListItemProps = {
-  title:
-    | 'Basic Details'
-    | 'Client & Firm Details'
-    | 'Vendor Details'
-    | 'Visit Details';
-  screen: 'BasicDetails' | 'ClientFirmScreen' | 'VendorScreen' | 'VisitScreen';
+const Strings = {
+  appBarTitle: 'Client Information Master',
+  collectLeadInfo: 'Collect Lead Information',
+  textColor: '#333',
+  itemBgColor: '#fff',
+  borderColor: '#CBCED5',
 };
 
-// Sample Data Array
-const DATA: ListItemProps[] = [
-  {title: 'Basic Details', screen: 'BasicDetails'},
-  {title: 'Client & Firm Details', screen: 'ClientFirmScreen'},
-  {title: 'Vendor Details', screen: 'VendorScreen'},
-  {title: 'Visit Details', screen: 'VisitScreen'},
-];
-
-type NavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType, 'FormSelectionScreen'>
->;
-
-export const FormSelectionScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationType>();
+export const FormSelectionScreen: React.FC<FormSelectionProps> = ({
+  navigation,
+}) => {
+  const onPressFormItem = (item: ListItemProps) => {
+    navigation.navigate(ClientScreens.CreateClientForm, {
+      screen: item.screen,
+      title: item.title,
+    });
+  };
 
   return (
     <Container>
-      {/* App Bar with Title */}
-      <AppBar title="Client Information Master" navigation={navigation} />
-
-      {/* Subheader Section */}
+      <AppBar title={Strings.appBarTitle} navigation={navigation} />
       <View>
         <TouchableOpacity
-          style={styles.subcontainer}
+          style={styles.subContainer}
           onPress={navigation.goBack}>
           <LeftChevronCircle height={26} width={26} />
-          <Text style={styles.subheader}>Collect Lead Information</Text>
+          <Text style={styles.subheader}>{Strings.collectLeadInfo}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* List Section */}
       <View style={styles.container}>
-        {DATA.map(item => (
+        {ALL_FORMS.map(item => (
           <TouchableOpacity
             key={item.title}
             style={styles.item}
-            onPress={() =>
-              navigation.navigate('InputFormField', {
-                screen: item.screen,
-                title: item.title,
-              })
-            }>
+            onPress={() => onPressFormItem(item)}>
             <Text style={styles.text}>{item.title}</Text>
             <RightChevron height={17} width={20} />
           </TouchableOpacity>
@@ -74,18 +59,18 @@ export const FormSelectionScreen: React.FC = () => {
 
 // Styles
 const styles = StyleSheet.create({
-  subcontainer: {
+  subContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.LimeGray,
-    paddingLeft: 16, // Spacing from the left
+    paddingLeft: 16,
     paddingVertical: 12,
   },
   subheader: {
-    marginLeft: 12, // Space between icon and text
+    marginLeft: 12,
     fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
-    color: '#333',
+    color: Strings.textColor,
   },
   container: {
     flex: 1,
@@ -97,13 +82,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: Strings.itemBgColor,
     paddingVertical: 14,
     paddingHorizontal: 18,
     borderRadius: 10,
     marginBottom: 12,
-    borderWidth: 1, // Added border
-    borderColor: '#CBCED5', // Border color as requested
+    borderWidth: 1,
+    borderColor: Strings.borderColor,
   },
   text: {
     fontSize: 16,

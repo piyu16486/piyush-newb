@@ -1,112 +1,63 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, {useCallback, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {Filter, Plus, Search} from '@assets/Icons';
 import {AppBar, ClientCard, Container} from '@components/index';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
-import {Search, Filter, Plus} from '@assets/Icons'; // Import your search and filter icons
-import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import fontWeight from '@constants/FontWeight';
-import {Colors} from '@constants/index';
-
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ClientScreens, Colors, FontWeight} from '@constants/index';
+import {DrawerScreenProps} from '@react-navigation/drawer';
+import {CompositeScreenProps} from '@react-navigation/native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ClientCardReadMore} from '@screens/ReadMore/ClientCardReadMore';
+import {clientActions, clientSelector} from '@store/client';
+import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
+import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
-const clientsData = [
-  {
-    id: '0001',
-    name: 'S D Verma',
-    location: 'Delhi',
-    initiator: 'Delhi',
-    source: 'Source D',
-    referenceDetails: '9898923222',
-    monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Warm',
-  },
-  {
-    id: '0002',
-    name: 'K D Verma',
-    location: 'Delhi',
-    initiator: 'Delhi',
-    source: 'Source D',
-    referenceDetails: '9898923222',
-    monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Hot',
-  },
-  {
-    id: '0003',
-    name: 'A D Verma',
-    location: 'Delhi',
-    initiator: 'Delhi',
-    source: 'Source D',
-    referenceDetails: '9898923222',
-    monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Warm',
-  },
-  {
-    id: '0004',
-    name: 'S P Verma',
-    location: 'Delhi',
-    initiator: 'Delhi',
-    source: 'Source D',
-    referenceDetails: '9898923222',
-    monthlyTurnover: '20,00,000',
-    sanctionRequested: '25,00,000',
-    financier: '10-02-2023',
-    status: 'Cold',
-  },
-  // Add more client data here...
-] as const;
-
-type ClientInfoNavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType>
+type NavigationType = CompositeScreenProps<
+  NativeStackScreenProps<ClientNavigatorType>,
+  DrawerScreenProps<HomeNavigatorType>
 >;
 
-export const ClientInfo = () => {
-  const navigation = useNavigation<ClientInfoNavigationType>();
+type ClientInfoProps = {
+  navigation: NavigationType['navigation'];
+};
+
+export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
   const [showReadMore, setShowReadMore] = useState(false);
+
+  const dispatch = useDispatch();
+  const clientsData = useSelector(clientSelector.getClientList);
+
+  const callGetClients = () => {
+    dispatch(clientActions.getClients());
+  };
+  useEffect(() => {
+    callGetClients();
+  }, []);
+
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
   }, []);
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredClients = clientsData.filter(
-    item =>
-      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.initiator.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.source.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.referenceDetails.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.monthlyTurnover.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.sanctionRequested
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      item.financier.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.status.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const onPressFAB = () => {
+    dispatch(clientActions.resetAllClientFormData());
+    navigation.navigate(ClientScreens.FormSelectionScreen);
+  };
+
+  const onPressCard = (id: number) => {
+    navigation.navigate(ClientScreens.ClientLeadInfoTab, {clientId: id});
+  };
 
   return (
     <Container>
-      {/* AppBar */}
       <AppBar title="Client Information Master" navigation={navigation} />
-
-      <View style={styles.Subcontainer}>
+      <View style={styles.subContainer}>
         <Text style={styles.Subheader}>Client Information</Text>
       </View>
       {showReadMore ? (
@@ -114,10 +65,10 @@ export const ClientInfo = () => {
       ) : (
         <>
           <View style={styles.RowContainer}>
-            <View style={styles.Subrowcontainer}>
-              <Text style={styles.Subrowcontainertxt}>Clients</Text>
+            <View style={styles.subRowContainer}>
+              <Text style={styles.subRowContainerTxt}>Clients</Text>
               <View style={styles.Badge}>
-                <Text style={styles.Badgetext}>{clientsData.length}</Text>
+                <Text style={styles.badgeText}>{clientsData.length}</Text>
               </View>
             </View>
             <View style={styles.Searchbox}>
@@ -130,62 +81,30 @@ export const ClientInfo = () => {
                 onChangeText={setSearchQuery}
               />
             </View>
-            <View style={styles.Filterbox}>
+            <View style={styles.filterBox}>
               <View>
                 <Filter height={12} width={12} />
               </View>
             </View>
           </View>
-          <View style={styles.Cardlist}>
+          <View style={styles.cardList}>
             <FlatList
-              data={filteredClients}
-              keyExtractor={item => item.id}
+              data={clientsData}
               renderItem={({item}) => (
                 <ClientCard
-                  {...item}
+                  data={item}
                   onPressReadMore={onPressReadMore}
-                  onDoublePress={id => {
-                    navigation.navigate('ClientLeadInfoTab', {clientId: id});
-                  }}
+                  onPressCard={onPressCard}
                 />
               )}
-              contentContainerStyle={{flexGrow: 1}}
+              refreshing={false}
+              onRefresh={callGetClients}
+              ListEmptyComponent={
+                <Text style={styles.emptyList}>No Clients Found</Text>
+              }
             />
           </View>
-          <TouchableOpacity
-            style={styles.plusButton}
-            // screen changes
-            // for Softsanctionv -> Softsanction
-            // for Next page of Softsanction -> SoftsanctionProcess
-            // for SoftSanction -> SoftSanctionRuleset
-            // for SoftSanctionRuleset phase-2 -> RulesetTCPD
-            // for UGRO phase-1 -> UGROTurnoverMethod
-            // for UGRO phase-2 -> UGROPurchaseMethod
-            // for LeadProgress -. LeadProgress
-            // for LeadProgress -> LeadProgressInfo
-            // for Report -> Report
-            // for Kyc Screens -> KycUploadDoc
-            // for pan screens -> KycUploadPan
-            // for Aadhar screens -> KycUploadAdhar
-            // for Residence screen -> ResidenceDetail
-            // for KycElectricityBill -> KycElectricityBill
-            // for KycOwnerStatus -> KycOwner
-            // for Udhyam Certificate -> UdhyamCertificate
-            // for GSTDocument -> GSTDocument
-            // for GodownDetails -> GodownDetails
-            // for GodownDetails2 -> GodownDetails2
-            // for CompanyPanCard -> CompanyPanCard
-            // for KycDocument -> KycDocument
-            // for KYCFormSelection -> KYCFormSelection
-            // for ShareholdingCompany -> ShareholdingCompany
-            // for CompanyDocument -> CompanyDocument
-            // for DocumentValidation -> DocumentValidation 1
-            // for DocValidForm -> DocValidForm 2
-            // for DocValidSelection -> DocValidSelection 3
-            // for PersonalKYCValidation -> PersonalKYCValidation 4
-            // for BusinessKYCValidation -> BusinessKYCValidation 5
-
-            onPress={() => navigation.navigate('FormSelectionScreen')}>
+          <TouchableOpacity style={styles.plusButton} onPress={onPressFAB}>
             <Plus height={24} width={24} />
           </TouchableOpacity>
         </>
@@ -195,14 +114,20 @@ export const ClientInfo = () => {
 };
 
 const styles = StyleSheet.create({
-  Subcontainer: {
+  subContainer: {
     backgroundColor: '#fff',
   },
+  emptyList: {
+    fontSize: scaleFont(16),
+    fontWeight: FontWeight.SemiBold,
+    color: Colors.SteelGray,
+    textAlign: 'center',
+  },
   Subheader: {
-    width: '100%', // ✅ Ensures full width
+    width: '100%',
     padding: 16,
     fontSize: scaleFont(16),
-    fontWeight: fontWeight.SemiBold,
+    fontWeight: FontWeight.SemiBold,
     backgroundColor: Colors.LimeGray,
   },
   RowContainer: {
@@ -210,15 +135,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap: 'wrap', // ✅ Ensures proper wrapping if needed
+    flexWrap: 'wrap',
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  Subrowcontainer: {
+  subRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  Subrowcontainertxt: {
+  subRowContainerTxt: {
     fontSize: scaleFont(16),
     fontWeight: '600',
     color: Colors.darkblack,
@@ -229,13 +154,12 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     marginLeft: 8,
   },
-  Badgetext: {
+  badgeText: {
     color: Colors.SteelGray,
   },
   Searchbox: {
     flex: 1,
     flexDirection: 'row',
-    // width: scaleWidth(80),
     height: scaleHeight(29),
     marginLeft: 5,
     marginTop: 2,
@@ -250,7 +174,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: scaleFont(12),
   },
-  Filterbox: {
+  filterBox: {
     width: scaleWidth(32),
     height: scaleHeight(30),
     backgroundColor: Colors.primaryColor,
@@ -260,7 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  Cardlist: {
+  cardList: {
     flex: 1,
     padding: 16,
   },

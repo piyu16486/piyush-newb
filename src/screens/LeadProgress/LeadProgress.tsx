@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {AppBar, Container, LeadProgressCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
@@ -11,6 +11,9 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {LeadProgressInfo} from '@screens/LeadProgressInfo/LeadProgressInfo';
+import {useDispatch, useSelector} from 'react-redux';
+import {clientActions, clientSelector} from '@store/client';
+import FontWeight from '@constants/FontWeight';
 
 type LeadNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -74,6 +77,16 @@ export const LeadProgress = () => {
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
   }, []);
+
+  const dispatch = useDispatch();
+  const LeadData = useSelector(clientSelector.getLeadProgress);
+  const callgetleads = () => {
+    dispatch(clientActions.getLead());
+  };
+  useEffect(() => {
+    callgetleads();
+  }, []);
+
   return (
     <Container>
       <AppBar title="Lead Progress" navigation={navigation} />
@@ -89,7 +102,7 @@ export const LeadProgress = () => {
             <View style={styles.Subrowcontainer}>
               <Text style={styles.Subrowcontainertxt}>Leads</Text>
               <View style={styles.Badge}>
-                <Text style={styles.Badgetext}>{leadData.length}</Text>
+                <Text style={styles.Badgetext}>{LeadData.length}</Text>
               </View>
             </View>
             <View style={styles.Searchbox}>
@@ -108,12 +121,17 @@ export const LeadProgress = () => {
           </View>
           <View style={styles.Cardlist}>
             <FlatList
-              data={leadData}
+              data={LeadData}
               keyExtractor={item => item.clientId}
               renderItem={({item}) => (
                 <LeadProgressCard {...item} onPressReadMore={onPressReadMore} />
               )}
               contentContainerStyle={{flexGrow: 1}}
+              refreshing={false}
+              onRefresh={callgetleads}
+              ListEmptyComponent={
+                <Text style={styles.emptyList}>No Leads Found</Text>
+              }
             />
           </View>
         </>
@@ -125,6 +143,12 @@ export const LeadProgress = () => {
 const styles = StyleSheet.create({
   Subcontainer: {
     backgroundColor: '#fff',
+  },
+  emptyList: {
+    fontSize: scaleFont(16),
+    fontWeight: FontWeight.SemiBold,
+    color: Colors.SteelGray,
+    textAlign: 'center',
   },
   Subheader: {
     width: '100%', // ✅ Ensures full width

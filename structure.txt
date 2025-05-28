@@ -1,0 +1,209 @@
+.
+├── android
+│   ├── app
+│   │   ├── build.gradle
+│   │   ├── debug.keystore
+│   │   ├── proguard-rules.pro
+│   │   └── src
+│   ├── build.gradle
+│   ├── gradle
+│   │   └── wrapper
+│   ├── gradle.properties
+│   ├── gradlew
+│   ├── gradlew.bat
+│   ├── link-assets-manifest.json
+│   ├── local.properties
+│   └── settings.gradle
+├── app.json
+├── App.tsx
+├── assets
+│   └── fonts
+│       ├── Gilroy-Black.ttf
+│       ├── Gilroy-BlackItalic.ttf
+│       ├── Gilroy-Bold.ttf
+│       ├── Gilroy-BoldItalic.ttf
+│       ├── Gilroy-ExtraBold.ttf
+│       ├── Gilroy-ExtraBoldItalic.ttf
+│       ├── Gilroy-Heavy.ttf
+│       ├── Gilroy-HeavyItalic.ttf
+│       ├── Gilroy-Light.ttf
+│       ├── Gilroy-LightItalic.ttf
+│       ├── Gilroy-Medium.ttf
+│       ├── Gilroy-MediumItalic.ttf
+│       ├── Gilroy-Regular.ttf
+│       ├── Gilroy-RegularItalic.ttf
+│       ├── Gilroy-SemiBold.ttf
+│       ├── Gilroy-SemiBoldItalic.ttf
+│       ├── Gilroy-Thin.ttf
+│       ├── Gilroy-ThinItalic.ttf
+│       ├── Gilroy-UltraLight.ttf
+│       └── Gilroy-UltraLightItalic.ttf
+├── babel.config.js
+├── Gemfile
+├── Gemfile.lock
+├── index.js
+├── ios
+│   ├── CashNTech
+│   │   ├── AppDelegate.swift
+│   │   ├── Images.xcassets
+│   │   ├── Info.plist
+│   │   ├── LaunchScreen.storyboard
+│   │   └── PrivacyInfo.xcprivacy
+│   ├── CashNTech.xcodeproj
+│   │   ├── project.pbxproj
+│   │   ├── project.xcworkspace
+│   │   └── xcshareddata
+│   ├── CashNTech.xcworkspace
+│   │   ├── contents.xcworkspacedata
+│   │   ├── xcshareddata
+│   │   └── xcuserdata
+│   ├── link-assets-manifest.json
+│   ├── Podfile
+│   ├── Podfile.lock
+│   └── Pods
+│       ├── boost
+│       ├── DoubleConversion
+│       ├── fast_float
+│       ├── fmt
+│       ├── glog
+│       ├── Headers
+│       ├── hermes-engine
+│       ├── hermes-engine-artifacts
+│       ├── Local Podspecs
+│       ├── lottie-ios
+│       ├── Manifest.lock
+│       ├── Pods.xcodeproj
+│       ├── RCT-Folly
+│       ├── SocketRocket
+│       └── Target Support Files
+├── jest.config.js
+├── metro.config.js
+├── package-lock.json
+├── package.json
+├── react-native.config.js
+├── README.md
+├── script
+│   ├── decrypt.js
+│   └── encrypt.js
+├── src
+│   ├── assets
+│   │   ├── Icons
+│   │   ├── Images
+│   │   ├── index.ts
+│   │   └── Lottie
+│   ├── components
+│   │   ├── Button
+│   │   ├── ClientCard
+│   │   ├── Container
+│   │   ├── DashedBox
+│   │   ├── DateNTimePicker
+│   │   ├── DocValidCard
+│   │   ├── Drawer
+│   │   ├── Dropdown
+│   │   ├── Footer
+│   │   ├── Header
+│   │   ├── index.ts
+│   │   ├── Input
+│   │   ├── KycCard
+│   │   ├── LeadProgressCard
+│   │   ├── PersonalKYCValidationCard
+│   │   ├── RulesetTCPDCard
+│   │   ├── SoftRulesetCard
+│   │   ├── SoftSanctionLeadCard
+│   │   ├── TaskCard
+│   │   ├── UGRO-PurchaseMethod
+│   │   ├── UGRO-TurnoverMethod
+│   │   └── UploadModelComponent
+│   ├── config
+│   │   ├── config.ts
+│   │   └── index.ts
+│   ├── constants
+│   │   ├── ApiEndPoints.ts
+│   │   ├── Cities.ts
+│   │   ├── Colors.ts
+│   │   ├── Fonts.ts
+│   │   ├── FontWeight.ts
+│   │   ├── index.ts
+│   │   ├── Screens.ts
+│   │   └── StorageKeys.ts
+│   ├── hooks
+│   │   ├── index.ts
+│   │   └── useLoggedInCheck.hook.ts
+│   ├── navigation
+│   │   ├── AuthNavigator.tsx
+│   │   ├── ClientNavigator.tsx
+│   │   ├── DocNavigator.tsx
+│   │   ├── HomeNavigator.tsx
+│   │   ├── index.ts
+│   │   ├── KycNavigator.tsx
+│   │   ├── LeadNavigator.tsx
+│   │   ├── MainNavigator.tsx
+│   │   ├── ReportNavigator.tsx
+│   │   └── SoftNavigator.tsx
+│   ├── screens
+│   │   ├── Auth
+│   │   ├── BusinessKYCValidation
+│   │   ├── ClientDetailsScreen
+│   │   ├── ClientInfo
+│   │   ├── ClientLeadInfoTabs
+│   │   ├── CompanyDocuments
+│   │   ├── CompanyPANCard
+│   │   ├── CreateClientForm
+│   │   ├── DocumentValidation
+│   │   ├── DocValidForm
+│   │   ├── DocValidSelection
+│   │   ├── FormSelectionScreen
+│   │   ├── GodownDetails
+│   │   ├── GodownDetails2
+│   │   ├── GSTDocument
+│   │   ├── index.ts
+│   │   ├── KYCDocument
+│   │   ├── KYCFormSelection
+│   │   ├── KYCOwnerStatus
+│   │   ├── KYCResidenceDetail
+│   │   ├── KYCResidenceElectricity
+│   │   ├── KYCUploadAdhar
+│   │   ├── KYCUploadDoc
+│   │   ├── KYCUploadPan
+│   │   ├── LeadProgress
+│   │   ├── LeadProgressInfo
+│   │   ├── OnBoarding
+│   │   ├── PersonalKYCValidation
+│   │   ├── ReadMore
+│   │   ├── Report
+│   │   ├── ShareholdingPatternCompany
+│   │   ├── SoftSanction
+│   │   ├── SoftsanctionProcess
+│   │   ├── SoftSanctionRuleset
+│   │   ├── SoftSanctionRulesetTCPD
+│   │   ├── SplashScreen
+│   │   ├── TaskTabs
+│   │   ├── TermsOfService
+│   │   ├── UdhyamCertificate
+│   │   ├── UGRO-PurchaseMethod
+│   │   └── UGRO-TurnoverMethod
+│   ├── services
+│   │   ├── api
+│   │   └── localStorage
+│   ├── store
+│   │   ├── app
+│   │   ├── auth
+│   │   ├── client
+│   │   └── user
+│   ├── types
+│   │   ├── global.types.ts
+│   │   ├── NavigatorTypes.ts
+│   │   └── react-native-config.d.ts
+│   └── utils
+│       ├── doubleTap.ts
+│       ├── Scale.ts
+│       ├── TryCatch.ts
+│       └── Utils.ts
+├── structure.txt
+├── tsconfig.json
+├── vendor
+│   └── bundle
+│       └── ruby
+└── yarn.lock
+
+118 directories, 89 files

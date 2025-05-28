@@ -1,14 +1,17 @@
 import {Filter, Search} from '@assets/Icons';
 import {AppBar, Container} from '@components/index';
 import Colors from '@constants/Colors';
+import FontWeight from '@constants/FontWeight';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions, clientSelector} from '@store/client';
 import {HomeNavigatorType, ReportNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
 type ReportNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -17,6 +20,14 @@ type ReportNavigationType = CompositeNavigationProp<
 
 export const Report = () => {
   const navigation = useNavigation<ReportNavigationType>();
+  const dispatch = useDispatch();
+  const reportData = useSelector(clientSelector.getRemarkReport);
+  const callGetReport = () => {
+    dispatch(clientActions.getReport());
+  };
+  useEffect(() => {
+    callGetReport();
+  }, []);
 
   const taskData = [
     {
@@ -94,7 +105,7 @@ export const Report = () => {
         <View style={styles.Subrowcontainer}>
           <Text style={styles.Subrowcontainertxt}>Leads</Text>
           <View style={styles.Badge}>
-            <Text style={styles.Badgetext}>{taskData.length}</Text>
+            <Text style={styles.Badgetext}>{reportData.length}</Text>
           </View>
         </View>
         <View style={styles.Searchbox}>
@@ -112,10 +123,15 @@ export const Report = () => {
         </View>
       </View>
       <FlatList
-        data={taskData}
+        data={reportData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.container}
+        refreshing={false}
+        onRefresh={callGetReport}
+        ListEmptyComponent={
+          <Text style={styles.emptyList}>No Reports Found</Text>
+        }
       />
     </Container>
   );
@@ -134,6 +150,12 @@ const styles = StyleSheet.create({
     fontSize: scaleFont(16),
     fontWeight: fontWeight.SemiBold,
     backgroundColor: Colors.LimeGray,
+  },
+  emptyList: {
+    fontSize: scaleFont(16),
+    fontWeight: FontWeight.SemiBold,
+    color: Colors.SteelGray,
+    textAlign: 'center',
   },
   RowContainer: {
     marginTop: 10,

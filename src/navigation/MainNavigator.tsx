@@ -2,13 +2,12 @@ import {NavigationContainer} from '@react-navigation/native';
 import {SplashScreen} from '@screens/index';
 import React, {useEffect, useState} from 'react';
 import {AuthNavigator} from './AuthNavigator';
-import {useSelector} from 'react-redux';
-import {userSelector} from '@store/user';
 import {HomeNavigator} from './HomeNavigator';
+import {useLoggedInCheck} from '@hooks/index';
 
 export const MainNavigator = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const userInfo = useSelector(userSelector.getUserInfo);
+  const isLoggedIn = useLoggedInCheck();
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
@@ -22,14 +21,11 @@ export const MainNavigator = () => {
   }
 
   const linking = {
-    prefixes: ['myapp://'],
+    prefixes: ['cashntech://', 'https://cashntech.nikhilmakwana.in'],
     config: {
       screens: {
         PasswordScreen: {
           path: 'reset-password',
-          parse: {
-            token: (token: string) => token,
-          },
         },
       },
     },
@@ -37,7 +33,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer linking={linking}>
-      {!userInfo ? <HomeNavigator /> : <AuthNavigator />}
+      {isLoggedIn ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

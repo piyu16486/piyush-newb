@@ -1,24 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Colors} from '@constants/index';
-import {useNavigation} from '@react-navigation/native';
-import {createDoubleTapHandler} from '@utils/doubleTap';
+import {IClientInfoResponseDatum} from '@store/client';
 
-interface ClientCardProps {
-  id: string;
-  name: string;
-  location: string;
-  initiator: string;
-  source: string;
-  referenceDetails: string;
-  monthlyTurnover: string;
-  sanctionRequested: string;
-  financier: string;
-  status: 'Warm' | 'Hot' | 'Cold';
-  onPressReadMore: (id: string) => void;
-  onDoublePress?: (id: string) => void; // ✅ new prop
-}
+const Strings = {
+  clientId: 'Client ID :',
+  clientName: 'Client Name :',
+  location: 'Location :',
+  initiator: 'Initiator :',
+  sourceDHCO: 'Source (D/H/C/O) :',
+  referenceDetails: 'Reference Details :',
+  monthlyTurnover: 'Monthly Turnover :',
+  sanctionRequested: 'Sanction Requested :',
+  financier: 'Financier :',
+  readMore: 'Read more',
+};
 
 const ChipColors = {
   Warm: '#FFC107',
@@ -26,70 +22,74 @@ const ChipColors = {
   Cold: Colors.tertiaryBlue,
 };
 
-export const ClientCard: React.FC<ClientCardProps> = ({
-  id,
-  name,
-  location,
-  initiator,
-  source,
-  referenceDetails,
-  monthlyTurnover,
-  sanctionRequested,
-  financier,
-  status,
-  onPressReadMore,
-  onDoublePress,
-}) => {
-  const navigation = useNavigation();
-  const handleDoubleTap = createDoubleTapHandler(() => {
-    if (onDoublePress) {
-      onDoublePress(id);
-    }
-  });
+type ClientCardProps = {
+  data: IClientInfoResponseDatum;
+  onPressReadMore: (id: number) => void;
+  onPressCard: (id: number) => void;
+};
 
+/**
+ * A card component for displaying client info.
+ *
+ * @param {IClientInfoResponseDatum} data - Client data
+ * @param {Function} onPressReadMore - Function to call when "Read more" is pressed
+ * @param {Function} onPressCard - Function to call when the card is pressed
+ * @returns {JSX.Element} Client card component
+ */
+export const ClientCard: React.FC<ClientCardProps> = ({
+  data,
+  onPressReadMore,
+  onPressCard,
+}) => {
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={handleDoubleTap} activeOpacity={0.95}>
-        <View
-          style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
-          <Text style={styles.statusText}>{status}</Text>
+      <TouchableOpacity
+        onPress={() => onPressCard(data.id)}
+        activeOpacity={0.7}>
+        <View style={[styles.statusBadge, {backgroundColor: ChipColors.Warm}]}>
+          <Text style={styles.statusText}>{'Warm'}</Text>
         </View>
 
         <Text style={styles.label}>
-          <Text style={styles.bold}>Client ID :</Text> {id}
+          <Text style={styles.bold}>{Strings.clientId}</Text> {data.id}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Client Name :</Text> {name}
+          <Text style={styles.bold}>{Strings.clientName}</Text>
+          {data.client_name}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Location :</Text> {location}
+          <Text style={styles.bold}>{Strings.location}</Text> {data.location}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Initiator :</Text> {initiator}
+          <Text style={styles.bold}>{Strings.initiator}</Text>
+          {'TODO: Initiator'}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Source (D/H/C/O) :</Text> {source}
+          <Text style={styles.bold}>{Strings.sourceDHCO}</Text>
+          {data.source_of_lead}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Reference Details :</Text>{' '}
-          {referenceDetails}
+          <Text style={styles.bold}>{Strings.referenceDetails}</Text>
+          {'TODO: Reference Details'}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Monthly Turnover :</Text> {monthlyTurnover}
+          <Text style={styles.bold}>{Strings.monthlyTurnover}</Text>
+          {'TODO: Monthly Turnover'}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Sanction Requested :</Text>{' '}
-          {sanctionRequested}
+          <Text style={styles.bold}>{Strings.sanctionRequested}</Text>
+          {data.estimated_funding_required}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Financier :</Text> {financier}
+          <Text style={styles.bold}>{Strings.financier}</Text>
+          {'TODO: Financier'}
         </Text>
       </TouchableOpacity>
-      {/* "Read More" Button */}
+
       <TouchableOpacity
         style={styles.readMoreButton}
-        onPress={() => onPressReadMore(id)}>
-        <Text style={styles.readMoreText}>Read more</Text>
+        onPress={() => onPressReadMore(data.id)}>
+        <Text style={styles.readMoreText}>{Strings.readMore}</Text>
       </TouchableOpacity>
     </View>
   );
