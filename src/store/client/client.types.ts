@@ -25,6 +25,9 @@ export type ClientState = {
   loading: boolean;
   data: IUploadKycDocumentResponse | null;
   error: string | null;
+
+  BankLoader: boolean;
+  BankList: Array<IBankListResponseDatum>;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -169,4 +172,14 @@ export interface IUploadKycDocumentResponse {
   data: {
     document_url: string;
   };
+}
+
+export interface IBankListResponse {
+  statusCode: number;
+  data: IBankListResponseDatum[];
+}
+
+export interface IBankListResponseDatum {
+  id: number;
+  bank_name: string;
 }

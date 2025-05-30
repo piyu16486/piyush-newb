@@ -1,5 +1,6 @@
 import {createSelector} from '@reduxjs/toolkit';
 import {RootState} from '@store/app/store';
+import {create} from 'react-test-renderer';
 
 const _selectState = (state: RootState) => state.client;
 
@@ -40,6 +41,8 @@ const getUploadKycData = createSelector(_selectState, state => state.data);
 
 const getUploadKycError = createSelector(_selectState, state => state.error);
 
+const getBankList = createSelector(_selectState, _state => _state.BankList);
+
 export default {
   getClientList,
   getClientFormData,
@@ -52,4 +55,5 @@ export default {
   getUploadKycLoading,
   getUploadKycData,
   getUploadKycError,
+  getBankList,
 };

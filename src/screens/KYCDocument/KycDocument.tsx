@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {AppBar, Container, KycCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
@@ -17,6 +17,9 @@ import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
+import {useDispatch, useSelector} from 'react-redux';
+import {clientActions, clientSelector} from '@store/client';
+import FontWeight from '@constants/FontWeight';
 
 const KycData = [
   {
@@ -77,6 +80,16 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
 
+  const dispatch = useDispatch();
+  const KycData = useSelector(clientSelector.getClientList);
+
+  const callGetKYC = () => {
+    dispatch(clientActions.getClients());
+  };
+  useEffect(() => {
+    callGetKYC();
+  }, []);
+
   return (
     <Container>
       <AppBar title="Kyc Document" navigation={navigation} />
@@ -115,7 +128,12 @@ export const KycDocument = () => {
               <KycCard {...item} />
             </TouchableOpacity>
           )}
-          contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
+          refreshing={false}
+          onRefresh={callGetKYC}
+          ListEmptyComponent={
+            <Text style={styles.emptyList}>No Kyc data Found</Text>
+          }
+          contentContainerStyle={{flexGrow: 1}}
         />
       </View>
     </Container>
@@ -125,6 +143,12 @@ export const KycDocument = () => {
 const styles = StyleSheet.create({
   Subcontainer: {
     backgroundColor: '#fff',
+  },
+  emptyList: {
+    fontSize: scaleFont(16),
+    fontWeight: FontWeight.SemiBold,
+    color: Colors.SteelGray,
+    textAlign: 'center',
   },
   Subheader: {
     width: '100%', // ✅ Ensures full width

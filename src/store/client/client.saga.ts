@@ -1,5 +1,6 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import {
+  getBankList,
   getClients,
   getLead,
   getReport,
@@ -11,6 +12,7 @@ import {
 import {ClientApis} from '@services/api';
 import {
   clientActions,
+  IBankListResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
@@ -92,10 +94,22 @@ function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   }
 }
 
+function* hnadleGetBankList(): unknown {
+  const {data, error}: Result<IBankListResponse> = yield call(
+    clientApi.getBankList,
+  );
+  if (!error) {
+    yield put(clientActions.setBankList(data.data));
+  } else {
+    yield put(clientActions.setBankList([]));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
+  yield takeLatest(getBankList.type, hnadleGetBankList);
 }

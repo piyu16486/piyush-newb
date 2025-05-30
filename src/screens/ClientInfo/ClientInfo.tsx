@@ -77,8 +77,6 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
                 style={styles.input}
                 placeholder="Search Clients"
                 placeholderTextColor="#999"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
               />
             </View>
             <View style={styles.filterBox}>

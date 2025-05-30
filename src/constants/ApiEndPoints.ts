@@ -30,6 +30,9 @@ const Endpoints = {
   apiKycProfilePic: '/client-info-master/personal-kyc/profile',
   apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
   apiKycPanUpload: '/client-info-master/personal-kyc/pan',
+
+  // BankList dropdown
+  apiBankList: '/client-info-master/bank-list',
 } as const;
 
 export default Endpoints;

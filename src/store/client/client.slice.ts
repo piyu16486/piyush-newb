@@ -5,6 +5,7 @@ import {
   ClientFormPayload,
   ClientFormType,
   ClientState,
+  IBankListResponseDatum,
   IClientInfoResponseDatum,
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
@@ -73,6 +74,9 @@ const initialState: ClientState = {
   loading: false,
   data: null,
   error: null,
+  // Bank List
+  BankLoader: false,
+  BankList: [],
 };
 
 const clientSlice = createSlice({
@@ -174,6 +178,23 @@ const clientSlice = createSlice({
       state.data = null;
       state.error = null;
     },
+    setBankLoader: (state, action: PayloadAction<boolean>) => {
+      state.BankLoader = action.payload;
+    },
+    getBankList: state => {
+      state.BankLoader = true;
+    },
+    setBankList: (
+      state,
+      action: PayloadAction<Array<IBankListResponseDatum>>,
+    ) => {
+      state.BankLoader = false;
+      state.BankList = action.payload;
+    },
+    resetBankList: state => {
+      state.BankList = [];
+      state.BankLoader = false;
+    },
   },
 });
 
@@ -197,5 +218,9 @@ export const {
   uploadKycSuccess,
   uploadKycFailure,
   clearUploadKyc,
+  setBankLoader,
+  getBankList,
+  setBankList,
+  resetBankList,
 } = clientSlice.actions;
 export default clientSlice.reducer;

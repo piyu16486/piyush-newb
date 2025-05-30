@@ -5,6 +5,7 @@ import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
   BasicDetailPayload,
+  IBankListResponse,
   IbasicDetailResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
@@ -114,6 +115,22 @@ const uploadKycDocument = async (formData: FormData) => {
   };
 };
 
+const getBankList = async () => {
+  const {data, error} = await tryCatch<AxiosResponse<IBankListResponse>>(
+    Api.get(Endpoints.apiBankList),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 export default {
   getAllClients,
   getRemarkReport,
@@ -121,4 +138,5 @@ export default {
   getTaskHistory,
   postBasicDetails,
   uploadKycDocument,
+  getBankList,
 };

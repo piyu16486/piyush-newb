@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, StyleSheet, FlatList, TextInput} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -17,6 +17,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Search} from '@assets/Icons';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '@store/app/store';
+import {clientActions} from '@store/client';
 
 type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -35,6 +38,17 @@ type Lead = {
 export const SoftsanctionProcess = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
+  const dispatch = useDispatch();
+  const bankList = useSelector((state: RootState) => state.client.BankList);
+
+  useEffect(() => {
+    dispatch(clientActions.getBankList());
+  }, []);
+
+  const formattedBankList = bankList.map(bank => ({
+    label: bank.bank_name,
+    value: bank.id.toString(),
+  }));
 
   const leads: Lead[] = [
     {
@@ -75,13 +89,7 @@ export const SoftsanctionProcess = () => {
           {/* <Input label="Bank Name" /> */}
           <CustomDropdown
             label="Bank Name"
-            data={[
-              {label: 'Option 1', value: 'option1'},
-              {label: 'Option 2', value: 'option2'},
-              {label: 'Option 3', value: 'option3'},
-              {label: 'Option 4', value: 'option4'},
-              {label: 'Option 5', value: 'option5'},
-            ]}
+            data={formattedBankList}
             placeholder="Bank Name"
             containerStyle={{marginBottom: scaleHeight(20)}}
           />

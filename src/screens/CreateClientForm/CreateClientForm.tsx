@@ -152,7 +152,7 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
             style={styles.saveButton}
             onPress={() => {
               // Navigate to ClientInfo screen
-              navigation.navigate('ClientInfo'); // Make sure 'ClientInfo' matches your route name
+              navigation.replace('ClientInfo');
             }}>
             <Text style={styles.saveText}>Submit</Text>
             <RightCheckmark width={12} height={12} />
