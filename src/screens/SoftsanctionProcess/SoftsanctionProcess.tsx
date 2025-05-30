@@ -38,6 +38,7 @@ type Lead = {
 export const SoftsanctionProcess = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
+  const [showLeads, setShowLeads] = useState(false);
   const dispatch = useDispatch();
   const bankList = useSelector((state: RootState) => state.client.BankList);
 
@@ -135,36 +136,37 @@ export const SoftsanctionProcess = () => {
         <Button
           buttonText={'View Rulset'}
           style={styles.button}
-          onPress={() => navigation.navigate('SoftSanctionRuleset')} // SoftSanctionRuleset | RulesetTCPD | UGROPurchaseMethod | UGROTurnoverMethod
+          onPress={() => setShowLeads(true)} // SoftSanctionRuleset | RulesetTCPD | UGROPurchaseMethod | UGROTurnoverMethod | to navigate other screen "navigation.navigate('SoftSanctionRuleset')"
         />
-
-        <View style={styles.container}>
-          <View style={styles.headerRow}>
-            <View style={styles.titleWithBadge}>
-              <Text style={styles.header}>Leads</Text>
-              <View style={styles.countBadge}>
-                <Text style={styles.countText}>{leads.length}</Text>
+        {showLeads && (
+          <View style={styles.container}>
+            <View style={styles.headerRow}>
+              <View style={styles.titleWithBadge}>
+                <Text style={styles.header}>Leads</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countText}>{leads.length}</Text>
+                </View>
+              </View>
+              <View style={styles.searchContainer}>
+                <Search width={16} height={16} style={styles.searchIcon} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search Leads"
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholderTextColor="#999"
+                />
               </View>
             </View>
-            <View style={styles.searchContainer}>
-              <Search width={16} height={16} style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search Leads"
-                value={search}
-                onChangeText={setSearch}
-                placeholderTextColor="#999"
-              />
-            </View>
-          </View>
 
-          <FlatList
-            data={filteredLeads}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({item}) => <LeadCard lead={item} />}
-            contentContainerStyle={{paddingBottom: 20}}
-          />
-        </View>
+            <FlatList
+              data={filteredLeads}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({item}) => <LeadCard lead={item} />}
+              contentContainerStyle={{paddingBottom: 20}}
+            />
+          </View>
+        )}
       </ScrollView>
     </Container>
   );
