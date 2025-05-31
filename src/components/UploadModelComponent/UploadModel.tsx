@@ -1,10 +1,9 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {File, RightCheckmark} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
-import {pick} from '@react-native-documents/picker';
+import {DocumentPickerResponse, pick} from '@react-native-documents/picker';
 import {scaleWidth, scaleHeight, scaleFont} from '@utils/Scale';
+import {tryCatch} from '@utils/TryCatch';
 import React, {useState} from 'react';
 import {
   Modal,
@@ -12,7 +11,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TouchableWithoutFeedback,
 } from 'react-native';
 
@@ -21,32 +19,33 @@ export const UploadModal = ({
   onClose,
 }: {
   visible: boolean;
-  onClose: () => void;
+  onClose: (file?: DocumentPickerResponse) => void;
 }) => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   const handleBrowseFile = async () => {
-    // You can trigger DocumentPicker here
-    try {
-      const files = await pick({
+    const {data, error} = await tryCatch(
+      pick({
         mode: 'import',
-        allowMultiSelection: true,
-      });
-      console.log(files);
-    } catch (error) {}
+        allowMultiSelection: false,
+      }),
+    );
+    if (!error) {
+      setSelectedFile(data[0]);
+    }
   };
 
   const handleSubmit = () => {
-    // Upload logic here
-    onClose(); // Close after submit
+    onClose(selectedFile);
   };
-
   return (
     <Modal
       transparent
       visible={visible}
       animationType="fade"
-      onRequestClose={onClose}>
+      onRequestClose={() => onClose()}>
       <TouchableWithoutFeedback
         onPress={() => {
           console.log('Outside modal pressed - closing');
@@ -75,7 +74,7 @@ export const UploadModal = ({
 
                   {selectedFile && (
                     <Text style={{marginTop: 8, color: '#444', fontSize: 14}}>
-                      Selected: {selectedFile}
+                      Selected: {selectedFile.name}
                     </Text>
                   )}
                 </View>
@@ -85,7 +84,6 @@ export const UploadModal = ({
                 style={styles.saveButton}
                 activeOpacity={0.7}
                 onPress={() => {
-                  console.log('Submit pressed');
                   handleSubmit();
                 }}>
                 <Text style={styles.saveText}>Submit</Text>

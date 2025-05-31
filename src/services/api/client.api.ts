@@ -11,6 +11,7 @@ import {
   IRemarkReportResponse,
   ITaskHistoryResponse,
 } from '@store/client';
+import {CustomRequestConfig} from './api';
 
 const getAllClients = async () => {
   const {data, error} = await tryCatch<
@@ -95,12 +96,9 @@ const postBasicDetails = async (payload: BasicDetailPayload) => {
 const uploadKycDocument = async (formData: FormData) => {
   const {data, error} = await tryCatch<AxiosResponse<any>>(
     Api.post(Endpoints.apiKycProfilePic, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }),
+      isFormData: true,
+    } as CustomRequestConfig),
   );
-
   if (error) {
     return {
       data: null,

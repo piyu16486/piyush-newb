@@ -51,7 +51,6 @@ function* handleGetLeadProgress(): unknown {
   if (!error) {
     yield put(clientActions.setLeadList(data.data));
   } else {
-    yield put(clientActions.setLeadList([]));
   }
 }
 
@@ -68,20 +67,20 @@ function* handleGetTaskHistory(): unknown {
 
 function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   try {
+    console.log('Called uploadKycRequest');
     const formData = new FormData();
     formData.append('doc', {
       uri: action.payload.doc.uri,
       name: action.payload.doc.name,
       type: action.payload.doc.type,
-    } as any); // React Native file input
+    } as any);
     formData.append('clientId', action.payload.clientId.toString());
     formData.append('uploaded_by', action.payload.uploaded_by);
     formData.append('params', action.payload.params);
     formData.append('client_name', action.payload.client_name);
 
     const {data, error}: {data: IUploadKycDocumentResponse | null; error: any} =
-      yield call(uploadKycDocument, formData);
-
+      yield call(ClientApis.uploadKycDocument, formData);
     if (data) {
       yield put(uploadKycSuccess(data));
     } else {
