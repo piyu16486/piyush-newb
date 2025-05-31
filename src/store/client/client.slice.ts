@@ -50,6 +50,7 @@ const initialState: ClientState = {
   clientLoader: false,
   clientList: [],
   clientFormData: clientFormData,
+  clientFormId: undefined,
 };
 
 const clientSlice = createSlice({
@@ -71,6 +72,9 @@ const clientSlice = createSlice({
       state.clientLoader = false;
       state.clientList = action.payload;
     },
+    saveClientId: (state, action: PayloadAction<number>) => {
+      state.clientFormId = action.payload;
+    },
     // Set Client Form Data
     setClientFormData: (state, action: PayloadAction<ClientFormPayload>) => {
       const {formName, name, value} = action.payload;
@@ -89,6 +93,10 @@ const clientSlice = createSlice({
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
     },
+    // Save Client
+    saveClientBasicDetails: state => {
+      state.clientLoader = false;
+    },
   },
 });
 
@@ -96,8 +104,10 @@ export const {
   getClients,
   setClientLoader,
   setClientList,
+  saveClientId,
   setClientFormData,
   resetClientFormData,
   resetAllClientFormData,
+  saveClientBasicDetails,
 } = clientSlice.actions;
 export default clientSlice.reducer;

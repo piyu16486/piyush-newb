@@ -112,8 +112,8 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
   const currentFormKey: FormTypes = formNames[formIndex];
   const currentTitle = formTitles[currentFormKey];
   const onPressSaveNext = () => {
-    if (formIndex < formNames.length - 1) {
-      setFormIndex(formIndex + 1);
+    if (formNames[formIndex] === 'BasicDetails') {
+      dispatch(clientActions.saveClientBasicDetails());
     }
   };
 

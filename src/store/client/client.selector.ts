@@ -8,5 +8,9 @@ const getClientFormData = createSelector(
   _selectState,
   _state => _state.clientFormData,
 );
+const getClientFormId = createSelector(
+  _selectState,
+  _state => _state.clientFormId,
+);
 
-export default {getClientList, getClientFormData};
+export default {getClientList, getClientFormData, getClientFormId};

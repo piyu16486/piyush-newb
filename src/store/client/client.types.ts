@@ -9,6 +9,7 @@ export type ClientState = {
   clientLoader: boolean;
   clientList: Array<IClientInfoResponseDatum>;
   clientFormData: ClientFormType;
+  clientFormId: number | undefined;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -68,3 +69,20 @@ export interface Vendor {
   id: number;
   monthly_sales_value: number;
 }
+
+//
+export type IBasicDetailsPayload = {
+  source_of_lead: string;
+  location: string;
+  city: string;
+  state: string;
+  type_of_visit: string;
+  visit: number;
+  date_of_visit: string;
+};
+
+export type IBasicDetailsResponse = {
+  statusCode: number;
+  message: string;
+  data: number;
+};

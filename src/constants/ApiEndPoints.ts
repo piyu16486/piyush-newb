@@ -13,6 +13,7 @@ const Endpoints = {
 
   // Client apis
   apiGetAllClients: '/client-info-master/list',
+  apiSaveBasicDetails: '/client-info-master/basic-details',
 } as const;
 
 export default Endpoints;
