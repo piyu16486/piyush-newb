@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
-  BasicDetailPayload,
   ClientFormPayload,
   ClientFormType,
   ClientState,
@@ -57,6 +56,7 @@ const initialState: ClientState = {
   clientLoader: false,
   clientList: [],
   clientFormData: clientFormData,
+  clientFormId: undefined,
   //Remark Report fields
   reportLoader: false,
   reportList: [],
@@ -94,6 +94,9 @@ const clientSlice = createSlice({
       state.clientLoader = false;
       state.clientList = action.payload;
     },
+    saveClientId: (state, action: PayloadAction<number>) => {
+      state.clientFormId = action.payload;
+    },
     // Set Client Form Data
     setClientFormData: (state, action: PayloadAction<ClientFormPayload>) => {
       const {formName, name, value} = action.payload;
@@ -111,6 +114,13 @@ const clientSlice = createSlice({
     },
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
+    },
+    // Save Client
+    saveClientBasicDetails: state => {
+      state.clientLoader = false;
+    },
+    saveClientFirmDetails: state => {
+      state.clientLoader = false;
     },
     // Remark Report Actions
     getReport: state => {
@@ -181,9 +191,12 @@ export const {
   getClients,
   setClientLoader,
   setClientList,
+  saveClientId,
   setClientFormData,
   resetClientFormData,
   resetAllClientFormData,
+  saveClientBasicDetails,
+  saveClientFirmDetails,
   getReport,
   setReportList,
   resetReportList,

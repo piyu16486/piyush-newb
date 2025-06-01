@@ -4,14 +4,17 @@ import {Api} from '.';
 import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
-  BasicDetailPayload,
-  IbasicDetailResponse,
+  IBasicDetailsPayload,
+  IBasicDetailsResponse,
+  IClientFirmPayload,
+  IclientFirmResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
   ITaskHistoryResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
+import {saveClientFirmDetails} from '@store/client/client.slice';
 
 const getAllClients = async () => {
   const {data, error} = await tryCatch<
@@ -77,9 +80,25 @@ const getTaskHistory = async () => {
   };
 };
 
-const postBasicDetails = async (payload: BasicDetailPayload) => {
-  const {data, error} = await tryCatch<AxiosResponse<IbasicDetailResponse>>(
-    Api.post(Endpoints.apiBasicDetailPost, payload),
+const saveBasicDetailForm = async (body: IBasicDetailsPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IBasicDetailsResponse>>(
+    Api.post(Endpoints.apiSaveBasicDetails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const saveClientFirmForm = async (body: IClientFirmPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IclientFirmResponse>>(
+    Api.post(Endpoints.apiSaveClientFirmDerails, body),
   );
   if (error) {
     return {
@@ -117,6 +136,7 @@ export default {
   getRemarkReport,
   getLeadProgress,
   getTaskHistory,
-  postBasicDetails,
+  saveBasicDetailForm,
+  saveClientFirmForm,
   uploadKycDocument,
 };

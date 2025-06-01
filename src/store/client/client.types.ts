@@ -9,6 +9,7 @@ export type ClientState = {
   clientLoader: boolean;
   clientList: Array<IClientInfoResponseDatum>;
   clientFormData: ClientFormType;
+  clientFormId: number | undefined;
 
   reportLoader: boolean;
   reportList: Array<IRemarkReportResponseDatum>;
@@ -135,7 +136,7 @@ export interface ITaskHistoryResponseDatum {
   client: number;
 }
 
-export interface BasicDetailPayload {
+export type IBasicDetailsPayload = {
   source_of_lead: string;
   location: string;
   city: string;
@@ -143,13 +144,33 @@ export interface BasicDetailPayload {
   type_of_visit: string;
   visit: number;
   date_of_visit: string;
-}
+};
 
-export interface IbasicDetailResponse {
+export type IBasicDetailsResponse = {
   statusCode: number;
   message: string;
   data: number;
-}
+};
+
+export type IClientFirmPayload = {
+  client_name: string;
+  firm_name: string;
+  contact_number: string;
+  firm_type: string;
+  business_vintage: string;
+  sector: string;
+  bank_name: string;
+  cibil_score: number;
+  facility_type: string;
+  existing_funding_sanctioned_amount: number;
+  estimated_funding_required: number;
+  credit_period_offer: number;
+};
+
+export type IclientFirmResponse = {
+  statusCode: number;
+  message: string;
+};
 
 export interface IUploadKycDocumentPayload {
   doc: {

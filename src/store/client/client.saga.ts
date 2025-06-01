@@ -1,9 +1,10 @@
-import {call, put, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {
   getClients,
   getLead,
   getReport,
   getTaskHistory,
+  saveClientBasicDetails,
   uploadKycFailure,
   uploadKycRequest,
   uploadKycSuccess,
@@ -11,6 +12,10 @@ import {
 import {ClientApis} from '@services/api';
 import {
   clientActions,
+  ClientFormType,
+  clientSelector,
+  IBasicDetailsResponse,
+  IclientFirmResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
@@ -21,6 +26,7 @@ import {
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
 import {PayloadAction} from '@reduxjs/toolkit';
+import moment from 'moment';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -65,6 +71,60 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
+function* saveBasicDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const basicDetailForm = clientFormData.BasicDetails;
+  const body = {
+    source_of_lead: basicDetailForm.sourceOfLead,
+    location: basicDetailForm.location,
+    city: basicDetailForm.city,
+    state: basicDetailForm.state,
+    type_of_visit: basicDetailForm.typeOfVisit,
+    visit: parseInt(basicDetailForm.visitNumber),
+    date_of_visit: moment(basicDetailForm.dateOfVisit).format('YYYY-MM-DD'),
+  };
+
+  const {data, error}: Result<IBasicDetailsResponse> = yield call(
+    ClientApis.saveBasicDetailForm,
+    body,
+  );
+
+  if (!error) {
+    yield put(clientActions.saveClientId(data.data));
+  }
+}
+
+function* saveClientFirmDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientFirmDetailForm = clientFormData.ClientFirmScreen;
+  const body = {
+    client_name: clientFirmDetailForm.clientName,
+    firm_name: clientFirmDetailForm.firmName,
+    contact_number: clientFirmDetailForm.contactNumber,
+    firm_type: clientFirmDetailForm.typeOfFirm,
+    business_vintage: clientFirmDetailForm.businessVintage,
+    sector: clientFirmDetailForm.sector,
+    bank_name: clientFirmDetailForm.bankName,
+    cibil_score: clientFirmDetailForm.cibilScore,
+    facility_type: clientFirmDetailForm.facilityType,
+    existing_funding_sanctioned_amount: clientFirmDetailForm.existingFunding,
+    estimated_funding_required: clientFirmDetailForm.estimatedFunding,
+    credit_period_offer: clientFirmDetailForm.creditPeriod,
+  };
+
+  const {data, error}: Result<IclientFirmResponse> = yield call(
+    ClientApis.saveClientFirmForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.message));
+  }
+}
+
 function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   try {
     console.log('Called uploadKycRequest');
@@ -96,5 +156,7 @@ export default function* clientSaga() {
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
+  yield takeLatest(saveClientBasicDetails.type, saveBasicDetails);
+  yield takeLatest(saveClientBasicDetails.type, saveClientFirmDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
 }

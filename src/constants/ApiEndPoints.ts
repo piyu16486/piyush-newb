@@ -13,6 +13,8 @@ const Endpoints = {
 
   // Client apis
   apiGetAllClients: '/client-info-master/list',
+  apiSaveBasicDetails: '/client-info-master/basic-details',
+  apiSaveClientFirmDerails: '/client-info-master/client-firm-details/12',
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',
@@ -22,9 +24,6 @@ const Endpoints = {
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
-
-  // Clients Post apis
-  apiBasicDetailPost: '/client-info-master/basic-details',
 
   // Kyc Apis
   apiKycProfilePic: '/client-info-master/personal-kyc/profile',
