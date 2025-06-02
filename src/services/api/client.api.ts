@@ -12,6 +12,8 @@ import {
   ILeadProgressResponse,
   IRemarkReportResponse,
   ITaskHistoryResponse,
+  IvendorPayload,
+  IVendorResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
 import {saveClientFirmDetails} from '@store/client/client.slice';
@@ -112,6 +114,38 @@ const saveClientFirmForm = async (body: IClientFirmPayload) => {
   };
 };
 
+const saveVendorForm = async (body: IvendorPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IVendorResponse>>(
+    Api.post(Endpoints.apiSaveVendorDetails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const savevisitForm = async (body: iVisitPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IvisitResponse>>(
+    Api.post(Endpoints.apiSaveVisitDetails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 const uploadKycDocument = async (formData: FormData) => {
   const {data, error} = await tryCatch<AxiosResponse<any>>(
     Api.post(Endpoints.apiKycProfilePic, formData, {
@@ -138,5 +172,7 @@ export default {
   getTaskHistory,
   saveBasicDetailForm,
   saveClientFirmForm,
+  saveVendorForm,
+  savevisitForm,
   uploadKycDocument,
 };

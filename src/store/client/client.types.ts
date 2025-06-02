@@ -172,6 +172,84 @@ export type IclientFirmResponse = {
   message: string;
 };
 
+export type IvendorPayload = {
+  product_category: string;
+  product_type: string;
+  vendor_name: string;
+  address: string;
+  city: string;
+  state: string;
+  pin_code: string;
+  vendor_contact_number: string;
+  monthly_sales_value: number;
+};
+
+export type IVendorResponse = {
+  statusCode: number;
+  message: string;
+  data: IVendorResponseDatum[];
+};
+
+export type IVendorResponseDatum = {
+  id: number;
+  product_category: string;
+  product_type: string;
+  vendor_name: string;
+  address: string;
+  city: string;
+  state: string;
+  pin_code: string;
+  vendor_contact_number: string;
+  monthly_sales_value: number;
+  client: Client;
+};
+
+export type Client = {
+  id: number;
+  source_of_lead: string;
+  location: string;
+  city: string;
+  state: string;
+  type_of_visit: string;
+  visit: number;
+  date_of_visit: string;
+  client_name: string;
+  firm_name: string;
+  monthly_turnover: any;
+  contact_number: string;
+  firm_type: string;
+  business_vintage: string;
+  sector: string;
+  bank_name: string;
+  cibil_score: number;
+  facility_type: string;
+  existing_funding_sanctioned_amount: number;
+  estimated_funding_required: number;
+  credit_period_offer: number;
+  client_response: any;
+  intent: any;
+  date_of_next_visit: any;
+  reason_for_not_interested: any;
+  are_you_interested_for: any;
+  created_at: string;
+  deleted_at: any;
+  user: any;
+  kyc: any;
+};
+
+export type iVisitPayload = {
+  client_response: string;
+  intent: string;
+  date_of_next_visit: string;
+  reason_for_not_interested: string;
+  are_you_interested_for: string;
+};
+
+export type IvisitResponse = {
+  statusCode: number;
+  message: string;
+};
+
 export interface IUploadKycDocumentPayload {
   doc: {
     uri: string;

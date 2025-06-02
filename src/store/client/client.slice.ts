@@ -122,6 +122,12 @@ const clientSlice = createSlice({
     saveClientFirmDetails: state => {
       state.clientLoader = false;
     },
+    saveVendorDetails: state => {
+      state.clientLoader = false;
+    },
+    saveVisitDetails: state => {
+      state.clientLoader = false;
+    },
     // Remark Report Actions
     getReport: state => {
       state.reportLoader = true;
@@ -197,6 +203,8 @@ export const {
   resetAllClientFormData,
   saveClientBasicDetails,
   saveClientFirmDetails,
+  saveVendorDetails,
+  saveVisitDetails,
   getReport,
   setReportList,
   resetReportList,

@@ -119,6 +119,12 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
     if (formNames[formIndex] === 'ClientFirmScreen') {
       dispatch(clientActions.saveClientFirmDetails());
     }
+    if (formNames[formIndex] === 'VendorScreen') {
+      dispatch(clientActions.saveVendorDetails());
+    }
+    if (formNames[formIndex] === 'VisitScreen') {
+      dispatch(clientActions.saveVisitDetails());
+    }
   };
 
   const onPressClearAll = () => {

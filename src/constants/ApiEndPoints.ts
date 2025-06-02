@@ -15,6 +15,8 @@ const Endpoints = {
   apiGetAllClients: '/client-info-master/list',
   apiSaveBasicDetails: '/client-info-master/basic-details',
   apiSaveClientFirmDerails: '/client-info-master/client-firm-details/12',
+  apiSaveVendorDetails: '/client-info-master/vendor-details/12',
+  apiSaveVisitDetails: '/client-info-master/follow-up/12',
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',

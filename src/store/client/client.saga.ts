@@ -22,6 +22,8 @@ import {
   ITaskHistoryResponse,
   IUploadKycDocumentPayload,
   IUploadKycDocumentResponse,
+  IVendorResponse,
+  IvisitResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -125,6 +127,54 @@ function* saveClientFirmDetails(): unknown {
   }
 }
 
+function* saveVendorDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientVedorDetailForm = clientFormData.VendorScreen;
+  const body = {
+    product_category: clientVedorDetailForm.product,
+    // product_type: clientVedorDetailForm.product,
+    vendor_name: clientVedorDetailForm.vendorName,
+    // address: clientVedorDetailForm.v,
+    // city: string,
+    // state: string,
+    // pin_code: string,
+    vendor_contact_number: clientVedorDetailForm.vendorContact,
+    // monthly_sales_value: number,
+  };
+
+  const {data, error}: Result<IVendorResponse> = yield call(
+    ClientApis.saveVendorForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.data));
+  }
+}
+
+function* savevisitDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientVisitDetailForm = clientFormData.VisitScreen;
+  const body = {
+    // client_response: clientVisitDetailForm,
+    intent: clientVisitDetailForm.intent,
+    //   "date_of_next_visit": "2025-05-10T14:30:00Z",
+    reason_for_not_interested: clientVisitDetailForm.reason,
+    are_you_interested_for: clientVisitDetailForm.interested,
+  };
+
+  const {data, error}: Result<IvisitResponse> = yield call(
+    ClientApis.savevisitForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.message));
+  }
+}
+
 function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   try {
     console.log('Called uploadKycRequest');
@@ -158,5 +208,7 @@ export default function* clientSaga() {
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
   yield takeLatest(saveClientBasicDetails.type, saveBasicDetails);
   yield takeLatest(saveClientBasicDetails.type, saveClientFirmDetails);
+  yield takeLatest(saveClientBasicDetails.type, saveVendorDetails);
+  yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
 }
