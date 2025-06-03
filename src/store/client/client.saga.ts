@@ -1,10 +1,11 @@
-import {call, put, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {
   getBankList,
   getClients,
   getLead,
   getReport,
   getTaskHistory,
+  saveClientBasicDetails,
   uploadKycFailure,
   uploadKycRequest,
   uploadKycSuccess,
@@ -12,6 +13,10 @@ import {
 import {ClientApis} from '@services/api';
 import {
   clientActions,
+  ClientFormType,
+  clientSelector,
+  IBasicDetailsResponse,
+  IclientFirmResponse,
   IBankListResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
@@ -19,10 +24,13 @@ import {
   ITaskHistoryResponse,
   IUploadKycDocumentPayload,
   IUploadKycDocumentResponse,
+  IVendorResponse,
+  IvisitResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
 import {PayloadAction} from '@reduxjs/toolkit';
+import moment from 'moment';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -53,7 +61,6 @@ function* handleGetLeadProgress(): unknown {
   if (!error) {
     yield put(clientActions.setLeadList(data.data));
   } else {
-    yield put(clientActions.setLeadList([]));
   }
 }
 
@@ -68,22 +75,124 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
+function* saveBasicDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const basicDetailForm = clientFormData.BasicDetails;
+  const body = {
+    source_of_lead: basicDetailForm.sourceOfLead,
+    location: basicDetailForm.location,
+    city: basicDetailForm.city,
+    state: basicDetailForm.state,
+    type_of_visit: basicDetailForm.typeOfVisit,
+    visit: parseInt(basicDetailForm.visitNumber),
+    date_of_visit: moment(basicDetailForm.dateOfVisit).format('YYYY-MM-DD'),
+  };
+
+  const {data, error}: Result<IBasicDetailsResponse> = yield call(
+    ClientApis.saveBasicDetailForm,
+    body,
+  );
+
+  if (!error) {
+    yield put(clientActions.saveClientId(data.data));
+  }
+}
+
+function* saveClientFirmDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientFirmDetailForm = clientFormData.ClientFirmScreen;
+  const body = {
+    client_name: clientFirmDetailForm.clientName,
+    firm_name: clientFirmDetailForm.firmName,
+    contact_number: clientFirmDetailForm.contactNumber,
+    firm_type: clientFirmDetailForm.typeOfFirm,
+    business_vintage: clientFirmDetailForm.businessVintage,
+    sector: clientFirmDetailForm.sector,
+    bank_name: clientFirmDetailForm.bankName,
+    cibil_score: clientFirmDetailForm.cibilScore,
+    facility_type: clientFirmDetailForm.facilityType,
+    existing_funding_sanctioned_amount: clientFirmDetailForm.existingFunding,
+    estimated_funding_required: clientFirmDetailForm.estimatedFunding,
+    credit_period_offer: clientFirmDetailForm.creditPeriod,
+  };
+
+  const {data, error}: Result<IclientFirmResponse> = yield call(
+    ClientApis.saveClientFirmForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.message));
+  }
+}
+
+function* saveVendorDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientVedorDetailForm = clientFormData.VendorScreen;
+  const body = {
+    product_category: clientVedorDetailForm.product,
+    // product_type: clientVedorDetailForm.product,
+    vendor_name: clientVedorDetailForm.vendorName,
+    // address: clientVedorDetailForm.v,
+    // city: string,
+    // state: string,
+    // pin_code: string,
+    vendor_contact_number: clientVedorDetailForm.vendorContact,
+    // monthly_sales_value: number,
+  };
+
+  const {data, error}: Result<IVendorResponse> = yield call(
+    ClientApis.saveVendorForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.data));
+  }
+}
+
+function* savevisitDetails(): unknown {
+  const clientFormData: ClientFormType = yield select(
+    clientSelector.getClientFormData,
+  );
+  const clientVisitDetailForm = clientFormData.VisitScreen;
+  const body = {
+    // client_response: clientVisitDetailForm,
+    intent: clientVisitDetailForm.intent,
+    //   "date_of_next_visit": "2025-05-10T14:30:00Z",
+    reason_for_not_interested: clientVisitDetailForm.reason,
+    are_you_interested_for: clientVisitDetailForm.interested,
+  };
+
+  const {data, error}: Result<IvisitResponse> = yield call(
+    ClientApis.savevisitForm,
+    body,
+  );
+  if (!error) {
+    yield put(clientActions.saveClientId(data.message));
+  }
+}
+
 function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   try {
+    console.log('Called uploadKycRequest');
     const formData = new FormData();
     formData.append('doc', {
       uri: action.payload.doc.uri,
       name: action.payload.doc.name,
       type: action.payload.doc.type,
-    } as any); // React Native file input
+    } as any);
     formData.append('clientId', action.payload.clientId.toString());
     formData.append('uploaded_by', action.payload.uploaded_by);
     formData.append('params', action.payload.params);
     formData.append('client_name', action.payload.client_name);
 
     const {data, error}: {data: IUploadKycDocumentResponse | null; error: any} =
-      yield call(uploadKycDocument, formData);
-
+      yield call(ClientApis.uploadKycDocument, formData);
     if (data) {
       yield put(uploadKycSuccess(data));
     } else {
@@ -110,6 +219,10 @@ export default function* clientSaga() {
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
+  yield takeLatest(saveClientBasicDetails.type, saveBasicDetails);
+  yield takeLatest(saveClientBasicDetails.type, saveClientFirmDetails);
+  yield takeLatest(saveClientBasicDetails.type, saveVendorDetails);
+  yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
   yield takeLatest(getBankList.type, hnadleGetBankList);
 }

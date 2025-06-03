@@ -11,6 +11,9 @@ import {
   ListItemProps,
 } from './FormSelection.type';
 import {ClientScreens} from '@constants/Screens';
+import {useSelector} from 'react-redux';
+import {clientSelector} from '@store/client';
+import Toast from 'react-native-toast-message';
 
 const Strings = {
   appBarTitle: 'Client Information Master',
@@ -23,7 +26,16 @@ const Strings = {
 export const FormSelectionScreen: React.FC<FormSelectionProps> = ({
   navigation,
 }) => {
+  const currentFormId = useSelector(clientSelector.getClientFormId);
   const onPressFormItem = (item: ListItemProps) => {
+    if (item.screen !== 'BasicDetails' && !currentFormId) {
+      Toast.show({
+        text1: 'Incomplete Form',
+        text2: 'Please complete the basic details form before proceeding',
+        type: 'info',
+      });
+      return;
+    }
     navigation.navigate(ClientScreens.CreateClientForm, {
       screen: item.screen,
       title: item.title,

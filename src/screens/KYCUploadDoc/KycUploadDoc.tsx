@@ -10,9 +10,11 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {
   HomeNavigatorType,
   ClientNavigatorType,
@@ -21,6 +23,7 @@ import {
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -32,19 +35,36 @@ export const KycUploadDoc = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const [name, setName] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<DocumentPickerResponse | undefined>();
+
+  const dispatch = useDispatch();
 
   const handleSave = () => {
     Alert.alert('Saved!', `Name: ${name}`);
   };
 
   const handleSubmit = () => {
-    Alert.alert('Submitted!', `Name: ${name}\nImage: ${image}`);
+    console.log(name, image);
+    if (name && image) {
+      const payload = {
+        client_name: name,
+        clientId: 12,
+        doc: {
+          name: image.name ?? Date.now().toString(),
+          type: image.type ?? 'image/png',
+          uri: image.uri,
+        },
+        params: 'Profile',
+        uploaded_by: 'Nishith Upadhyay',
+      };
+      console.log('disp uploadKycRequest');
+      dispatch(clientActions.uploadKycRequest(payload));
+    }
   };
 
   const handleClear = () => {
     setName('');
-    setImage(null);
+    setImage(undefined);
   };
 
   return (
@@ -58,20 +78,31 @@ export const KycUploadDoc = () => {
         <Input
           label="Your Name"
           placeholder="Value"
+          onChangeText={setName}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
-        <DashedButton
-          label="Upload Your Picture"
-          onPress={() => setIsVisible(true)}
+        {image ? (
+          <Text>File Name: {image.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Your Picture"
+            onPress={() => setIsVisible(true)}
+          />
+        )}
+        <UploadModal
+          visible={isVisible}
+          onClose={file => {
+            if (file) {
+              setImage(file);
+            }
+            setIsVisible(false);
+          }}
         />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         {/* FooterButton */}
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}
@@ -85,7 +116,7 @@ export const KycUploadDoc = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

@@ -4,14 +4,21 @@ import {Api} from '.';
 import Endpoints from '@constants/ApiEndPoints';
 // Types
 import {
-  BasicDetailPayload,
+  IBasicDetailsPayload,
   IBankListResponse,
-  IbasicDetailResponse,
+  IBasicDetailsResponse,
+  IClientFirmPayload,
+  IclientFirmResponse,
   IClientInfoSuccessResponse,
   ILeadProgressResponse,
   IRemarkReportResponse,
   ITaskHistoryResponse,
+  IvendorPayload,
+  IVendorResponse,
+  IVisitPayload,
+  IvisitResponse,
 } from '@store/client';
+import {CustomRequestConfig} from './api';
 
 const getAllClients = async () => {
   const {data, error} = await tryCatch<
@@ -77,9 +84,57 @@ const getTaskHistory = async () => {
   };
 };
 
-const postBasicDetails = async (payload: BasicDetailPayload) => {
-  const {data, error} = await tryCatch<AxiosResponse<IbasicDetailResponse>>(
-    Api.post(Endpoints.apiBasicDetailPost, payload),
+const saveBasicDetailForm = async (body: IBasicDetailsPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IBasicDetailsResponse>>(
+    Api.post(Endpoints.apiSaveBasicDetails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const saveClientFirmForm = async (body: IClientFirmPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IclientFirmResponse>>(
+    Api.post(Endpoints.apiSaveClientFirmDerails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const saveVendorForm = async (body: IvendorPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IVendorResponse>>(
+    Api.post(Endpoints.apiSaveVendorDetails, body),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const savevisitForm = async (body: IVisitPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IvisitResponse>>(
+    Api.post(Endpoints.apiSaveVisitDetails, body),
   );
   if (error) {
     return {
@@ -96,12 +151,66 @@ const postBasicDetails = async (payload: BasicDetailPayload) => {
 const uploadKycDocument = async (formData: FormData) => {
   const {data, error} = await tryCatch<AxiosResponse<any>>(
     Api.post(Endpoints.apiKycProfilePic, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }),
+      isFormData: true,
+    } as CustomRequestConfig),
   );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
 
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadPanDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycPanUpload, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadAadharDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycAadharUpload, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadResidenceDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycResidenceDetail, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
   if (error) {
     return {
       data: null,
@@ -136,7 +245,13 @@ export default {
   getRemarkReport,
   getLeadProgress,
   getTaskHistory,
-  postBasicDetails,
+  saveBasicDetailForm,
+  saveClientFirmForm,
+  saveVendorForm,
+  savevisitForm,
   uploadKycDocument,
+  uploadPanDocument,
+  uploadAadharDocument,
+  uploadResidenceDocument,
   getBankList,
 };

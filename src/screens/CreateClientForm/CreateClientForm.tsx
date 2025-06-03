@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {LeftChevronCircle, RightCheckmark} from '@assets/Icons';
 import {RightChevronCircle} from '@assets/Icons/RightChevronCircle';
 import {
@@ -112,8 +113,17 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
   const currentFormKey: FormTypes = formNames[formIndex];
   const currentTitle = formTitles[currentFormKey];
   const onPressSaveNext = () => {
-    if (formIndex < formNames.length - 1) {
-      setFormIndex(formIndex + 1);
+    if (formNames[formIndex] === 'BasicDetails') {
+      dispatch(clientActions.saveClientBasicDetails());
+    }
+    if (formNames[formIndex] === 'ClientFirmScreen') {
+      dispatch(clientActions.saveClientFirmDetails());
+    }
+    if (formNames[formIndex] === 'VendorScreen') {
+      dispatch(clientActions.saveVendorDetails());
+    }
+    if (formNames[formIndex] === 'VisitScreen') {
+      dispatch(clientActions.saveVisitDetails());
     }
   };
 

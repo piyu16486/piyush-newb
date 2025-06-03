@@ -231,6 +231,7 @@ export const TaskLogTabs = () => {
                 ListEmptyComponent={
                   <Text style={styles.emptyList}>No Task History Found</Text>
                 }
+                refreshing={false}
               />
             </View>
           </View>

@@ -1,8 +1,9 @@
 import {File, RightCheckmark} from '@assets/Icons';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
-import {pick} from '@react-native-documents/picker';
+import {DocumentPickerResponse, pick} from '@react-native-documents/picker';
 import {scaleWidth, scaleHeight, scaleFont} from '@utils/Scale';
+import {tryCatch} from '@utils/TryCatch';
 import React, {useState} from 'react';
 import {
   Modal,
@@ -10,7 +11,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {launchCamera} from 'react-native-image-picker';
@@ -20,14 +20,15 @@ export const UploadModal = ({
   onClose,
 }: {
   visible: boolean;
-  onClose: () => void;
+  onClose: (file?: DocumentPickerResponse) => void;
 }) => {
-  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   const handleBrowseFile = async () => {
-    try {
-      const files = await pick({
+    const {data, error} = await tryCatch(
+      pick({
         mode: 'import',
         allowMultiSelection: false,
       });
@@ -48,18 +49,19 @@ export const UploadModal = ({
   };
 
   const handleSubmit = () => {
-    // TODO: upload selectedImageUri or selectedFile
-    console.log('Submitting file or image');
-    onClose();
+    onClose(selectedFile);
   };
-
   return (
     <Modal
       transparent
       visible={visible}
       animationType="fade"
-      onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose}>
+      onRequestClose={() => onClose()}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          console.log('Outside modal pressed - closing');
+          onClose();
+        }}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
             <View style={styles.popup}>
@@ -89,7 +91,7 @@ export const UploadModal = ({
 
                   {selectedFile && (
                     <Text style={{marginTop: 8, color: '#444', fontSize: 14}}>
-                      Selected: {selectedFile}
+                      Selected: {selectedFile.name}
                     </Text>
                   )}
 
@@ -112,7 +114,10 @@ export const UploadModal = ({
 
               <TouchableOpacity
                 style={styles.saveButton}
-                onPress={handleSubmit}>
+                activeOpacity={0.7}
+                onPress={() => {
+                  handleSubmit();
+                }}>
                 <Text style={styles.saveText}>Submit</Text>
                 <RightCheckmark width={12} height={12} />
               </TouchableOpacity>

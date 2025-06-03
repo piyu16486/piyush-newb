@@ -9,6 +9,10 @@ const getClientFormData = createSelector(
   _selectState,
   _state => _state.clientFormData,
 );
+const getClientFormId = createSelector(
+  _selectState,
+  _state => _state.clientFormId,
+);
 const getRemarkReport = createSelector(
   _selectState,
   _state => _state.reportList,
@@ -46,6 +50,7 @@ const getBankList = createSelector(_selectState, _state => _state.BankList);
 export default {
   getClientList,
   getClientFormData,
+  getClientFormId,
   getRemarkReport,
   getLeadProgress,
   getTaskHistory,
