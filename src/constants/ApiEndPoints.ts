@@ -32,7 +32,6 @@ const Endpoints = {
   apiKycPanUpload: '/client-info-master/personal-kyc/pan',
   apiKycAadharUpload: '/client-info-master/personal-kyc/aadhar',
   apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
-  apiKycPanUpload: '/client-info-master/personal-kyc/pan',
 
   // BankList dropdown
   apiBankList: '/client-info-master/bank-list',

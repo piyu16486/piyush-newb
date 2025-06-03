@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {RightCheckmark} from '@assets/Icons';
-import {AppBar, Container, DashedButton, Input, UploadModal} from '@components/index';
+import {
+  AppBar,
+  Container,
+  DashedButton,
+  Input,
+  UploadModal,
+} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -27,6 +34,10 @@ type KycNavigationType = CompositeNavigationProp<
 export const ShareholdingCompany = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [shareholdingImage, setShareholdingImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -43,6 +54,7 @@ export const ShareholdingCompany = () => {
         </View>
         <Input
           label="Company Name"
+          onChangeText={setCompanyName}
           containerStyle={{marginBottom: scaleHeight(20)}}
         />
         <DashedButton

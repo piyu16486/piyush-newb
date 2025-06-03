@@ -31,6 +31,22 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycUploadAdhar = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [nameAdhar, setNameAdhar] = useState('');
+  const [adharNumber, setAdharNumber] = useState('');
+  const [frontImage, setFrontImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [backImage, setBackImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [coApplicantNameAdhar, setCoApplicantNameAdhar] = useState('');
+  const [coApplicantAdharNumber, setCoApplicantAdharNumber] = useState('');
+  const [coApplicantFrontImage, setCoApplicantFrontImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [coApplicantBackImage, setCoApplicantBackImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -45,10 +61,12 @@ export const KycUploadAdhar = () => {
         </Text>
         <Input
           label="Name as per Aadhar Card"
+          onChangeText={setNameAdhar}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Aadhar number"
+          onChangeText={setAdharNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
@@ -70,10 +88,12 @@ export const KycUploadAdhar = () => {
         </Text>
         <Input
           label="Name as per Aadhar Card"
+          onChangeText={setCoApplicantNameAdhar}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Aadhar number"
+          onChangeText={setCoApplicantAdharNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 

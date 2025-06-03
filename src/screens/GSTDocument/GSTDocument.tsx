@@ -9,6 +9,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -25,6 +26,11 @@ type KycNavigationType = CompositeNavigationProp<
 export const GSTDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [nameonGstCertificate, setNameonGstCertificate] = useState('');
+  const [gstNumber, setGstNumber] = useState('');
+  const [gstImage, setGstImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -38,10 +44,12 @@ export const GSTDocument = () => {
           <Text style={styles.sectionTitle}>GST Document</Text>
           <Input
             label="Name as per GST Certificate"
+            onChangeText={setNameonGstCertificate}
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
           <Input
             label="GST Number"
+            onChangeText={setGstNumber}
             containerStyle={{marginBottom: scaleHeight(14)}}
           />
           <DashedButton

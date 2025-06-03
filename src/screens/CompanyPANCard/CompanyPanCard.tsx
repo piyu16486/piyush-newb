@@ -9,6 +9,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -25,6 +26,15 @@ type KycNavigationType = CompositeNavigationProp<
 export const CompanyPanCard = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [namePan, setNamePan] = useState('');
+  const [panNumber, setPanNumber] = useState('');
+  const [dateofBirth, setDateofBirth] = useState('');
+  const [frontPanImage, setFrontPanImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [backPanImage, setBackPanImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -37,14 +47,17 @@ export const CompanyPanCard = () => {
         <Text style={styles.sectionTitle}>Company PAN Card</Text>
         <Input
           label="Name as per PAN"
+          onChangeText={setNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN Number"
+          onChangeText={setPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          onChangeText={setDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 

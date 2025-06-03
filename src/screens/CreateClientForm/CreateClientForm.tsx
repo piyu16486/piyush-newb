@@ -113,17 +113,20 @@ export const CreateClientForm: React.FC<CreateClientFormProps> = ({
   const currentFormKey: FormTypes = formNames[formIndex];
   const currentTitle = formTitles[currentFormKey];
   const onPressSaveNext = () => {
-    if (formNames[formIndex] === 'BasicDetails') {
+    const currentForm = formNames[formIndex];
+
+    if (currentForm === 'BasicDetails') {
       dispatch(clientActions.saveClientBasicDetails());
-    }
-    if (formNames[formIndex] === 'ClientFirmScreen') {
+    } else if (currentForm === 'ClientFirmScreen') {
       dispatch(clientActions.saveClientFirmDetails());
-    }
-    if (formNames[formIndex] === 'VendorScreen') {
+    } else if (currentForm === 'VendorScreen') {
       dispatch(clientActions.saveVendorDetails());
-    }
-    if (formNames[formIndex] === 'VisitScreen') {
+    } else if (currentForm === 'VisitScreen') {
       dispatch(clientActions.saveVisitDetails());
+    }
+
+    if (formIndex < formNames.length - 1) {
+      setFormIndex(prev => prev + 1);
     }
   };
 

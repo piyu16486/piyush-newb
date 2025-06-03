@@ -48,7 +48,7 @@ export const KycUploadDoc = () => {
     if (name && image) {
       const payload = {
         client_name: name,
-        clientId: 12,
+        clientId: 16,
         doc: {
           name: image.name ?? Date.now().toString(),
           type: image.type ?? 'image/png',

@@ -5,16 +5,26 @@ import {
   CustomDropdown,
   DashedButton,
   Input,
+  UploadModal,
 } from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 export const ResidenceDetail = () => {
   const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [nameofOwner, setnameofOwner] = useState('');
+  const [agreementCopy, setAgreementCopy] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [electricityBill, setElectricityBill] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -41,14 +51,25 @@ export const ResidenceDetail = () => {
             <>
               <Input
                 label="Name of Owner"
+                onChangeText={setnameofOwner}
                 containerStyle={{marginBottom: scaleHeight(20)}}
               />
 
               {ownershipStatus === 'rented' ? (
-                <DashedButton label="Upload Agreement Copy" />
+                <DashedButton
+                  label="Upload Agreement Copy"
+                  onPress={() => setIsVisible(true)}
+                />
               ) : (
-                <DashedButton label="Upload Electricity Bill" />
+                <DashedButton
+                  label="Upload Electricity Bill"
+                  onPress={() => setIsVisible(true)}
+                />
               )}
+              <UploadModal
+                visible={isVisible}
+                onClose={() => setIsVisible(false)}
+              />
 
               {/* Fixed button row at the bottom */}
               <View style={styles.footerButton}>

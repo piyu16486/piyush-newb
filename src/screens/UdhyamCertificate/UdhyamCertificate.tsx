@@ -9,6 +9,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -25,6 +26,14 @@ type KycNavigationType = CompositeNavigationProp<
 export const UdhyamCertificate = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [udhyamAdharName, setUdhyamAdharName] = useState('');
+  const [udhyamNumber, setUdhyamNumber] = useState('');
+  const [udhyamFrontImage, setUdhyamFrontImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [udhyamBackImage, setUdhyamBackImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -38,10 +47,12 @@ export const UdhyamCertificate = () => {
           <Text style={styles.sectionTitle}>Udhyam Certificate</Text>
           <Input
             label="Name as per Udhyam Aadhar"
+            onChangeText={setUdhyamAdharName}
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
           <Input
             label="URN Number"
+            onChangeText={setUdhyamNumber}
             containerStyle={{marginBottom: scaleHeight(14)}}
           />
 
@@ -54,7 +65,14 @@ export const UdhyamCertificate = () => {
             onClose={() => setIsVisible(false)}
           />
 
-          <DashedButton label="Upload Back Side of Udhyam" />
+          <DashedButton
+            label="Upload Back Side of Udhyam"
+            onPress={() => setIsVisible(true)}
+          />
+          <UploadModal
+            visible={isVisible}
+            onClose={() => setIsVisible(false)}
+          />
 
           {/* FooterButton */}
           <View style={styles.footerButton}>

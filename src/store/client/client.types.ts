@@ -282,3 +282,7 @@ export interface IBankListResponseDatum {
   id: number;
   bank_name: string;
 }
+
+export interface UploadPanKycDocumentPayload {
+  
+}

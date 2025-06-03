@@ -10,6 +10,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -27,6 +28,13 @@ export const GodownDetails = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
   const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
+  const [nameofOwner, setnameofOwner] = useState('');
+  const [agreementCopy, setAgreementCopy] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [electricityBill, setElectricityBill] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -53,6 +61,7 @@ export const GodownDetails = () => {
             <>
               <Input
                 label="Name of Owner"
+                onChangeText={setnameofOwner}
                 containerStyle={{marginBottom: scaleHeight(20)}}
               />
 
@@ -67,7 +76,6 @@ export const GodownDetails = () => {
                   onPress={() => setIsVisible(true)}
                 />
               )}
-
               <UploadModal
                 visible={isVisible}
                 onClose={() => setIsVisible(false)}

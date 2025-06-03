@@ -13,7 +13,6 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {launchCamera} from 'react-native-image-picker';
 
 export const UploadModal = ({
   visible,
@@ -31,20 +30,10 @@ export const UploadModal = ({
       pick({
         mode: 'import',
         allowMultiSelection: false,
-      });
-      if (files && files[0]) {
-        setSelectedFile(files[0].name || 'Document Selected');
-      }
-    } catch (error) {
-      console.log('Document picking error:', error);
-    }
-  };
-
-  const handleOpenCamera = async () => {
-    const result = await launchCamera({mediaType: 'photo', saveToPhotos: true});
-    if (result?.assets && result.assets.length > 0) {
-      setSelectedImageUri(result.assets[0].uri || null);
-      setSelectedFile(null); // clear file name if using camera
+      }),
+    );
+    if (!error) {
+      setSelectedFile(data[0]);
     }
   };
 
@@ -63,7 +52,10 @@ export const UploadModal = ({
           onClose();
         }}>
         <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              console.log('Inside modal - do not close');
+            }}>
             <View style={styles.popup}>
               <Text style={styles.title}>Upload your File</Text>
               <Text style={styles.subtitle}>Supports JPG, PNG and PDF</Text>
@@ -71,8 +63,8 @@ export const UploadModal = ({
               <View style={styles.uploadBox}>
                 <File width={20} height={26} />
                 <Text style={styles.info}>Max file size 15MB</Text>
-                {/* <Text style={styles.info}>Drag & Drop your file or</Text> */}
- 
+                <Text style={styles.info}>Drag & Drop your file or</Text>
+
                 <View style={{alignItems: 'center'}}>
                   <TouchableOpacity
                     style={styles.browseButton}
@@ -80,34 +72,10 @@ export const UploadModal = ({
                     <Text style={styles.browseText}>Browse File</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={[
-                      styles.browseButton,
-                      {backgroundColor: '#28a745', marginTop: 10},
-                    ]}
-                    onPress={handleOpenCamera}>
-                    <Text style={styles.browseText}>Take Photo</Text>
-                  </TouchableOpacity>
-
                   {selectedFile && (
                     <Text style={{marginTop: 8, color: '#444', fontSize: 14}}>
                       Selected: {selectedFile.name}
                     </Text>
-                  )}
-
-                  {selectedImageUri && (
-                    <Image
-                      source={{uri: selectedImageUri}}
-                      style={{
-                        marginTop: 10,
-                        width: 120,
-                        height: 120,
-                        borderRadius: 6,
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                      }}
-                      resizeMode="cover"
-                    />
                   )}
                 </View>
               </View>
@@ -155,6 +123,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FAFAFA',
   },
+  icon: {width: 40, height: 40, marginBottom: 10},
   info: {fontSize: 14, color: '#666', textAlign: 'center'},
   browseButton: {
     backgroundColor: '#007bff',

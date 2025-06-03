@@ -3,6 +3,7 @@ import {AppBar, Container, DashedButton, UploadModal} from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -25,6 +26,18 @@ type KycNavigationType = CompositeNavigationProp<
 export const CompanyDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [aoaDocument, setAoaDocument] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [moaDocument, setMoaDocument] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [coiDocument, setCoiDocument] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [otherDocument, setOtherDocument] = useState<
+    DocumentPickerResponse | undefined
+  >();
 
   return (
     <Container>
@@ -51,7 +64,7 @@ export const CompanyDocument = () => {
 
           <Text style={styles.subTitle}>MOA</Text>
           <DashedButton
-            label="Upload AOA Document"
+            label="Upload MOA Document"
             onPress={() => setIsVisible(true)}
           />
           <UploadModal
@@ -61,7 +74,7 @@ export const CompanyDocument = () => {
 
           <Text style={styles.subTitle}>COI</Text>
           <DashedButton
-            label="Upload AOA Document"
+            label="Upload COI Document"
             onPress={() => setIsVisible(true)}
           />
           <UploadModal
@@ -71,7 +84,7 @@ export const CompanyDocument = () => {
 
           <Text style={styles.subTitle}>Other Document</Text>
           <DashedButton
-            label="Upload AOA Document"
+            label="Upload Other Document"
             onPress={() => setIsVisible(true)}
           />
           <UploadModal

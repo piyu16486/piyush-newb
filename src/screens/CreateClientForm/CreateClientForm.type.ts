@@ -58,7 +58,7 @@ export type VendorNames = VendorDropDownNames | VendorInputNames;
 
 type VisitDropDownNames = 'intent';
 type VisitInputNames =
-  | 'visitRemarks'
+  | 'UserResponse'
   | 'nextVisitDate'
   | 'reason'
   | 'interested';
@@ -318,8 +318,8 @@ export const formInputDetails: FormInputListType = {
     {label: 'Monthly Sales Value', name: 'monthlySales', type: FieldType.INPUT},
   ],
   VisitScreen: [
+    {label: 'User Response', name: 'UserResponse', type: FieldType.INPUT},
     {label: 'Intent', name: 'intent', type: FieldType.DROPDOWN},
-    {label: 'Visit Remarks', name: 'visitRemarks', type: FieldType.INPUT},
     {label: 'Date of Next Visit', name: 'nextVisitDate', type: FieldType.DATE},
     {label: 'Reason for Not Interested', name: 'reason', type: FieldType.INPUT},
     {

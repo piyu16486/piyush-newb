@@ -9,6 +9,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -31,6 +32,24 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycUplaodPan = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [namePan, setNamePan] = useState('');
+  const [panNumber, setPanNumber] = useState('');
+  const [dateofBirth, setDateofBirth] = useState('');
+  const [frontImage, setFrontImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [backImage, setBackImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [coApplicantNamePan, setCoApplicantNamePan] = useState('');
+  const [coApplicantPanNumber, setCoApplicantPanNumber] = useState('');
+  const [coApplicantDateofBirth, setCoApplicantDateofBirth] = useState('');
+const [coApplicantFrontImage, setCoApplicantFrontImage] = useState<
+  DocumentPickerResponse | undefined
+>();
+const [coApplicantBackImage, setCoApplicantBackImage] = useState<
+  DocumentPickerResponse | undefined
+>();
 
   return (
     <Container>
@@ -43,14 +62,17 @@ export const KycUplaodPan = () => {
         <Text style={styles.sectionTitle}>Main Applicant PAN Card Details</Text>
         <Input
           label="Name as per PAN"
+          onChangeText={setNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN number"
+          onChangeText={setPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          onChangeText={setDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
@@ -70,14 +92,17 @@ export const KycUplaodPan = () => {
         <Text style={styles.sectionTitle}>Co Applicant PAN Card Details</Text>
         <Input
           label="Name as per PAN"
+          onChangeText={setCoApplicantNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN number"
+          onChangeText={setCoApplicantPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          onChangeText={setCoApplicantDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
