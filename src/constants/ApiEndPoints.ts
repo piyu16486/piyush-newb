@@ -14,23 +14,24 @@ const Endpoints = {
   // Client apis
   apiGetAllClients: '/client-info-master/list',
   apiSaveBasicDetails: '/client-info-master/basic-details',
-  apiSaveClientFirmDerails: '/client-info-master/client-firm-details/12',
-  apiSaveVendorDetails: '/client-info-master/vendor-details/12',
-  apiSaveVisitDetails: '/client-info-master/follow-up/12',
+  apiSaveClientFirmDerails: '/client-info-master/client-firm-details/16',
+  apiSaveVendorDetails: '/client-info-master/vendor-details/16',
+  apiSaveVisitDetails: '/client-info-master/follow-up/16',
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',
 
   // Lead apis
-  apiGetLeadProgress: '/client-info-master/6/lead-progress',
+  apiGetLeadProgress: '/client-info-master/16/lead-progress',
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
 
   // Kyc Apis
   apiKycProfilePic: '/client-info-master/personal-kyc/profile',
-  apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
   apiKycPanUpload: '/client-info-master/personal-kyc/pan',
+  apiKycAadharUpload: '/client-info-master/personal-kyc/aadhar',
+  apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
 } as const;
 
 export default Endpoints;

@@ -237,7 +237,7 @@ export type Client = {
   kyc: any;
 };
 
-export type iVisitPayload = {
+export type IVisitPayload = {
   client_response: string;
   intent: string;
   date_of_next_visit: string;

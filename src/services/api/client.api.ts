@@ -14,9 +14,10 @@ import {
   ITaskHistoryResponse,
   IvendorPayload,
   IVendorResponse,
+  IVisitPayload,
+  IvisitResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
-import {saveClientFirmDetails} from '@store/client/client.slice';
 
 const getAllClients = async () => {
   const {data, error} = await tryCatch<
@@ -130,7 +131,7 @@ const saveVendorForm = async (body: IvendorPayload) => {
   };
 };
 
-const savevisitForm = async (body: iVisitPayload) => {
+const savevisitForm = async (body: IVisitPayload) => {
   const {data, error} = await tryCatch<AxiosResponse<IvisitResponse>>(
     Api.post(Endpoints.apiSaveVisitDetails, body),
   );
@@ -165,6 +166,63 @@ const uploadKycDocument = async (formData: FormData) => {
   };
 };
 
+const uploadPanDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycPanUpload, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadAadharDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycAadharUpload, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadResidenceDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiKycResidenceDetail, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 export default {
   getAllClients,
   getRemarkReport,
@@ -175,4 +233,7 @@ export default {
   saveVendorForm,
   savevisitForm,
   uploadKycDocument,
+  uploadPanDocument,
+  uploadAadharDocument,
+  uploadResidenceDocument,
 };
