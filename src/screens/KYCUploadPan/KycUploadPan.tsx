@@ -13,6 +13,7 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
@@ -23,6 +24,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -32,6 +34,11 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycUplaodPan = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+
+  const [uploadType, setUploadType] = useState<
+    'mainFront' | 'mainBack' | 'coFront' | 'coBack' | null
+  >(null);
+
   const [namePan, setNamePan] = useState('');
   const [panNumber, setPanNumber] = useState('');
   const [dateofBirth, setDateofBirth] = useState('');
@@ -44,12 +51,87 @@ export const KycUplaodPan = () => {
   const [coApplicantNamePan, setCoApplicantNamePan] = useState('');
   const [coApplicantPanNumber, setCoApplicantPanNumber] = useState('');
   const [coApplicantDateofBirth, setCoApplicantDateofBirth] = useState('');
-const [coApplicantFrontImage, setCoApplicantFrontImage] = useState<
-  DocumentPickerResponse | undefined
->();
-const [coApplicantBackImage, setCoApplicantBackImage] = useState<
-  DocumentPickerResponse | undefined
->();
+  const [coApplicantFrontImage, setCoApplicantFrontImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+  const [coApplicantBackImage, setCoApplicantBackImage] = useState<
+    DocumentPickerResponse | undefined
+  >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(
+      namePan,
+      panNumber,
+      dateofBirth,
+      frontImage,
+      backImage,
+      coApplicantNamePan,
+      coApplicantPanNumber,
+      coApplicantDateofBirth,
+      coApplicantFrontImage,
+      coApplicantBackImage,
+    );
+
+    const allFieldsFilled =
+      namePan &&
+      panNumber &&
+      dateofBirth &&
+      frontImage &&
+      backImage &&
+      coApplicantNamePan &&
+      coApplicantPanNumber &&
+      coApplicantDateofBirth &&
+      coApplicantFrontImage &&
+      coApplicantBackImage;
+
+    if (allFieldsFilled) {
+      const payload = {
+        clientId: 16, // or dynamic if available
+        uploaded_by: 'Nishith Upadhyay',
+        doc: [
+          {
+            name_as_per_pan: namePan,
+            pan_number: panNumber,
+            dob: dateofBirth,
+          },
+          {
+            name_as_per_pan: coApplicantNamePan,
+            pan_number: coApplicantPanNumber,
+            dob: coApplicantDateofBirth,
+          },
+        ],
+        files: [
+          {
+            uri: frontImage.uri,
+            name: frontImage.name ?? Date.now().toString(),
+            type: frontImage.type ?? 'image/png',
+          },
+          {
+            uri: backImage.uri,
+            name: backImage.name ?? Date.now().toString(),
+            type: backImage.type ?? 'image/png',
+          },
+          {
+            uri: coApplicantFrontImage.uri,
+            name: coApplicantFrontImage.name ?? Date.now().toString(),
+            type: coApplicantFrontImage.type ?? 'image/png',
+          },
+          {
+            uri: coApplicantBackImage.uri,
+            name: coApplicantBackImage.name ?? Date.now().toString(),
+            type: coApplicantBackImage.type ?? 'image/png',
+          },
+        ],
+      };
+
+      console.log('Dispatching uploadPanRequest', payload);
+      dispatch(clientActions.uploadPanRequest(payload));
+    } else {
+      console.warn('Please fill all required PAN details and upload images.');
+    }
+  };
 
   return (
     <Container>
@@ -76,17 +158,29 @@ const [coApplicantBackImage, setCoApplicantBackImage] = useState<
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <DashedButton
-          label="Upload Front side of PAN"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {frontImage ? (
+          <Text>File Name: {frontImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Front side of PAN"
+            onPress={() => {
+              setUploadType('mainFront');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
-        <DashedButton
-          label="Upload Back side of PAN"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {backImage ? (
+          <Text>File Name: {backImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Back side of PAN"
+            onPress={() => {
+              setUploadType('mainBack');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
         {/* Co Applicant Section */}
         <Text style={styles.sectionTitle}>Co Applicant PAN Card Details</Text>
@@ -106,17 +200,53 @@ const [coApplicantBackImage, setCoApplicantBackImage] = useState<
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <DashedButton
-          label="Upload Front side of PAN"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {coApplicantFrontImage ? (
+          <Text>File Name: {coApplicantFrontImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Front side of PAN"
+            onPress={() => {
+              setUploadType('coFront');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
-        <DashedButton
-          label="Upload Back side of PAN"
-          onPress={() => setIsVisible(true)}
+        {coApplicantBackImage ? (
+          <Text>File Name: {coApplicantBackImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Back side of PAN"
+            onPress={() => {
+              setUploadType('coBack');
+              setIsVisible(true);
+            }}
+          />
+        )}
+
+        <UploadModal
+          visible={isVisible}
+          onClose={file => {
+            if (file) {
+              switch (uploadType) {
+                case 'mainFront':
+                  setFrontImage(file);
+                  break;
+                case 'mainBack':
+                  setBackImage(file);
+                  break;
+                case 'coFront':
+                  setCoApplicantFrontImage(file);
+                  break;
+                case 'coBack':
+                  setCoApplicantBackImage(file);
+                  break;
+              }
+            }
+            setIsVisible(false);
+            setUploadType(null);
+          }}
         />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
@@ -136,7 +266,7 @@ const [coApplicantBackImage, setCoApplicantBackImage] = useState<
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

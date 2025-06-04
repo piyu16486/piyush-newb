@@ -20,3 +20,4 @@ export * from './Download';
 export * from './Upload';
 export * from './File';
 export * from './Tasklog';
+export * from './Dots';

@@ -12,6 +12,10 @@ import {
   ITaskHistoryResponseDatum,
   IUploadKycDocumentPayload,
   IUploadKycDocumentResponse,
+  IUploadPanDocumentsPayload,
+  IUploadPanDocumentsResponse,
+  IUploadResidenceDetailsPayload,
+  IUploadResidenceDetailsResponse,
 } from './client.types';
 
 const clientFormData: ClientFormType = {
@@ -71,7 +75,7 @@ const initialState: ClientState = {
   //Basic Detail fields
   basicLoader: false,
   clientId: null,
-  // kyc
+  // Profile kyc
   loading: false,
   data: null,
   error: null,
@@ -81,6 +85,14 @@ const initialState: ClientState = {
   // Kyc Checked
   KycCheckedLoader: false,
   kycCheckedList: [],
+  // Pan Kyc
+  panLoading: false,
+  panData: null,
+  panError: null,
+  // Residence Kyc
+  residenceLoading: false,
+  residenceData: null,
+  residenceError: null,
 };
 
 const clientSlice = createSlice({
@@ -232,6 +244,49 @@ const clientSlice = createSlice({
       state.kycCheckedList = [];
       state.KycCheckedLoader = false;
     },
+    uploadPanRequest(state, action: PayloadAction<IUploadPanDocumentsPayload>) {
+      state.panLoading = true;
+      state.panError = null;
+    },
+    uploadPanSuccess(
+      state,
+      action: PayloadAction<IUploadPanDocumentsResponse>,
+    ) {
+      state.panLoading = false;
+      state.panData = action.payload;
+    },
+    uploadPanFailure(state, action: PayloadAction<string>) {
+      state.panLoading = false;
+      state.panError = action.payload;
+    },
+    clearPanUpload(state) {
+      state.panLoading = false;
+      state.panData = null;
+      state.panError = null;
+    },
+    uploadResidenceRequest(
+      state,
+      action: PayloadAction<IUploadResidenceDetailsPayload>,
+    ) {
+      state.residenceLoading = true;
+      state.residenceError = null;
+    },
+    uploadResidenceSuccess(
+      state,
+      action: PayloadAction<IUploadResidenceDetailsResponse>,
+    ) {
+      state.residenceLoading = false;
+      state.residenceData = action.payload;
+    },
+    uploadResidenceFailure(state, action: PayloadAction<string>) {
+      state.residenceLoading = false;
+      state.residenceError = action.payload;
+    },
+    clearUploadResidence(state) {
+      state.reportLoader = false;
+      state.residenceData = null;
+      state.residenceError = null;
+    },
   },
 });
 
@@ -268,5 +323,13 @@ export const {
   getKycChecked,
   setKycCheckedList,
   resetKycCheckedList,
+  uploadPanRequest,
+  uploadPanSuccess,
+  uploadPanFailure,
+  clearPanUpload,
+  uploadResidenceRequest,
+  uploadResidenceSuccess,
+  uploadResidenceFailure,
+  clearUploadResidence,
 } = clientSlice.actions;
 export default clientSlice.reducer;

@@ -9,6 +9,7 @@ import {
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
+import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -31,6 +32,10 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycUploadAdhar = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+
+  const [uploadType, setUploadType] = useState<
+    'mainFront' | 'mainBack' | 'coFront' | 'coBack' | null
+  >(null);
   const [nameAdhar, setNameAdhar] = useState('');
   const [adharNumber, setAdharNumber] = useState('');
   const [frontImage, setFrontImage] = useState<
@@ -47,6 +52,29 @@ export const KycUploadAdhar = () => {
   const [coApplicantBackImage, setCoApplicantBackImage] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const handleSubmit = () => {
+    console.log(
+      nameAdhar,
+      adharNumber,
+      frontImage,
+      backImage,
+      coApplicantNameAdhar,
+      coApplicantAdharNumber,
+      coApplicantFrontImage,
+      coApplicantBackImage,
+    );
+
+    const allFieldsFilled =
+      nameAdhar &&
+      adharNumber &&
+      frontImage &&
+      backImage &&
+      coApplicantNameAdhar &&
+      coApplicantAdharNumber &&
+      coApplicantFrontImage &&
+      coApplicantBackImage;
+  };
 
   return (
     <Container>
@@ -70,17 +98,29 @@ export const KycUploadAdhar = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <DashedButton
-          label="Upload Front side of Aadhar"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {frontImage ? (
+          <Text>File Name: {frontImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Front side of Aadhar"
+            onPress={() => {
+              setUploadType('mainFront');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
-        <DashedButton
-          label="Upload Back side of Aadhar"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {backImage ? (
+          <Text>File Name: {backImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Back side of Aadhar"
+            onPress={() => {
+              setUploadType('mainBack');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
         {/* Co Applicant Section */}
         <Text style={styles.sectionTitle}>
@@ -97,17 +137,53 @@ export const KycUploadAdhar = () => {
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <DashedButton
-          label="Upload Front side of Aadhar"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {coApplicantFrontImage ? (
+          <Text>File Name: {coApplicantFrontImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Front side of Aadhar"
+            onPress={() => {
+              setUploadType('coFront');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
-        <DashedButton
-          label="Upload Back side of Aadhar"
-          onPress={() => setIsVisible(true)}
+        {coApplicantBackImage ? (
+          <Text>File Name: {coApplicantBackImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Back side of Aadhar"
+            onPress={() => {
+              setUploadType('coBack');
+              setIsVisible(true);
+            }}
+          />
+        )}
+
+        <UploadModal
+          visible={isVisible}
+          onClose={file => {
+            if (file) {
+              switch (uploadType) {
+                case 'mainFront':
+                  setFrontImage(file);
+                  break;
+                case 'mainBack':
+                  setBackImage(file);
+                  break;
+                case 'coFront':
+                  setCoApplicantFrontImage(file);
+                  break;
+                case 'coBack':
+                  setCoApplicantBackImage(file);
+                  break;
+              }
+            }
+            setIsVisible(false);
+            setUploadType(null);
+          }}
         />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
@@ -127,7 +203,7 @@ export const KycUploadAdhar = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

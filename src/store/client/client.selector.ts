@@ -1,6 +1,5 @@
 import {createSelector} from '@reduxjs/toolkit';
 import {RootState} from '@store/app/store';
-import {create} from 'react-test-renderer';
 
 const _selectState = (state: RootState) => state.client;
 
@@ -52,6 +51,27 @@ const getkycChecked = createSelector(
   _state => _state.kycCheckedList,
 );
 
+const getUplaodpanLoading = createSelector(
+  _selectState,
+  state => state.panLoading,
+);
+
+const getUplaodpanData = createSelector(_selectState, state => state.panData);
+const getUplaodpanError = createSelector(_selectState, state => state.panError);
+
+const getUplaodResidenceLoading = createSelector(
+  _selectState,
+  state => state.residenceLoading,
+);
+const getUplaodResidenceData = createSelector(
+  _selectState,
+  state => state.residenceData,
+);
+const getUplaodResidenceError = createSelector(
+  _selectState,
+  state => state.residenceError,
+);
+
 export default {
   getClientList,
   getClientFormData,
@@ -67,4 +87,10 @@ export default {
   getUploadKycError,
   getBankList,
   getkycChecked,
+  getUplaodpanLoading,
+  getUplaodpanData,
+  getUplaodpanError,
+  getUplaodResidenceLoading,
+  getUplaodResidenceData,
+  getUplaodResidenceError,
 };

@@ -23,9 +23,20 @@ export type ClientState = {
   basicLoader: boolean;
   clientId: null;
 
+  // KYC Upload
   loading: boolean;
   data: IUploadKycDocumentResponse | null;
   error: string | null;
+
+  // PAN Upload
+  panLoading: boolean;
+  panData: IUploadPanDocumentsResponse | null;
+  panError: string | null;
+
+  // Residence Upload
+  residenceLoading: boolean;
+  residenceData: IUploadResidenceDetailsResponse | null;
+  residenceError: string | null;
 
   BankLoader: boolean;
   BankList: Array<IBankListResponseDatum>;
@@ -269,6 +280,49 @@ export interface IUploadKycDocumentPayload {
 }
 
 export interface IUploadKycDocumentResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_url: string;
+  };
+}
+
+export interface IUploadPanDocumentsPayload {
+  clientId: number;
+  uploaded_by: string;
+  doc: {
+    name_as_per_pan: string;
+    pan_number: string;
+    dob: string;
+  }[];
+  files: {
+    uri: string;
+    type: string;
+    name: string;
+  }[];
+}
+
+export interface IUploadPanDocumentsResponse {
+  status: boolean;
+  message: string;
+  data: any; // Adjust this according to real API response
+}
+
+export interface IUploadResidenceDetailsPayload {
+  doc: {
+    uri: string | null; // File path or URL to the image
+    type: string | null; // e.g., 'image/png'
+    name: string | null; // e.g., 'bhavya.png'
+  };
+  clientId: number;
+  uploaded_by: string;
+  params: string;
+  client_name: string;
+  name_of_owner: string;
+  ownership_status: string;
+}
+
+export interface IUploadResidenceDetailsResponse {
   status: boolean;
   message: string;
   data: {

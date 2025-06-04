@@ -10,6 +10,12 @@ import {
   uploadKycFailure,
   uploadKycRequest,
   uploadKycSuccess,
+  uploadPanFailure,
+  uploadPanRequest,
+  uploadPanSuccess,
+  uploadResidenceFailure,
+  uploadResidenceRequest,
+  uploadResidenceSuccess,
 } from './client.slice';
 import {ClientApis} from '@services/api';
 import {
@@ -28,6 +34,10 @@ import {
   IVendorResponse,
   IvisitResponse,
   IKycCheckedResponse,
+  IUploadPanDocumentsPayload,
+  IUploadPanDocumentsResponse,
+  IUploadResidenceDetailsResponse,
+  IUploadResidenceDetailsPayload,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -205,6 +215,84 @@ function* handleUploadKyc(action: PayloadAction<IUploadKycDocumentPayload>) {
   }
 }
 
+function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
+  try {
+    const {clientId, uploaded_by, doc, files} = action.payload;
+
+    const formData = new FormData();
+    formData.append('clientId', clientId.toString());
+    formData.append('uploaded_by', uploaded_by);
+
+    // Append each file
+    files.forEach((file, index) => {
+      formData.append('doc', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      } as any);
+    });
+
+    // Append each PAN detail
+    doc.forEach((item, index) => {
+      formData.append(`doc[${index}][name_as_per_pan]`, item.name_as_per_pan);
+      formData.append(`doc[${index}][pan_number]`, item.pan_number);
+      formData.append(`doc[${index}][dob]`, item.dob);
+    });
+
+    const {
+      data,
+      error,
+    }: {data: IUploadPanDocumentsResponse | null; error: any} = yield call(
+      ClientApis.uploadPanDocument,
+      formData,
+    );
+
+    if (data) {
+      yield put(uploadPanSuccess(data));
+    } else {
+      yield put(uploadPanFailure(error?.message ?? 'PAN Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadPanFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadResidence(
+  action: PayloadAction<IUploadResidenceDetailsPayload>,
+) {
+  try {
+    const formData = new FormData();
+    formData.append('doc', {
+      uri: action.payload.doc.uri,
+      name: action.payload.doc.name,
+      type: action.payload.doc.type,
+    } as any);
+
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+    formData.append('params', action.payload.params);
+    formData.append('client_name', action.payload.client_name);
+    formData.append('name_of_owner', action.payload.name_of_owner);
+    formData.append('ownership_status', action.payload.ownership_status);
+
+    const {
+      data,
+      error,
+    }: {data: IUploadResidenceDetailsResponse | null; error: any} = yield call(
+      ClientApis.uploadResidenceDocument,
+      formData,
+    );
+
+    if (data) {
+      yield put(uploadResidenceSuccess(data));
+    } else {
+      yield put(uploadResidenceFailure(error?.message ?? 'Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadResidenceFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
 function* hnadleGetBankList(): unknown {
   const {data, error}: Result<IBankListResponse> = yield call(
     clientApi.getBankList,
@@ -237,6 +325,8 @@ export default function* clientSaga() {
   yield takeLatest(saveClientBasicDetails.type, saveVendorDetails);
   yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
+  yield takeLatest(uploadPanRequest.type, handleUploadPan);
+  yield takeLatest(uploadResidenceRequest.type, handleUploadResidence);
   yield takeLatest(getBankList.type, hnadleGetBankList);
   yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
 }

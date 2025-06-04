@@ -18,3 +18,4 @@ export * from './PersonalKYCValidationCard/PersonalKYCValidationCard';
 export * from './UploadModelComponent/UploadModel';
 export * from './DateNTimePicker/DateNTimePicker';
 export * from './SoftsanctionModel/SoftSanctionModel';
+export * from './ThreeDotsDropdown/ThreeDotsDropdown';
