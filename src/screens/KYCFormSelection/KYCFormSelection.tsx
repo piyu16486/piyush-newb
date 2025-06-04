@@ -17,9 +17,10 @@ import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions, clientSelector} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -27,6 +28,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -37,53 +39,81 @@ export const KYCFormSelection = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
 
+  const dispatch = useDispatch();
+  const kycChecked = useSelector(clientSelector.getkycChecked);
+
+  const checkedKyc = () => {
+    dispatch(clientActions.getKycChecked());
+  };
+  useEffect(() => {
+    checkedKyc();
+  }, []);
+
+  const personalDocs = [
+    {label: 'Upload your Picture', key: 'photo'},
+    {label: 'PAN Card Details', key: 'pan'},
+    {label: 'Aadhar Card Details', key: 'aadhaar'},
+    {label: 'Residence Details', key: 'residence'},
+  ];
+
+  const businessDocs = [
+    {label: 'Udhyam Certificate', key: 'udyam'},
+    {label: 'GST Documents', key: 'gst'},
+    {label: 'Godown Details', key: 'godown'},
+    {label: 'Company PAN Card Details', key: 'company_pan'},
+    {label: 'Shareholding Details', key: 'shareholding'},
+    {label: 'Company Information', key: 'company_info'},
+  ];
+
   const [activeTab, setActiveTab] = useState<'personal' | 'business' | 'bank'>(
     'personal',
   );
 
   const handleNavigation = (text: string) => {
-    switch (text) {
-      case 'Upload your Picture':
-        navigation.navigate('KycUploadDoc');
-        break;
-      case 'PAN Card Details':
-        navigation.navigate('KycUploadPan');
-        break;
-      case 'Aadhar Card Details':
-        navigation.navigate('KycUploadAdhar');
-        break;
-      case 'Residence Details':
-        navigation.navigate('ResidenceDetail');
-        break;
-      default:
-        console.warn('Screen not found for', text);
-    }
+    const navMap: {[key: string]: keyof KycNavigatorType} = {
+      'Upload your Picture': 'KycUploadDoc',
+      'PAN Card Details': 'KycUploadPan',
+      'Aadhar Card Details': 'KycUploadAdhar',
+      'Residence Details': 'ResidenceDetail',
+    };
+    const screen = navMap[text];
+    screen
+      ? navigation.navigate(screen)
+      : console.warn('Screen not found for', text);
   };
 
   const handleNavigation2 = (text: string) => {
-    switch (text) {
-      case 'Udhyam Certificate':
-        navigation.navigate('UdhyamCertificate');
-        break;
-      case 'GST Documents':
-        navigation.navigate('GSTDocument');
-        break;
-      case 'Godown Details':
-        navigation.navigate('GodownDetails');
-        break;
-      case 'Company PAN Card Details':
-        navigation.navigate('CompanyPanCard');
-        break;
-      case 'Shareholding Details':
-        navigation.navigate('ShareholdingCompany');
-        break;
-      case 'Company Information':
-        navigation.navigate('CompanyDocument');
-        break;
-      default:
-        console.warn('Screen not found for', text);
-    }
+    const navMap: {[key: string]: keyof KycNavigatorType} = {
+      'Udhyam Certificate': 'UdhyamCertificate',
+      'GST Documents': 'GSTDocument',
+      'Godown Details': 'GodownDetails',
+      'Company PAN Card Details': 'CompanyPanCard',
+      'Shareholding Details': 'ShareholdingCompany',
+      'Company Information': 'CompanyDocument',
+    };
+    const screen = navMap[text];
+    screen
+      ? navigation.navigate(screen)
+      : console.warn('Screen not found for', text);
   };
+
+  const renderList = (
+    docs: {label: string; key: keyof typeof kycChecked}[],
+    handler: (label: string) => void,
+  ) =>
+    docs.map(({label, key}, index) => (
+      <TouchableOpacity
+        key={index}
+        style={styles.card}
+        onPress={() => handler(label)}>
+        <Text style={styles.cardText}>{label}</Text>
+        {kycChecked?.[key] ? (
+          <RightCheckmark width={20} height={20} />
+        ) : (
+          <RightChevron width={20} height={17} />
+        )}
+      </TouchableOpacity>
+    ));
 
   const renderTabContent = () => {
     switch (activeTab) {

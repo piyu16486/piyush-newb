@@ -6,6 +6,7 @@ import {
   getReport,
   getTaskHistory,
   saveClientBasicDetails,
+  setKycCheckedList,
   uploadKycFailure,
   uploadKycRequest,
   uploadKycSuccess,
@@ -26,6 +27,7 @@ import {
   IUploadKycDocumentResponse,
   IVendorResponse,
   IvisitResponse,
+  IKycCheckedResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -214,6 +216,17 @@ function* hnadleGetBankList(): unknown {
   }
 }
 
+function* handleGetKycChecked(): unknown {
+  const {data, error}: Result<IKycCheckedResponse> = yield call(
+    clientApi.getKycChecked,
+  );
+  if (!error) {
+    yield put(clientActions.setKycCheckedList(data.data));
+  } else {
+    yield put(clientActions.setKycCheckedList([]));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
@@ -225,4 +238,5 @@ export default function* clientSaga() {
   yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
   yield takeLatest(getBankList.type, hnadleGetBankList);
+  yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
 }

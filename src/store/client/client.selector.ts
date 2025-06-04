@@ -47,6 +47,11 @@ const getUploadKycError = createSelector(_selectState, state => state.error);
 
 const getBankList = createSelector(_selectState, _state => _state.BankList);
 
+const getkycChecked = createSelector(
+  _selectState,
+  _state => _state.kycCheckedList,
+);
+
 export default {
   getClientList,
   getClientFormData,
@@ -61,4 +66,5 @@ export default {
   getUploadKycData,
   getUploadKycError,
   getBankList,
+  getkycChecked,
 };

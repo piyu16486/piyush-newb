@@ -17,6 +17,7 @@ import {
   IVendorResponse,
   IVisitPayload,
   IvisitResponse,
+  IKycCheckedResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
 
@@ -240,6 +241,22 @@ const getBankList = async () => {
   };
 };
 
+const getKycChecked = async () => {
+  const {data, error} = await tryCatch<AxiosResponse<IKycCheckedResponse>>(
+    Api.get(Endpoints.apiGetKycChecked),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 export default {
   getAllClients,
   getRemarkReport,
@@ -254,4 +271,5 @@ export default {
   uploadAadharDocument,
   uploadResidenceDocument,
   getBankList,
+  getKycChecked,
 };

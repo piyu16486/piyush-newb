@@ -29,6 +29,9 @@ export type ClientState = {
 
   BankLoader: boolean;
   BankList: Array<IBankListResponseDatum>;
+
+  KycCheckedLoader: boolean;
+  kycCheckedList: Array<IKycCheckedResponseDatum>;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -283,6 +286,13 @@ export interface IBankListResponseDatum {
   bank_name: string;
 }
 
-export interface UploadPanKycDocumentPayload {
-  
+export interface UploadPanKycDocumentPayload {}
+
+export interface IKycCheckedResponse {
+  statusCode: number;
+  data: IKycCheckedResponseDatum[];
+}
+export interface IKycCheckedResponseDatum {
+  document_id: number;
+  document_type: string;
 }

@@ -27,11 +27,21 @@ const Endpoints = {
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
 
-  // Kyc Apis
+  // Kyc Apis --
+  // Personal Tab
   apiKycProfilePic: '/client-info-master/personal-kyc/profile',
   apiKycPanUpload: '/client-info-master/personal-kyc/pan',
   apiKycAadharUpload: '/client-info-master/personal-kyc/aadhar',
   apiKycResidenceDetail: '/client-info-master/personal-kyc/residence',
+  // Business Tab
+  apiUdhyamCertificate: '/client-info-master/business-kyc/udhyam',
+  apiGstDocument: '/client-info-master/business-kyc/gst',
+  apiGodownDetails: '/client-info-master/business-kyc/godown',
+  apiCompanyPanDetails: '/client-info-master/business-kyc/pan',
+  apiShareholding: '/client-info-master/business-kyc/share-holding',
+  apiCompanyInformation: '/client-info-master/business-kyc/company-docs',
+  // Get Api to check document uploaded or not
+  apiGetKycChecked: '/client-info-master/personal-kyc/check/16',
 
   // BankList dropdown
   apiBankList: '/client-info-master/bank-list',

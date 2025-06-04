@@ -6,6 +6,7 @@ import {
   ClientState,
   IBankListResponseDatum,
   IClientInfoResponseDatum,
+  IKycCheckedResponseDatum,
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
   ITaskHistoryResponseDatum,
@@ -77,6 +78,9 @@ const initialState: ClientState = {
   // Bank List
   BankLoader: false,
   BankList: [],
+  // Kyc Checked
+  KycCheckedLoader: false,
+  kycCheckedList: [],
 };
 
 const clientSlice = createSlice({
@@ -211,6 +215,23 @@ const clientSlice = createSlice({
       state.BankList = [];
       state.BankLoader = false;
     },
+    setKycCheckedLoader: (state, action: PayloadAction<boolean>) => {
+      state.KycCheckedLoader = action.payload;
+    },
+    getKycChecked: state => {
+      state.KycCheckedLoader = true;
+    },
+    setKycCheckedList: (
+      state,
+      action: PayloadAction<Array<IKycCheckedResponseDatum>>,
+    ) => {
+      state.KycCheckedLoader = false;
+      state.kycCheckedList = action.payload;
+    },
+    resetKycCheckedList: state => {
+      state.kycCheckedList = [];
+      state.KycCheckedLoader = false;
+    },
   },
 });
 
@@ -243,5 +264,9 @@ export const {
   getBankList,
   setBankList,
   resetBankList,
+  setKycCheckedLoader,
+  getKycChecked,
+  setKycCheckedList,
+  resetKycCheckedList,
 } = clientSlice.actions;
 export default clientSlice.reducer;
