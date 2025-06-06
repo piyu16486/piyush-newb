@@ -23,6 +23,7 @@ const Endpoints = {
 
   // Lead apis
   apiGetLeadProgress: '/client-info-master/16/lead-progress',
+  apiInfoLeadProgress: '/client-info-master/16/lead-progress',
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
