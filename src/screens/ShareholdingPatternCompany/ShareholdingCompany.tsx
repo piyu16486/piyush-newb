@@ -14,6 +14,7 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
@@ -25,6 +26,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -38,6 +40,32 @@ export const ShareholdingCompany = () => {
   const [shareholdingImage, setShareholdingImage] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(companyName, shareholdingImage);
+    if (companyName && shareholdingImage) {
+      const payload = {
+        clientId: 16,
+        uploaded_by: 'Nishith Upadhyay',
+        client_name: companyName,
+        doc: {
+          name: shareholdingImage.name ?? Date.now().toString(),
+          type: shareholdingImage.type ?? 'image.png',
+          uri: shareholdingImage.uri,
+        },
+        params: 'ShareHolding',
+      };
+      console.log('Disp uploadShareholdingRequest');
+      dispatch(clientActions.uploadShareholdingRequest(payload));
+    }
+  };
+
+  const handleClear = () => {
+    setCompanyName('');
+    setShareholdingImage(undefined);
+  };
 
   return (
     <Container>
@@ -54,20 +82,33 @@ export const ShareholdingCompany = () => {
         </View>
         <Input
           label="Company Name"
+          value={companyName}
           onChangeText={setCompanyName}
           containerStyle={{marginBottom: scaleHeight(20)}}
         />
-        <DashedButton
-          label="Upload Shareholding Pattern"
-          onPress={() => setIsVisible(true)}
+
+        {shareholdingImage ? (
+          <Text>File Name: {shareholdingImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Shareholding Pattern"
+            onPress={() => setIsVisible(true)}
+          />
+        )}
+
+        <UploadModal
+          visible={isVisible}
+          onClose={file => {
+            if (file) {
+              setShareholdingImage(file);
+            }
+            setIsVisible(false);
+          }}
         />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}
@@ -81,7 +122,7 @@ export const ShareholdingCompany = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

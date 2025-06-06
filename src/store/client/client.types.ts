@@ -33,10 +33,45 @@ export type ClientState = {
   panData: IUploadPanDocumentsResponse | null;
   panError: string | null;
 
+  // Aadhar Upload
+  adharLoading: boolean;
+  adharData: IUploadAdharDocumentResponse | null;
+  adharError: string | null;
+
   // Residence Upload
   residenceLoading: boolean;
   residenceData: IUploadResidenceDetailsResponse | null;
   residenceError: string | null;
+
+  // Udhyam Upload
+  udhyamLoading: boolean;
+  udhyamData: IUploadUdhyamResponse | null;
+  udhyamError: string | null;
+
+  // Gst Upload
+  gstDocLoading: boolean;
+  gstDocData: IUploadGstResponse | null;
+  gtsDocError: string | null;
+
+  // GoDown Upload
+  goDownLoading: boolean;
+  goDownData: IUploadGodDownDetailsResponse | null;
+  goDownError: string | null;
+
+  // Shareholding Upload
+  ShareholdingLoading: boolean;
+  ShareholdingData: IUploadShareholdingResponse | null;
+  ShareholdingError: string | null;
+
+  // CompanyPan Upload
+  CompanyPanLoading: boolean;
+  CompanyPanData: IuplaodCompanyPanResponse | null;
+  CompanyPanError: string | null;
+
+  // CompanyInfo Upload
+  CompanyInfoLoading: boolean;
+  CompanyInfoData: IUploadCompanyInfoResponse | null;
+  CompanyInfoError: string | null;
 
   BankLoader: boolean;
   BankList: Array<IBankListResponseDatum>;
@@ -305,14 +340,34 @@ export interface IUploadPanDocumentsPayload {
 export interface IUploadPanDocumentsResponse {
   status: boolean;
   message: string;
-  data: any; // Adjust this according to real API response
+  data: any;
+}
+
+export interface IUploadAdharDocumnetsPayload {
+  clientId: number;
+  uploaded_by: string;
+  doc: {
+    name_as_per_aadhar: string;
+    aadhar_number: string;
+  }[];
+  files: {
+    uri: string;
+    type: string;
+    name: string;
+  }[];
+}
+
+export interface IUploadAdharDocumentResponse {
+  status: boolean;
+  message: string;
+  data: any;
 }
 
 export interface IUploadResidenceDetailsPayload {
   doc: {
-    uri: string | null; // File path or URL to the image
-    type: string | null; // e.g., 'image/png'
-    name: string | null; // e.g., 'bhavya.png'
+    uri: string | null;
+    type: string | null;
+    name: string | null;
   };
   clientId: number;
   uploaded_by: string;
@@ -330,6 +385,155 @@ export interface IUploadResidenceDetailsResponse {
   };
 }
 
+export interface IUploadUdhyamPayload {
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  }[];
+  clientId: number;
+  uploaded_by: string;
+  docDetails: {
+    name_as_per_udhyam: string;
+    urn_number: string;
+  };
+}
+
+export interface IUploadUdhyamResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_urls: {
+      url: string;
+      name: string;
+    }[];
+    docDetails: {
+      name_as_per_udhyam: string;
+      urn_number: string;
+    };
+  };
+}
+
+export interface IUploadGstPayload {
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  };
+  clientId: number;
+  uploaded_by: string;
+  name_as_per_gst: string;
+  gst_number: string;
+  params: string;
+}
+
+export interface IUploadGstResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_urls: {
+      url: string;
+      name: string;
+    }[];
+    docDetails: {
+      name_as_per_gst: string;
+      gst_number: string;
+    };
+  };
+}
+
+export interface IUploadGoDownDetailsPayload {
+  doc: {
+    uri: string | null;
+    type: string | null;
+    name: string | null;
+  };
+  clientId: number;
+  uploaded_by: string;
+  params: string;
+  client_name: string;
+  name_of_owner: string;
+  ownership_status: string;
+}
+
+export interface IUploadGodDownDetailsResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_url: string;
+  };
+}
+
+export interface IUploadShareholdingPayload {
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  };
+  clientId: number;
+  uploaded_by: string;
+  params: string;
+  client_name: string;
+}
+
+export interface IUploadShareholdingResponse {
+  status: boolean;
+  messsage: string;
+  data: {
+    document_url: string;
+  };
+}
+
+export interface IuploadCompanyPanPayload {
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  }[]; // Array of 2 files
+  clientId: number;
+  uploaded_by: string;
+  docDetails: {
+    name_as_per_pan: string;
+    pan_number: string;
+  };
+}
+
+export interface IuplaodCompanyPanResponse {
+  status: boolean;
+  message: string;
+  data: {
+    document_urls: {
+      url: string;
+      name: string;
+    }[];
+    docDetails: {
+      name_as_per_pan: string;
+      pan_number: string;
+    };
+  };
+}
+
+export interface IUploadCompanyInfoPayload {
+  clientId: number;
+  uploaded_by: string;
+  doc: {
+    uri: string;
+    type: string;
+    name: string;
+  }[];
+}
+
+export interface IUploadCompanyInfoResponse {
+  status: boolean;
+  message: string;
+  data: {
+    uploaded_urls: {
+      url: string;
+      name: string;
+    }[];
+  };
+}
+
 export interface IBankListResponse {
   statusCode: number;
   data: IBankListResponseDatum[];
@@ -339,8 +543,6 @@ export interface IBankListResponseDatum {
   id: number;
   bank_name: string;
 }
-
-export interface UploadPanKycDocumentPayload {}
 
 export interface IKycCheckedResponse {
   statusCode: number;

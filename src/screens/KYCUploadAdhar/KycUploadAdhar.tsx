@@ -13,6 +13,7 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleWidth, scaleHeight, scaleFont} from '@utils/Scale';
 import React, {useState} from 'react';
@@ -23,6 +24,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -53,6 +55,8 @@ export const KycUploadAdhar = () => {
     DocumentPickerResponse | undefined
   >();
 
+  const dispatch = useDispatch();
+
   const handleSubmit = () => {
     console.log(
       nameAdhar,
@@ -74,6 +78,61 @@ export const KycUploadAdhar = () => {
       coApplicantAdharNumber &&
       coApplicantFrontImage &&
       coApplicantBackImage;
+
+    if (allFieldsFilled) {
+      const payload = {
+        clientId: 16,
+        uploaded_by: 'Nishith Upadhyay',
+        doc: [
+          {
+            name_as_per_aadhar: nameAdhar,
+            aadhar_number: adharNumber,
+          },
+          {
+            name_as_per_aadhar: coApplicantNameAdhar,
+            aadhar_number: coApplicantAdharNumber,
+          },
+        ],
+        files: [
+          {
+            uri: frontImage.uri,
+            name: frontImage.name ?? Date.now().toString(),
+            type: frontImage.type ?? 'image/png',
+          },
+          {
+            uri: backImage.uri,
+            name: backImage.name ?? Date.now().toString(),
+            type: backImage.type ?? 'image/png',
+          },
+          {
+            uri: coApplicantFrontImage.uri,
+            name: coApplicantFrontImage.name ?? Date.now().toString(),
+            type: coApplicantFrontImage.type ?? 'image/png',
+          },
+          {
+            uri: coApplicantBackImage.uri,
+            name: coApplicantBackImage.name ?? Date.now().toString(),
+            type: coApplicantBackImage.type ?? 'image/png',
+          },
+        ],
+      };
+
+      console.log('Disp uploadAdharRequest', payload);
+      dispatch(clientActions.uploadAdharRequest(payload));
+    } else {
+      console.warn('Please fill all required Adhar Details and upload images.');
+    }
+  };
+
+  const handleClear = () => {
+    setNameAdhar('');
+    setAdharNumber('');
+    setFrontImage(undefined);
+    setBackImage(undefined);
+    setCoApplicantNameAdhar('');
+    setCoApplicantAdharNumber('');
+    setCoApplicantFrontImage(undefined);
+    setCoApplicantBackImage(undefined);
   };
 
   return (
@@ -89,11 +148,13 @@ export const KycUploadAdhar = () => {
         </Text>
         <Input
           label="Name as per Aadhar Card"
+          value={nameAdhar}
           onChangeText={setNameAdhar}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Aadhar number"
+          value={adharNumber}
           onChangeText={setAdharNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
@@ -128,11 +189,13 @@ export const KycUploadAdhar = () => {
         </Text>
         <Input
           label="Name as per Aadhar Card"
+          value={coApplicantNameAdhar}
           onChangeText={setCoApplicantNameAdhar}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Aadhar number"
+          value={coApplicantAdharNumber}
           onChangeText={setCoApplicantAdharNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
@@ -187,9 +250,7 @@ export const KycUploadAdhar = () => {
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}

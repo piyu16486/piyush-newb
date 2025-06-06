@@ -7,6 +7,20 @@ import {
   getTaskHistory,
   saveClientBasicDetails,
   setKycCheckedList,
+  uploadAdharFailure,
+  uploadAdharRequest,
+  uploadAdharSuccess,
+  uploadCompanyInfoFailure,
+  uploadCompanyInfoRequest,
+  uploadCompanyInfoSuccess,
+  uploadCompanyPanFailure,
+  uploadCompanyPanRequest,
+  uploadCompanyPanSuccess,
+  uploadGoDownFailure,
+  uploadGoDownRequest,
+  uploadGoDownSuccess,
+  uploadGstRequest,
+  uploadGstSuccess,
   uploadKycFailure,
   uploadKycRequest,
   uploadKycSuccess,
@@ -16,6 +30,12 @@ import {
   uploadResidenceFailure,
   uploadResidenceRequest,
   uploadResidenceSuccess,
+  uploadShareholdingFailure,
+  uploadShareholdingRequest,
+  uploadShareholdingSuccess,
+  uploadUdhyamFailure,
+  uploadUdhyamRequest,
+  uploadUdhyamSuccess,
 } from './client.slice';
 import {ClientApis} from '@services/api';
 import {
@@ -38,6 +58,20 @@ import {
   IUploadPanDocumentsResponse,
   IUploadResidenceDetailsResponse,
   IUploadResidenceDetailsPayload,
+  IUploadUdhyamPayload,
+  IUploadUdhyamResponse,
+  IUploadGstPayload,
+  IUploadGstResponse,
+  IUploadGoDownDetailsPayload,
+  IUploadGodDownDetailsResponse,
+  IUploadShareholdingPayload,
+  IUploadShareholdingResponse,
+  IuploadCompanyPanPayload,
+  IuplaodCompanyPanResponse,
+  IUploadAdharDocumnetsPayload,
+  IUploadAdharDocumentResponse,
+  IUploadCompanyInfoPayload,
+  IUploadCompanyInfoResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -223,7 +257,6 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
     formData.append('clientId', clientId.toString());
     formData.append('uploaded_by', uploaded_by);
 
-    // Append each file
     files.forEach((file, index) => {
       formData.append('doc', {
         uri: file.uri,
@@ -232,7 +265,6 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
       } as any);
     });
 
-    // Append each PAN detail
     doc.forEach((item, index) => {
       formData.append(`doc[${index}][name_as_per_pan]`, item.name_as_per_pan);
       formData.append(`doc[${index}][pan_number]`, item.pan_number);
@@ -254,6 +286,49 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
     }
   } catch (err: any) {
     yield put(uploadPanFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadAdhar(
+  action: PayloadAction<IUploadAdharDocumnetsPayload>,
+) {
+  try {
+    const {clientId, uploaded_by, doc, files} = action.payload;
+
+    const formData = new FormData();
+    formData.append('clientId', clientId.toString());
+    formData.append('uploaded_by', uploaded_by);
+
+    files.forEach(file => {
+      formData.append('doc', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      } as any);
+    });
+
+    doc.forEach((item, index) => {
+      formData.append(
+        `doc[${index}][name_as_per_aadhar]`,
+        item.name_as_per_aadhar,
+      );
+      formData.append(`doc[${index}[aadhar_number]`, item.aadhar_number);
+    });
+    const {
+      data,
+      error,
+    }: {data: IUploadAdharDocumentResponse | null; error: any} = yield call(
+      ClientApis.uploadAadharDocument,
+      formData,
+    );
+
+    if (data) {
+      yield put(uploadAdharSuccess(data));
+    } else {
+      yield put(uploadAdharFailure(error?.message ?? 'Adhar Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadAdharFailure(err?.message ?? 'Something went wrong'));
   }
 }
 
@@ -293,6 +368,223 @@ function* handleUploadResidence(
   }
 }
 
+function* handleUploadUdhyam(action: PayloadAction<IUploadUdhyamPayload>) {
+  try {
+    console.log('Uploading Udhyam Document...');
+
+    const formData = new FormData();
+
+    // Attach each file in doc[]
+    action.payload.doc.forEach((file, index) => {
+      formData.append('doc', {
+        uri: file.uri,
+        name: file.name,
+        type: file.type,
+      } as any);
+    });
+
+    // Text fields
+    formData.append(
+      'doc[name_as_per_udhyam]',
+      action.payload.docDetails.name_as_per_udhyam,
+    );
+    formData.append('doc[urn_number]', action.payload.docDetails.urn_number);
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+
+    // API Call
+    const {data, error}: {data: IUploadUdhyamResponse | null; error: any} =
+      yield call(ClientApis.uploadUdhyamDocument, formData);
+
+    if (data) {
+      yield put(uploadUdhyamSuccess(data));
+    } else {
+      yield put(uploadUdhyamFailure(error?.message ?? 'Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadUdhyamFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadGst(action: PayloadAction<IUploadGstPayload>) {
+  try {
+    console.log('Uploading GST Document...');
+
+    const formData = new FormData();
+
+    // Attach the document
+    formData.append('doc', {
+      uri: action.payload.doc.uri,
+      name: action.payload.doc.name,
+      type: action.payload.doc.type,
+    } as any);
+
+    // Append other form fields
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+    formData.append('name_as_per_gst', action.payload.name_as_per_gst);
+    formData.append('gst_number', action.payload.gst_number);
+    formData.append('params', action.payload.params);
+
+    // API Call
+    const {data, error}: {data: IUploadGstResponse | null; error: any} =
+      yield call(ClientApis.uploadGstDocument, formData);
+
+    if (data) {
+      yield put(uploadGstSuccess(data));
+    } else {
+      yield put(uploadKycFailure(error?.message ?? 'Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadKycFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadGoDown(
+  action: PayloadAction<IUploadGoDownDetailsPayload>,
+) {
+  try {
+    const formData = new FormData();
+    formData.append('doc', {
+      uri: action.payload.doc.uri,
+      name: action.payload.doc.name,
+      type: action.payload.doc.type,
+    } as any);
+
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+    formData.append('params', action.payload.params);
+    formData.append('client_name', action.payload.client_name);
+    formData.append('name_of_owner', action.payload.name_of_owner);
+    formData.append('ownership_status', action.payload.ownership_status);
+
+    const {
+      data,
+      error,
+    }: {data: IUploadGodDownDetailsResponse | null; error: any} = yield call(
+      ClientApis.uploadGoDownDocument,
+      formData,
+    );
+
+    if (data) {
+      yield put(uploadGoDownSuccess(data));
+    } else {
+      yield put(uploadGoDownFailure(error?.message ?? 'Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadGoDownFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadShareholding(
+  action: PayloadAction<IUploadShareholdingPayload>,
+) {
+  try {
+    console.log('Called UploadShareholdingRequest');
+    const formData = new FormData();
+    formData.append('doc', {
+      uri: action.payload.doc.uri,
+      name: action.payload.doc.name,
+      type: action.payload.doc.type,
+    } as any);
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+    formData.append('params', action.payload.params);
+    formData.append('client_name', action.payload.client_name);
+
+    const {
+      data,
+      error,
+    }: {data: IUploadShareholdingResponse | null; error: any} = yield call(
+      ClientApis.uploadShareholdingDocument,
+      formData,
+    );
+    if (data) {
+      yield put(uploadShareholdingSuccess(data));
+    } else {
+      yield put(
+        uploadGoDownFailure(error?.message ?? 'Shareholding Upload failed'),
+      );
+    }
+  } catch (err: any) {
+    yield put(
+      uploadShareholdingFailure(err?.message ?? 'Something went wrong'),
+    );
+  }
+}
+
+function* handleUploadCompanyPan(
+  action: PayloadAction<IuploadCompanyPanPayload>,
+) {
+  try {
+    console.log('Uploading CompanyPan Document...');
+
+    const formData = new FormData();
+
+    action.payload.doc.forEach(file => {
+      formData.append('doc', {
+        uri: file.uri,
+        name: file.name,
+        type: file.type,
+      } as any);
+    });
+
+    formData.append(
+      'doc[name_as_per_pan]',
+      action.payload.docDetails.name_as_per_pan,
+    );
+    formData.append('doc[pan_number]', action.payload.docDetails.pan_number);
+    formData.append('clientId', action.payload.clientId.toString());
+    formData.append('uploaded_by', action.payload.uploaded_by);
+
+    const {data, error}: {data: IuplaodCompanyPanResponse | null; error: any} =
+      yield call(ClientApis.uploadCompanyPanDocument, formData);
+
+    if (data) {
+      yield put(uploadCompanyPanSuccess(data));
+    } else {
+      yield put(uploadCompanyPanFailure(error?.message ?? 'Upload failed'));
+    }
+  } catch (err: any) {
+    yield put(uploadCompanyPanFailure(err?.message ?? 'Something went wrong'));
+  }
+}
+
+function* handleUploadCompanyInfo(
+  action: PayloadAction<IUploadCompanyInfoPayload>,
+) {
+  try {
+    const {clientId, uploaded_by, doc} = action.payload;
+
+    const formData = new FormData();
+    formData.append('clientId', clientId.toString());
+    formData.append('uploaded_by', uploaded_by);
+
+    doc.forEach(file => {
+      formData.append('doc', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      } as any);
+    });
+
+    const {data, error}: {data: IUploadCompanyInfoResponse | null; error: any} =
+      yield call(ClientApis.uploadCopmanyInfoDocument, formData);
+
+    if (error) {
+      yield put(
+        uploadCompanyInfoFailure(error.message || 'Something went wrong'),
+      );
+    } else {
+      yield put(uploadCompanyInfoSuccess(data!));
+    }
+  } catch (err: any) {
+    yield put(
+      uploadCompanyInfoFailure(err.message || 'Unexpected error occurred'),
+    );
+  }
+}
+
 function* hnadleGetBankList(): unknown {
   const {data, error}: Result<IBankListResponse> = yield call(
     clientApi.getBankList,
@@ -326,7 +618,14 @@ export default function* clientSaga() {
   yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
   yield takeLatest(uploadPanRequest.type, handleUploadPan);
+  yield takeLatest(uploadAdharRequest.type, handleUploadAdhar);
   yield takeLatest(uploadResidenceRequest.type, handleUploadResidence);
+  yield takeLatest(uploadUdhyamRequest.type, handleUploadUdhyam);
+  yield takeLatest(uploadGstRequest.type, handleUploadGst);
+  yield takeLatest(uploadGoDownRequest.type, handleUploadGoDown);
+  yield takeLatest(uploadShareholdingRequest.type, handleUploadShareholding);
+  yield takeLatest(uploadCompanyInfoRequest.type, handleUploadCompanyInfo);
+  yield takeLatest(uploadCompanyPanRequest.type, handleUploadCompanyPan);
   yield takeLatest(getBankList.type, hnadleGetBankList);
   yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
 }

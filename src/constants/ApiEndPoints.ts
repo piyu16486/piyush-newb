@@ -40,6 +40,7 @@ const Endpoints = {
   apiCompanyPanDetails: '/client-info-master/business-kyc/pan',
   apiShareholding: '/client-info-master/business-kyc/share-holding',
   apiCompanyInformation: '/client-info-master/business-kyc/company-docs',
+
   // Get Api to check document uploaded or not
   apiGetKycChecked: '/client-info-master/personal-kyc/check/16',
 

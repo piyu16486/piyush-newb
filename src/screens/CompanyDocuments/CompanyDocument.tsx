@@ -7,6 +7,7 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
@@ -17,6 +18,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -26,6 +28,9 @@ type KycNavigationType = CompositeNavigationProp<
 export const CompanyDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [uploadType, setUploadType] = useState<
+    'aoaDoc' | 'moaDoc' | 'coiDoc' | 'otherDoc' | null
+  >(null);
   const [aoaDocument, setAoaDocument] = useState<
     DocumentPickerResponse | undefined
   >();
@@ -38,6 +43,56 @@ export const CompanyDocument = () => {
   const [otherDocument, setOtherDocument] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(aoaDocument, moaDocument, coiDocument, otherDocument);
+
+    const allFieldsFilled =
+      aoaDocument && moaDocument && coiDocument && otherDocument;
+
+    if (allFieldsFilled) {
+      const payload = {
+        clientId: 16,
+        uploaded_by: 'Nishith Upadhyay',
+        doc: [
+          {
+            uri: aoaDocument.uri,
+            name: aoaDocument.name ?? Date.now().toString(),
+            type: aoaDocument.type ?? 'image/png',
+          },
+          {
+            uri: moaDocument.uri,
+            name: moaDocument.name ?? Date.now().toString(),
+            type: moaDocument.type ?? 'image/png',
+          },
+          {
+            uri: coiDocument.uri,
+            name: coiDocument.name ?? Date.now().toString(),
+            type: coiDocument.type ?? 'image/png',
+          },
+          {
+            uri: otherDocument.uri,
+            name: otherDocument.name ?? Date.now().toString(),
+            type: otherDocument.type ?? 'image/png',
+          },
+        ],
+      };
+
+      console.log('Disp uploadCompanyInfoRequest', payload);
+      dispatch(clientActions.uploadCompanyInfoRequest(payload));
+    } else {
+      console.warn('Please fill all required images of Company Document');
+    }
+  };
+
+  const handleClear = () => {
+    setAoaDocument(undefined);
+    setMoaDocument(undefined);
+    setCoiDocument(undefined);
+    setOtherDocument(undefined);
+  };
 
   return (
     <Container>
@@ -53,50 +108,85 @@ export const CompanyDocument = () => {
           <Text style={styles.sectionTitle}>Company Documents</Text>
 
           <Text style={styles.subTitle}>AOA</Text>
-          <DashedButton
-            label="Upload AOA Document"
-            onPress={() => setIsVisible(true)}
-          />
-          <UploadModal
-            visible={isVisible}
-            onClose={() => setIsVisible(false)}
-          />
+
+          {aoaDocument ? (
+            <Text>File Name: {aoaDocument.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload AOA Document"
+              onPress={() => {
+                setUploadType('aoaDoc');
+                setIsVisible(true);
+              }}
+            />
+          )}
 
           <Text style={styles.subTitle}>MOA</Text>
-          <DashedButton
-            label="Upload MOA Document"
-            onPress={() => setIsVisible(true)}
-          />
-          <UploadModal
-            visible={isVisible}
-            onClose={() => setIsVisible(false)}
-          />
+          {moaDocument ? (
+            <Text>File Name: {moaDocument.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload MOA Document"
+              onPress={() => {
+                setUploadType('moaDoc');
+                setIsVisible(true);
+              }}
+            />
+          )}
 
           <Text style={styles.subTitle}>COI</Text>
-          <DashedButton
-            label="Upload COI Document"
-            onPress={() => setIsVisible(true)}
-          />
-          <UploadModal
-            visible={isVisible}
-            onClose={() => setIsVisible(false)}
-          />
+          {coiDocument ? (
+            <Text>File Name: {coiDocument.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload COI Document"
+              onPress={() => {
+                setUploadType('coiDoc');
+                setIsVisible(true);
+              }}
+            />
+          )}
 
           <Text style={styles.subTitle}>Other Document</Text>
-          <DashedButton
-            label="Upload Other Document"
-            onPress={() => setIsVisible(true)}
-          />
+          {otherDocument ? (
+            <Text>File Name: {otherDocument.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload Other Document"
+              onPress={() => {
+                setUploadType('otherDoc');
+                setIsVisible(true);
+              }}
+            />
+          )}
+
           <UploadModal
             visible={isVisible}
-            onClose={() => setIsVisible(false)}
+            onClose={file => {
+              if (file) {
+                switch (uploadType) {
+                  case 'aoaDoc':
+                    setAoaDocument(file);
+                    break;
+                  case 'moaDoc':
+                    setMoaDocument(file);
+                    break;
+                  case 'coiDoc':
+                    setCoiDocument(file);
+                    break;
+                  case 'otherDoc':
+                    setOtherDocument(file);
+                    break;
+                }
+              }
+              setIsVisible(false);
+              setUploadType(null);
+            }}
           />
 
           <View style={styles.footerButton}>
             {/* Clear All Button */}
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={() => console.log('Clear All Pressed')}>
+            <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
               <Text style={styles.clearText}>Clear all</Text>
             </TouchableOpacity>
             {/* Save Button */}
@@ -112,7 +202,7 @@ export const CompanyDocument = () => {
               <TouchableOpacity
                 style={styles.saveButton}
                 activeOpacity={0.7}
-                onPress={() => console.log('Next Pressed')}>
+                onPress={handleSubmit}>
                 <Text style={styles.saveText}>Submit</Text>
                 <RightCheckmark width={12} height={12} />
               </TouchableOpacity>

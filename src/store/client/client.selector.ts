@@ -59,6 +59,21 @@ const getUplaodpanLoading = createSelector(
 const getUplaodpanData = createSelector(_selectState, state => state.panData);
 const getUplaodpanError = createSelector(_selectState, state => state.panError);
 
+const getUploadAdharLoading = createSelector(
+  _selectState,
+  state => state.adharLoading,
+);
+
+const getUploadAdharData = createSelector(
+  _selectState,
+  state => state.adharData,
+);
+
+const getUploadAdharError = createSelector(
+  _selectState,
+  state => state.adharError,
+);
+
 const getUplaodResidenceLoading = createSelector(
   _selectState,
   state => state.residenceLoading,
@@ -70,6 +85,63 @@ const getUplaodResidenceData = createSelector(
 const getUplaodResidenceError = createSelector(
   _selectState,
   state => state.residenceError,
+);
+
+const getUdhyamLoading = createSelector(
+  _selectState,
+  state => state.udhyamLoading,
+);
+
+const getUdhyamData = createSelector(_selectState, state => state.udhyamData);
+
+const getUdhyamError = createSelector(_selectState, state => state.udhyamError);
+
+const getGstLoading = createSelector(
+  _selectState,
+  state => state.gstDocLoading,
+);
+
+const getGstData = createSelector(_selectState, state => state.gstDocData);
+
+const getGstError = createSelector(_selectState, state => state.gtsDocError);
+
+const getGoDownLoading = createSelector(
+  _selectState,
+  state => state.goDownLoading,
+);
+
+const getGoDownData = createSelector(_selectState, state => state.goDownData);
+
+const getGoDownError = createSelector(_selectState, state => state.goDownError);
+
+const getCompanyPanLoading = createSelector(
+  _selectState,
+  state => state.CompanyPanLoading,
+);
+
+const getCompanyPanData = createSelector(
+  _selectState,
+  state => state.CompanyPanData,
+);
+
+const getCompanyPanError = createSelector(
+  _selectState,
+  state => state.CompanyPanError,
+);
+
+const getCompanyInfoLoading = createSelector(
+  _selectState,
+  state => state.CompanyInfoLoading,
+);
+
+const getCompanyInfoData = createSelector(
+  _selectState,
+  state => state.CompanyInfoData,
+);
+
+const getCompanyInfoError = createSelector(
+  _selectState,
+  state => state.CompanyInfoError,
 );
 
 export default {
@@ -90,7 +162,25 @@ export default {
   getUplaodpanLoading,
   getUplaodpanData,
   getUplaodpanError,
+  getUploadAdharLoading,
+  getUploadAdharData,
+  getUploadAdharError,
   getUplaodResidenceLoading,
   getUplaodResidenceData,
   getUplaodResidenceError,
+  getUdhyamLoading,
+  getUdhyamData,
+  getUdhyamError,
+  getGstLoading,
+  getGstData,
+  getGstError,
+  getGoDownLoading,
+  getGoDownData,
+  getGoDownError,
+  getCompanyPanLoading,
+  getCompanyPanData,
+  getCompanyPanError,
+  getCompanyInfoLoading,
+  getCompanyInfoData,
+  getCompanyInfoError,
 };

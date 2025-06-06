@@ -78,6 +78,7 @@ export const KycUploadDoc = () => {
         <Input
           label="Your Name"
           placeholder="Value"
+          value={name}
           onChangeText={setName}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />

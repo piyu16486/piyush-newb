@@ -225,6 +225,118 @@ const uploadResidenceDocument = async (formData: FormData) => {
   };
 };
 
+const uploadUdhyamDocument = async (FormData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiUdhyamCertificate, FormData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadGstDocument = async (FormData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiGstDocument, FormData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadGoDownDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiGodownDetails, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadShareholdingDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiShareholding, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadCompanyPanDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiCompanyPanDetails, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const uploadCopmanyInfoDocument = async (formData: FormData) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiCompanyInformation, formData, {
+      isFormData: true,
+    } as CustomRequestConfig),
+  );
+
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 const getBankList = async () => {
   const {data, error} = await tryCatch<AxiosResponse<IBankListResponse>>(
     Api.get(Endpoints.apiBankList),
@@ -270,6 +382,12 @@ export default {
   uploadPanDocument,
   uploadAadharDocument,
   uploadResidenceDocument,
+  uploadUdhyamDocument,
+  uploadGstDocument,
+  uploadGoDownDocument,
+  uploadShareholdingDocument,
+  uploadCompanyPanDocument,
+  uploadCopmanyInfoDocument,
   getBankList,
   getKycChecked,
 };

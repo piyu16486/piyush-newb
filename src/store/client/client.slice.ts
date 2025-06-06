@@ -10,12 +10,26 @@ import {
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
   ITaskHistoryResponseDatum,
+  IuplaodCompanyPanResponse,
+  IUploadAdharDocumentResponse,
+  IUploadAdharDocumnetsPayload,
+  IUploadCompanyInfoPayload,
+  IUploadCompanyInfoResponse,
+  IuploadCompanyPanPayload,
+  IUploadGodDownDetailsResponse,
+  IUploadGoDownDetailsPayload,
+  IUploadGstPayload,
+  IUploadGstResponse,
   IUploadKycDocumentPayload,
   IUploadKycDocumentResponse,
   IUploadPanDocumentsPayload,
   IUploadPanDocumentsResponse,
   IUploadResidenceDetailsPayload,
   IUploadResidenceDetailsResponse,
+  IUploadShareholdingPayload,
+  IUploadShareholdingResponse,
+  IUploadUdhyamPayload,
+  IUploadUdhyamResponse,
 } from './client.types';
 
 const clientFormData: ClientFormType = {
@@ -89,10 +103,30 @@ const initialState: ClientState = {
   panLoading: false,
   panData: null,
   panError: null,
+  // Adhar Kyc
+  adharLoading: false,
+  adharData: null,
+  adharError: null,
   // Residence Kyc
   residenceLoading: false,
   residenceData: null,
   residenceError: null,
+  // Udhyam Kyc
+  udhyamLoading: false,
+  udhyamData: null,
+  udhyamError: null,
+  // Gst Kyc
+  gstDocLoading: false,
+  gstDocData: null,
+  gtsDocError: null,
+  // GoDown Kyc
+  goDownLoading: false,
+  goDownData: null,
+  goDownError: null,
+  // Shareholding Kyc
+  ShareholdingLoading: false,
+  ShareholdingData: null,
+  ShareholdingError: null,
 };
 
 const clientSlice = createSlice({
@@ -264,6 +298,29 @@ const clientSlice = createSlice({
       state.panData = null;
       state.panError = null;
     },
+    uploadAdharRequest(
+      state,
+      action: PayloadAction<IUploadAdharDocumnetsPayload>,
+    ) {
+      state.adharLoading = true;
+      state.adharError = null;
+    },
+    uploadAdharSuccess(
+      state,
+      action: PayloadAction<IUploadAdharDocumentResponse>,
+    ) {
+      state.adharLoading = false;
+      state.adharData = action.payload;
+    },
+    uploadAdharFailure(state, action: PayloadAction<string>) {
+      state.adharLoading = false;
+      state.adharError = action.payload;
+    },
+    clearAdhar(state) {
+      state.adharLoading = false;
+      state.adharData = null;
+      state.adharError = null;
+    },
     uploadResidenceRequest(
       state,
       action: PayloadAction<IUploadResidenceDetailsPayload>,
@@ -283,9 +340,135 @@ const clientSlice = createSlice({
       state.residenceError = action.payload;
     },
     clearUploadResidence(state) {
-      state.reportLoader = false;
+      state.residenceLoading = false;
       state.residenceData = null;
       state.residenceError = null;
+    },
+    uploadUdhyamRequest(state, action: PayloadAction<IUploadUdhyamPayload>) {
+      state.udhyamLoading = true;
+      state.udhyamError = null;
+    },
+    uploadUdhyamSuccess(state, action: PayloadAction<IUploadUdhyamResponse>) {
+      state.udhyamLoading = false;
+      state.udhyamData = action.payload;
+    },
+    uploadUdhyamFailure(state, action: PayloadAction<string>) {
+      state.udhyamLoading = false;
+      state.udhyamError = action.payload;
+    },
+    clearUplaodUdhyam(state) {
+      state.udhyamLoading = false;
+      state.udhyamData = null;
+      state.udhyamError = null;
+    },
+    uploadGstRequest(state, action: PayloadAction<IUploadGstPayload>) {
+      state.gstDocLoading = true;
+      state.gtsDocError = null;
+    },
+    uploadGstSuccess(state, action: PayloadAction<IUploadGstResponse>) {
+      state.gstDocLoading = false;
+      state.gstDocData = action.payload;
+    },
+    uploadGstfailure(state, action: PayloadAction<string>) {
+      state.gstDocLoading = false;
+      state.gtsDocError = action.payload;
+    },
+    clearUplaodGst(state) {
+      state.gstDocLoading = false;
+      state.gstDocData = null;
+      state.gtsDocError = null;
+    },
+    uploadGoDownRequest(
+      state,
+      action: PayloadAction<IUploadGoDownDetailsPayload>,
+    ) {
+      state.goDownLoading = true;
+      state.goDownError = null;
+    },
+    uploadGoDownSuccess(
+      state,
+      action: PayloadAction<IUploadGodDownDetailsResponse>,
+    ) {
+      state.goDownLoading = false;
+      state.goDownData = action.payload;
+    },
+    uploadGoDownFailure(state, action: PayloadAction<string>) {
+      state.goDownLoading = false;
+      state.goDownError = action.payload;
+    },
+    clearUploadGoDown(state) {
+      state.goDownLoading = false;
+      state.goDownData = null;
+      state.goDownError = null;
+    },
+    uploadShareholdingRequest(
+      state,
+      action: PayloadAction<IUploadShareholdingPayload>,
+    ) {
+      state.ShareholdingLoading = true;
+      state.ShareholdingError = null;
+    },
+    uploadShareholdingSuccess(
+      state,
+      action: PayloadAction<IUploadShareholdingResponse>,
+    ) {
+      state.ShareholdingLoading = false;
+      state.ShareholdingData = action.payload;
+    },
+    uploadShareholdingFailure(state, action: PayloadAction<string>) {
+      state.ShareholdingLoading = false;
+      state.ShareholdingError = action.payload;
+    },
+    clearShareholding(state) {
+      state.ShareholdingLoading = false;
+      state.ShareholdingData = null;
+      state.ShareholdingError = null;
+    },
+    uploadCompanyPanRequest(
+      state,
+      action: PayloadAction<IuploadCompanyPanPayload>,
+    ) {
+      state.CompanyPanLoading = true;
+      state.CompanyPanError = null;
+    },
+    uploadCompanyPanSuccess(
+      state,
+      action: PayloadAction<IuplaodCompanyPanResponse>,
+    ) {
+      state.CompanyPanLoading = false;
+      state.CompanyPanData = action.payload;
+    },
+    uploadCompanyPanFailure(state, action: PayloadAction<string>) {
+      state.CompanyPanLoading = false;
+      state.CompanyPanError = action.payload;
+    },
+    clearCompanyPan(state) {
+      state.CompanyPanLoading = false;
+      state.CompanyPanData = null;
+      state.CompanyPanError = null;
+    },
+    uploadCompanyInfoRequest(
+      state,
+      action: PayloadAction<IUploadCompanyInfoPayload>,
+    ) {
+      state.CompanyInfoLoading = true;
+      state.CompanyInfoError = null;
+    },
+    uploadCompanyInfoSuccess(
+      state,
+      action: PayloadAction<IUploadCompanyInfoResponse>,
+    ) {
+      state.CompanyInfoLoading = false;
+      state.CompanyInfoData = action.payload;
+    },
+    uploadCompanyInfoFailure(state, action: PayloadAction<string>) {
+      state.CompanyInfoLoading = false;
+      state.CompanyInfoError = action.payload;
+    },
+    clearCompanyInfo(state) {
+      state.CompanyInfoLoading = false;
+      state.CompanyInfoData = null;
+      state.CompanyInfoError = null;
     },
   },
 });
@@ -327,9 +510,37 @@ export const {
   uploadPanSuccess,
   uploadPanFailure,
   clearPanUpload,
+  uploadAdharRequest,
+  uploadAdharSuccess,
+  uploadAdharFailure,
+  clearAdhar,
   uploadResidenceRequest,
   uploadResidenceSuccess,
   uploadResidenceFailure,
   clearUploadResidence,
+  uploadUdhyamRequest,
+  uploadUdhyamSuccess,
+  uploadUdhyamFailure,
+  clearUplaodUdhyam,
+  uploadGstRequest,
+  uploadGstSuccess,
+  uploadGstfailure,
+  clearUplaodGst,
+  uploadGoDownRequest,
+  uploadGoDownSuccess,
+  uploadGoDownFailure,
+  clearUploadGoDown,
+  uploadShareholdingRequest,
+  uploadShareholdingSuccess,
+  uploadShareholdingFailure,
+  clearShareholding,
+  uploadCompanyPanRequest,
+  uploadCompanyPanSuccess,
+  uploadCompanyPanFailure,
+  clearCompanyPan,
+  uploadCompanyInfoRequest,
+  uploadCompanyInfoSuccess,
+  uploadCompanyInfoFailure,
+  clearCompanyInfo,
 } = clientSlice.actions;
 export default clientSlice.reducer;

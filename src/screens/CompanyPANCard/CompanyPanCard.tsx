@@ -13,10 +13,12 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions, IuploadCompanyPanPayload} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -26,6 +28,9 @@ type KycNavigationType = CompositeNavigationProp<
 export const CompanyPanCard = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [uploadType, setUploadType] = useState<
+    'frontPanImage' | 'backPanImage' | null
+  >(null);
   const [namePan, setNamePan] = useState('');
   const [panNumber, setPanNumber] = useState('');
   const [dateofBirth, setDateofBirth] = useState('');
@@ -35,6 +40,57 @@ export const CompanyPanCard = () => {
   const [backPanImage, setBackPanImage] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(namePan, panNumber, dateofBirth);
+    const allFieldsFilled =
+      namePan && panNumber && dateofBirth && frontPanImage && backPanImage;
+
+    if (!allFieldsFilled) {
+      console.warn(
+        'Please fill all required Company pan and upload both images',
+      );
+      Alert.alert(
+        'validation Error',
+        'Please fill all fields and upload both front and back images',
+      );
+      return;
+    }
+
+    const payload: IuploadCompanyPanPayload = {
+      clientId: 16, // ✅ fixed
+      uploaded_by: 'Nishith Upadhyay', // ✅ fixed
+      docDetails: {
+        name_as_per_pan: namePan,
+        pan_number: panNumber,
+      },
+      doc: [
+        {
+          name: frontPanImage.name ?? `${Date.now()}-front`,
+          type: frontPanImage.type ?? 'image/jpeg',
+          uri: frontPanImage.uri,
+        },
+        {
+          name: backPanImage.name ?? `${Date.now()}-back`,
+          type: backPanImage.type ?? 'image/jpeg',
+          uri: backPanImage.uri,
+        },
+      ],
+    };
+
+    console.log('Disp uploadCompanyPanRequest', payload);
+    dispatch(clientActions.uploadCompanyPanRequest(payload));
+  };
+
+  const handleClear = () => {
+    setNamePan('');
+    setPanNumber('');
+    setDateofBirth('');
+    setFrontPanImage(undefined);
+    setBackPanImage(undefined);
+  };
 
   return (
     <Container>
@@ -47,37 +103,68 @@ export const CompanyPanCard = () => {
         <Text style={styles.sectionTitle}>Company PAN Card</Text>
         <Input
           label="Name as per PAN"
+          value={namePan}
           onChangeText={setNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN Number"
+          value={panNumber}
           onChangeText={setPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          value={dateofBirth}
           onChangeText={setDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
 
-        <DashedButton
-          label="Upload Front side of PAN"
-          onPress={() => setIsVisible(true)}
-        />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
+        {frontPanImage ? (
+          <Text>File Name: {frontPanImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Front side of PAN"
+            onPress={() => {
+              setUploadType('frontPanImage');
+              setIsVisible(true);
+            }}
+          />
+        )}
 
-        <DashedButton
-          label="Upload Back side of PAN"
-          onPress={() => setIsVisible(true)}
+        {backPanImage ? (
+          <Text>File Name: {backPanImage.name}</Text>
+        ) : (
+          <DashedButton
+            label="Upload Back side of PAN"
+            onPress={() => {
+              setUploadType('backPanImage');
+              setIsVisible(true);
+            }}
+          />
+        )}
+
+        <UploadModal
+          visible={isVisible}
+          onClose={file => {
+            if (file) {
+              switch (uploadType) {
+                case 'frontPanImage':
+                  setFrontPanImage(file);
+                  break;
+                case 'backPanImage':
+                  setBackPanImage(file);
+                  break;
+              }
+            }
+            setIsVisible(false);
+            setUploadType(null);
+          }}
         />
-        <UploadModal visible={isVisible} onClose={() => setIsVisible(false)} />
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}
@@ -91,7 +178,7 @@ export const CompanyPanCard = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

@@ -55,8 +55,8 @@ export const ResidenceDetail = () => {
         type: selectedFile.type,
         name: selectedFile.name,
       },
-      clientId: 16, // replace this with dynamic clientId if needed
-      uploaded_by: 'Nishith Upadhyay', // use your actual username or get it from auth
+      clientId: 16,
+      uploaded_by: 'Nishith Upadhyay',
       params: 'residenceProof',
       client_name: nameofOwner,
       name_of_owner: nameofOwner,
@@ -65,6 +65,12 @@ export const ResidenceDetail = () => {
 
     console.log('Disp uploadResidenceRequest', payload);
     dispatch(uploadResidenceRequest(payload));
+  };
+
+  const handleClear = () => {
+    setnameofOwner('');
+    setAgreementCopy(undefined);
+    setElectricityBill(undefined);
   };
 
   return (
@@ -92,6 +98,7 @@ export const ResidenceDetail = () => {
             <>
               <Input
                 label="Name of Owner"
+                value={nameofOwner}
                 onChangeText={setnameofOwner}
                 containerStyle={{marginBottom: scaleHeight(20)}}
               />
@@ -147,7 +154,7 @@ export const ResidenceDetail = () => {
                 {/* Clear All Button */}
                 <TouchableOpacity
                   style={styles.clearButton}
-                  onPress={() => console.log('Clear All Pressed')}>
+                  onPress={handleClear}>
                   <Text style={styles.clearText}>Clear all</Text>
                 </TouchableOpacity>
                 {/* Save Button */}

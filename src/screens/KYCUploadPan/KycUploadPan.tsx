@@ -88,7 +88,7 @@ export const KycUplaodPan = () => {
 
     if (allFieldsFilled) {
       const payload = {
-        clientId: 16, // or dynamic if available
+        clientId: 16,
         uploaded_by: 'Nishith Upadhyay',
         doc: [
           {
@@ -133,6 +133,19 @@ export const KycUplaodPan = () => {
     }
   };
 
+  const handleClear = () => {
+    setNamePan('');
+    setPanNumber('');
+    setDateofBirth('');
+    setFrontImage(undefined);
+    setBackImage(undefined);
+    setCoApplicantNamePan('');
+    setCoApplicantPanNumber('');
+    setCoApplicantDateofBirth('');
+    setCoApplicantFrontImage(undefined);
+    setCoApplicantBackImage(undefined);
+  };
+
   return (
     <Container>
       <AppBar title="KYC Document" navigation={navigation} />
@@ -144,16 +157,19 @@ export const KycUplaodPan = () => {
         <Text style={styles.sectionTitle}>Main Applicant PAN Card Details</Text>
         <Input
           label="Name as per PAN"
+          value={namePan}
           onChangeText={setNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN number"
+          value={panNumber}
           onChangeText={setPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          value={dateofBirth}
           onChangeText={setDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
@@ -186,16 +202,19 @@ export const KycUplaodPan = () => {
         <Text style={styles.sectionTitle}>Co Applicant PAN Card Details</Text>
         <Input
           label="Name as per PAN"
+          value={coApplicantNamePan}
           onChangeText={setCoApplicantNamePan}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="PAN number"
+          value={coApplicantPanNumber}
           onChangeText={setCoApplicantPanNumber}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
         <Input
           label="Date of Birth"
+          value={coApplicantDateofBirth}
           onChangeText={setCoApplicantDateofBirth}
           containerStyle={{marginBottom: scaleHeight(24)}}
         />
@@ -250,9 +269,7 @@ export const KycUplaodPan = () => {
 
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}

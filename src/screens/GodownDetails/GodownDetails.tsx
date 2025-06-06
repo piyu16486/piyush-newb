@@ -14,10 +14,13 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {IUploadGoDownDetailsPayload} from '@store/client';
+import {uploadGoDownRequest} from '@store/client/client.slice';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -27,6 +30,9 @@ type KycNavigationType = CompositeNavigationProp<
 export const GodownDetails = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [uploadType, setUploadType] = useState<
+    'agreementCopy' | 'electricityBill' | null
+  >(null);
   const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
   const [nameofOwner, setnameofOwner] = useState('');
   const [agreementCopy, setAgreementCopy] = useState<
@@ -35,6 +41,47 @@ export const GodownDetails = () => {
   const [electricityBill, setElectricityBill] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(nameofOwner, agreementCopy, electricityBill);
+    if (!nameofOwner || !ownershipStatus) {
+      Alert.alert('Validation Error', 'Please fill all required fields.');
+      return;
+    }
+
+    const selectedFile =
+      ownershipStatus === 'rented' ? agreementCopy : electricityBill;
+
+    if (!selectedFile) {
+      Alert.alert('Validation Error', 'Please upload the required document.');
+      return;
+    }
+
+    const payload: IUploadGoDownDetailsPayload = {
+      doc: {
+        uri: selectedFile.uri,
+        type: selectedFile.type,
+        name: selectedFile.name,
+      },
+      clientId: 16,
+      uploaded_by: 'Nishith Upadhyay',
+      params: 'Godown',
+      client_name: nameofOwner,
+      name_of_owner: nameofOwner,
+      ownership_status: ownershipStatus,
+    };
+
+    console.log('Disp uploadGoDownRequest', payload);
+    dispatch(uploadGoDownRequest(payload));
+  };
+
+  const handleClear = () => {
+    setnameofOwner('');
+    setAgreementCopy(undefined);
+    setElectricityBill(undefined);
+  };
 
   return (
     <Container>
@@ -61,24 +108,55 @@ export const GodownDetails = () => {
             <>
               <Input
                 label="Name of Owner"
+                value={nameofOwner}
                 onChangeText={setnameofOwner}
                 containerStyle={{marginBottom: scaleHeight(20)}}
               />
 
               {ownershipStatus === 'rented' ? (
-                <DashedButton
-                  label="Upload Agreement Copy"
-                  onPress={() => setIsVisible(true)}
-                />
+                <>
+                  {agreementCopy ? (
+                    <Text>File Name: {agreementCopy.name}</Text>
+                  ) : null}
+                  <DashedButton
+                    label="Upload Agreement Copy"
+                    onPress={() => {
+                      setUploadType('agreementCopy');
+                      setIsVisible(true);
+                    }}
+                  />
+                </>
               ) : (
-                <DashedButton
-                  label="Upload Electricity Bill"
-                  onPress={() => setIsVisible(true)}
-                />
+                <>
+                  {electricityBill ? (
+                    <Text>File Name: {electricityBill.name}</Text>
+                  ) : null}
+                  <DashedButton
+                    label="Upload Electricity Bill"
+                    onPress={() => {
+                      setUploadType('electricityBill');
+                      setIsVisible(true);
+                    }}
+                  />
+                </>
               )}
+
               <UploadModal
                 visible={isVisible}
-                onClose={() => setIsVisible(false)}
+                onClose={file => {
+                  if (file) {
+                    switch (uploadType) {
+                      case 'agreementCopy':
+                        setAgreementCopy(file);
+                        break;
+                      case 'electricityBill':
+                        setElectricityBill(file);
+                        break;
+                    }
+                  }
+                  setIsVisible(false);
+                  setUploadType(null);
+                }}
               />
 
               {/* Fixed button row at the bottom */}
@@ -86,7 +164,7 @@ export const GodownDetails = () => {
                 {/* Clear All Button */}
                 <TouchableOpacity
                   style={styles.clearButton}
-                  onPress={() => console.log('Clear All Pressed')}>
+                  onPress={handleClear}>
                   <Text style={styles.clearText}>Clear all</Text>
                 </TouchableOpacity>
                 {/* Save Button */}
@@ -102,7 +180,7 @@ export const GodownDetails = () => {
                   <TouchableOpacity
                     style={styles.saveButton}
                     activeOpacity={0.7}
-                    onPress={() => console.log('Next Pressed')}>
+                    onPress={handleSubmit}>
                     <Text style={styles.saveText}>Submit</Text>
                     <RightCheckmark width={12} height={12} />
                   </TouchableOpacity>

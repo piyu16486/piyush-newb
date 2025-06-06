@@ -13,10 +13,12 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -32,6 +34,45 @@ export const GSTDocument = () => {
     DocumentPickerResponse | undefined
   >();
 
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(nameonGstCertificate, gstNumber, gstImage);
+
+    const allFieldsFilled = nameonGstCertificate && gstNumber && gstImage;
+
+    if (!allFieldsFilled) {
+      console.warn('Please fill all GST details and upload the image.');
+      Alert.alert(
+        'Validation Error',
+        'Please fill all fields and upload the GST image.',
+      );
+      return;
+    }
+
+    const payload = {
+      clientId: 16,
+      uploaded_by: 'Nishith Upadhyay',
+      doc: {
+        uri: gstImage.uri,
+        name: gstImage.name ?? `${Date.now()}-gst.jpg`,
+        type: gstImage.type ?? 'image/jpeg',
+      },
+      name_as_per_gst: nameonGstCertificate,
+      gst_number: gstNumber,
+      params: 'GST',
+    };
+
+    console.log('Dispatching uploadGstRequest:', payload);
+    dispatch(clientActions.uploadGstRequest(payload));
+  };
+
+  const handleClear = () => {
+    setNameonGstCertificate('');
+    setGstNumber('');
+    setGstImage(undefined);
+  };
+
   return (
     <Container>
       <AppBar title="KYC Document" navigation={navigation} />
@@ -44,30 +85,41 @@ export const GSTDocument = () => {
           <Text style={styles.sectionTitle}>GST Document</Text>
           <Input
             label="Name as per GST Certificate"
+            value={nameonGstCertificate}
             onChangeText={setNameonGstCertificate}
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
           <Input
             label="GST Number"
+            value={gstNumber}
             onChangeText={setGstNumber}
             containerStyle={{marginBottom: scaleHeight(14)}}
           />
-          <DashedButton
-            label="Upload GST Certificate"
-            onPress={() => setIsVisible(true)}
-          />
+
+          {gstImage ? (
+            <Text>File Name: {gstImage.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload GST Certificate"
+              onPress={() => setIsVisible(true)}
+            />
+          )}
+
           <UploadModal
             visible={isVisible}
-            onClose={() => setIsVisible(false)}
+            onClose={file => {
+              if (file) {
+                setGstImage(file);
+              }
+              setIsVisible(false);
+            }}
           />
         </View>
 
         {/* FooterButton */}
         <View style={styles.footerButton}>
           {/* Clear All Button */}
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => console.log('Clear All Pressed')}>
+          <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>Clear all</Text>
           </TouchableOpacity>
           {/* Save Button */}
@@ -81,7 +133,7 @@ export const GSTDocument = () => {
             <TouchableOpacity
               style={styles.saveButton}
               activeOpacity={0.7}
-              onPress={() => console.log('Next Pressed')}>
+              onPress={handleSubmit}>
               <Text style={styles.saveText}>Submit</Text>
               <RightCheckmark width={12} height={12} />
             </TouchableOpacity>

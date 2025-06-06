@@ -13,10 +13,12 @@ import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -26,6 +28,9 @@ type KycNavigationType = CompositeNavigationProp<
 export const UdhyamCertificate = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [uploadType, setUploadType] = useState<
+    'frontImage' | 'backImage' | null
+  >(null);
   const [udhyamAdharName, setUdhyamAdharName] = useState('');
   const [udhyamNumber, setUdhyamNumber] = useState('');
   const [udhyamFrontImage, setUdhyamFrontImage] = useState<
@@ -34,6 +39,62 @@ export const UdhyamCertificate = () => {
   const [udhyamBackImage, setUdhyamBackImage] = useState<
     DocumentPickerResponse | undefined
   >();
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    console.log(
+      udhyamAdharName,
+      udhyamNumber,
+      udhyamFrontImage,
+      udhyamBackImage,
+    );
+
+    const allFieldsFilled =
+      udhyamAdharName && udhyamNumber && udhyamFrontImage && udhyamBackImage;
+
+    if (!allFieldsFilled) {
+      console.warn(
+        'Please fill all required Udhyam details and upload both images.',
+      );
+      Alert.alert(
+        'Validation Error',
+        'Please fill all fields and upload both front and back images.',
+      );
+      return;
+    }
+
+    const payload = {
+      clientId: 16,
+      uploaded_by: 'Nishith Upadhyay',
+      doc: [
+        {
+          name: udhyamFrontImage.name ?? `${Date.now()}-front`,
+          type: udhyamFrontImage.type ?? 'image/jpeg',
+          uri: udhyamFrontImage.uri,
+        },
+        {
+          name: udhyamBackImage.name ?? `${Date.now()}-back`,
+          type: udhyamBackImage.type ?? 'image/jpeg',
+          uri: udhyamBackImage.uri,
+        },
+      ],
+      docDetails: {
+        name_as_per_udhyam: udhyamAdharName,
+        urn_number: udhyamNumber,
+      },
+    };
+
+    console.log('Dispatching uploadUdhyamRequest:', payload);
+    dispatch(clientActions.uploadUdhyamRequest(payload));
+  };
+
+  const handleClear = () => {
+    setUdhyamAdharName('');
+    setUdhyamNumber('');
+    setUdhyamFrontImage(undefined);
+    setUdhyamBackImage(undefined);
+  };
 
   return (
     <Container>
@@ -47,39 +108,63 @@ export const UdhyamCertificate = () => {
           <Text style={styles.sectionTitle}>Udhyam Certificate</Text>
           <Input
             label="Name as per Udhyam Aadhar"
+            value={udhyamAdharName}
             onChangeText={setUdhyamAdharName}
             containerStyle={{marginBottom: scaleHeight(24)}}
           />
           <Input
             label="URN Number"
+            value={udhyamNumber}
             onChangeText={setUdhyamNumber}
             containerStyle={{marginBottom: scaleHeight(14)}}
           />
 
-          <DashedButton
-            label="Upload Front Side of Udhyam"
-            onPress={() => setIsVisible(true)}
-          />
-          <UploadModal
-            visible={isVisible}
-            onClose={() => setIsVisible(false)}
-          />
+          {udhyamFrontImage ? (
+            <Text>File Name: {udhyamFrontImage.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload Front Side of Udhyam"
+              onPress={() => {
+                setUploadType('frontImage');
+                setIsVisible(true);
+              }}
+            />
+          )}
 
-          <DashedButton
-            label="Upload Back Side of Udhyam"
-            onPress={() => setIsVisible(true)}
-          />
+          {udhyamBackImage ? (
+            <Text>File Name: {udhyamBackImage.name}</Text>
+          ) : (
+            <DashedButton
+              label="Upload Back Side of Udhyam"
+              onPress={() => {
+                setUploadType('backImage');
+                setIsVisible(true);
+              }}
+            />
+          )}
+
           <UploadModal
             visible={isVisible}
-            onClose={() => setIsVisible(false)}
+            onClose={file => {
+              if (file) {
+                switch (uploadType) {
+                  case 'frontImage':
+                    setUdhyamFrontImage(file);
+                    break;
+                  case 'backImage':
+                    setUdhyamBackImage(file);
+                    break;
+                }
+              }
+              setIsVisible(false);
+              setUploadType(null);
+            }}
           />
 
           {/* FooterButton */}
           <View style={styles.footerButton}>
             {/* Clear All Button */}
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={() => console.log('Clear All Pressed')}>
+            <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
               <Text style={styles.clearText}>Clear all</Text>
             </TouchableOpacity>
             {/* Save Button */}
@@ -95,7 +180,7 @@ export const UdhyamCertificate = () => {
               <TouchableOpacity
                 style={styles.saveButton}
                 activeOpacity={0.7}
-                onPress={() => console.log('Next Pressed')}>
+                onPress={handleSubmit}>
                 <Text style={styles.saveText}>Submit</Text>
                 <RightCheckmark width={12} height={12} />
               </TouchableOpacity>
