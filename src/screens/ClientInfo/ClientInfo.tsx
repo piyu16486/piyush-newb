@@ -9,6 +9,7 @@ import {clientActions, clientSelector} from '@store/client';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useCallback, useEffect, useState} from 'react';
+import {Alert} from 'react-native';
 import {
   FlatList,
   StyleSheet,

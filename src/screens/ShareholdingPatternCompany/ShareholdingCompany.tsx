@@ -47,7 +47,7 @@ export const ShareholdingCompany = () => {
     console.log(companyName, shareholdingImage);
     if (companyName && shareholdingImage) {
       const payload = {
-        clientId: 16,
+        clientId: 22,
         uploaded_by: 'Nishith Upadhyay',
         client_name: companyName,
         doc: {

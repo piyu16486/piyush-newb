@@ -34,7 +34,11 @@ type BasicDetailsInputNames = 'location' | 'dateOfVisit' | 'visitNumber';
 export type BasicDetailsNames =
   | BasicDetailsDropDownNames
   | BasicDetailsInputNames;
-type ClientFirmDropDownNames = 'typeOfFirm' | 'sector' | 'facilityType';
+type ClientFirmDropDownNames =
+  | 'typeOfFirm'
+  | 'sector'
+  | 'facilityType'
+  | 'creditPeriod';
 type ClientFirmInputNames =
   | 'clientName'
   | 'firmName'
@@ -43,25 +47,21 @@ type ClientFirmInputNames =
   | 'cibilScore'
   | 'existingFunding'
   | 'estimatedFunding'
-  | 'creditPeriod'
   | 'bankName';
 export type ClientFirmNames = ClientFirmDropDownNames | ClientFirmInputNames;
 
-type VendorDropDownNames = '';
+type VendorDropDownNames = 'Product' | 'state' | 'city';
 type VendorInputNames =
-  | 'product'
   | 'vendorName'
+  | 'address'
+  | 'pincode'
   | 'vendorContact'
   | 'vendorEmail'
   | 'monthlySales';
 export type VendorNames = VendorDropDownNames | VendorInputNames;
 
-type VisitDropDownNames = 'intent';
-type VisitInputNames =
-  | 'UserResponse'
-  | 'nextVisitDate'
-  | 'reason'
-  | 'interested';
+type VisitDropDownNames = 'intent' | 'interested' | 'UserResponse';
+type VisitInputNames = 'nextVisitDate' | 'reason';
 export type VisitNames = VisitDropDownNames | VisitInputNames;
 
 // Form Data Type
@@ -180,10 +180,39 @@ export enum FacilityType {
   OTHERS = 'Others',
 }
 
+export enum creditPeriodType {
+  Days30 = '30',
+  Days45 = '45',
+  Days60 = '60',
+  Days90 = '90',
+}
+
 export enum IntentType {
   HIGH = 'High',
   LOW = 'Low',
   MEDIUM = 'Medium',
+}
+
+export enum InterestedType {
+  YES = 'Yes',
+  NO = 'No',
+  MAYBE = 'Maybe',
+}
+
+export enum ResponseType {
+  INTERESTED = 'Interested',
+  NOT_INTERESTED = 'Not interested',
+}
+
+export enum ProductCategoryType {
+  PERSONAL_CARE = 'Personal Care & Hygiene',
+  HOUSEHOLD_CLEANING = 'Household Cleaning',
+  PACKAGED_FOODS = 'Packaged Foods',
+  BEVERAGES = 'Beverages',
+  DAIRY_FROZEN = 'Dairy & Frozen Foods',
+  CONFECTIONERY = 'Confectionery',
+  STAPLE_GROCERY = 'Staple & Grocery',
+  PAPER_DISPOSABLE = 'Paper & Disposable',
 }
 
 // Dropdown Data
@@ -251,6 +280,117 @@ const intent = [
   {label: IntentType.MEDIUM, value: IntentType.MEDIUM},
 ];
 
+const creditPeriod = [
+  {label: creditPeriodType.Days30, value: creditPeriodType.Days30},
+  {label: creditPeriodType.Days45, value: creditPeriodType.Days45},
+  {label: creditPeriodType.Days60, value: creditPeriodType.Days60},
+  {label: creditPeriodType.Days90, value: creditPeriodType.Days90},
+];
+
+const Response = [
+  {label: ResponseType.INTERESTED, value: ResponseType.INTERESTED},
+  {label: ResponseType.NOT_INTERESTED, value: ResponseType.NOT_INTERESTED},
+];
+
+const interested = [
+  {label: InterestedType.YES, value: InterestedType.YES},
+  {label: InterestedType.NO, value: InterestedType.NO},
+  {label: InterestedType.MAYBE, value: InterestedType.MAYBE},
+];
+
+const productCategoryDropdown = [
+  {
+    label: ProductCategoryType.PERSONAL_CARE,
+    value: ProductCategoryType.PERSONAL_CARE,
+  },
+  {
+    label: ProductCategoryType.HOUSEHOLD_CLEANING,
+    value: ProductCategoryType.HOUSEHOLD_CLEANING,
+  },
+  {
+    label: ProductCategoryType.PACKAGED_FOODS,
+    value: ProductCategoryType.PACKAGED_FOODS,
+  },
+  {label: ProductCategoryType.BEVERAGES, value: ProductCategoryType.BEVERAGES},
+  {
+    label: ProductCategoryType.DAIRY_FROZEN,
+    value: ProductCategoryType.DAIRY_FROZEN,
+  },
+  {
+    label: ProductCategoryType.CONFECTIONERY,
+    value: ProductCategoryType.CONFECTIONERY,
+  },
+  {
+    label: ProductCategoryType.STAPLE_GROCERY,
+    value: ProductCategoryType.STAPLE_GROCERY,
+  },
+  {
+    label: ProductCategoryType.PAPER_DISPOSABLE,
+    value: ProductCategoryType.PAPER_DISPOSABLE,
+  },
+];
+
+const productCategoryOptionsMap: Record<ProductCategoryType, string[]> = {
+  [ProductCategoryType.PERSONAL_CARE]: [
+    'Toothpaste, toothbrush',
+    'Shampoo, conditioner',
+    'Soap, body wash',
+    'Face wash, face cream',
+    'Deodorants, perfumes',
+    'Shaving creams, razors',
+    'Sanitary napkins, baby diapers',
+  ],
+  [ProductCategoryType.HOUSEHOLD_CLEANING]: [
+    'Detergents (powder/liquid)',
+    'Dishwashing bars/liquids',
+    'Floor cleaners',
+    'Toilet cleaners',
+    'Air fresheners',
+    'Mosquito repellents',
+  ],
+  [ProductCategoryType.PACKAGED_FOODS]: [
+    'Biscuits, cookies',
+    'Chips, namkeen',
+    'Instant noodles, pasta',
+    'Breakfast cereals',
+    'Bakery items',
+    'Ready-to-eat meals',
+  ],
+  [ProductCategoryType.BEVERAGES]: [
+    'Packaged drinking water',
+    'Soft drinks',
+    'Juices',
+    'Energy drinks',
+    'Tea, coffee',
+  ],
+  [ProductCategoryType.DAIRY_FROZEN]: [
+    'Milk',
+    'Butter, cheese, paneer',
+    'Ice cream, frozen desserts',
+    'Yogurt, curd',
+    'Frozen snacks',
+  ],
+  [ProductCategoryType.CONFECTIONERY]: [
+    'Chocolates',
+    'Chewing gum',
+    'Candies, toffees',
+    'Lollipops',
+  ],
+  [ProductCategoryType.STAPLE_GROCERY]: [
+    'Salt, sugar',
+    'Edible oils',
+    'Atta, rice',
+    'Spices & masalas',
+    'Pulses, lentils',
+  ],
+  [ProductCategoryType.PAPER_DISPOSABLE]: [
+    'Tissues, napkins',
+    'Toilet rolls',
+    'Aluminum foil, cling film',
+    'Disposable plates, cups',
+  ],
+};
+
 // Combined Dropdown Data
 export const dropDownData: DropDownDataType = {
   sourceOfLead: sourceOfLead,
@@ -260,9 +400,16 @@ export const dropDownData: DropDownDataType = {
   typeOfFirm: typeOfFirm,
   sector: sector,
   facilityType: facilityType,
-  product: [],
+  creditPeriod: creditPeriod,
+  Product: productCategoryOptionsMap[
+    ProductCategoryType.HOUSEHOLD_CLEANING
+  ].map(item => ({
+    label: item,
+    value: item,
+  })),
+  UserResponse: Response,
   intent: intent,
-  interested: [],
+  interested: interested,
 };
 
 // Form Titles
@@ -304,11 +451,19 @@ export const formInputDetails: FormInputListType = {
       name: 'estimatedFunding',
       type: FieldType.INPUT,
     },
-    {label: 'Credit Period Offer', name: 'creditPeriod', type: FieldType.INPUT},
+    {
+      label: 'Credit Period Offer',
+      name: 'creditPeriod',
+      type: FieldType.DROPDOWN,
+    },
   ],
   VendorScreen: [
-    {label: 'Product', name: 'product', type: FieldType.INPUT},
+    {label: 'Product', name: 'Product', type: FieldType.DROPDOWN},
     {label: 'Vendor Name', name: 'vendorName', type: FieldType.INPUT},
+    {label: 'Address', name: 'address', type: FieldType.INPUT},
+    {label: 'City', name: 'city', type: FieldType.DROPDOWN},
+    {label: 'State', name: 'state', type: FieldType.DROPDOWN},
+    {label: 'Pincode', name: 'pincode', type: FieldType.INPUT},
     {
       label: 'Vendor Contact number',
       name: 'vendorContact',
@@ -318,14 +473,14 @@ export const formInputDetails: FormInputListType = {
     {label: 'Monthly Sales Value', name: 'monthlySales', type: FieldType.INPUT},
   ],
   VisitScreen: [
-    {label: 'User Response', name: 'UserResponse', type: FieldType.INPUT},
+    {label: 'User Response', name: 'UserResponse', type: FieldType.DROPDOWN},
     {label: 'Intent', name: 'intent', type: FieldType.DROPDOWN},
     {label: 'Date of Next Visit', name: 'nextVisitDate', type: FieldType.DATE},
     {label: 'Reason for Not Interested', name: 'reason', type: FieldType.INPUT},
     {
       label: 'Are you interested for?',
       name: 'interested',
-      type: FieldType.INPUT,
+      type: FieldType.DROPDOWN,
     },
   ],
 };

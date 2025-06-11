@@ -182,6 +182,15 @@ const clientSlice = createSlice({
     saveVisitDetails: state => {
       state.clientLoader = false;
     },
+    deleteClientRequest: (state, action) => {},
+    deleteClientSuccess: (state, action) => {
+      state.clientList = state.clientList.filter(
+        client => client.id !== action.payload,
+      );
+    },
+    deleteClientFailure: (state, action) => {
+      state.error = action.payload;
+    },
     // Remark Report Actions
     getReport: state => {
       state.reportLoader = true;

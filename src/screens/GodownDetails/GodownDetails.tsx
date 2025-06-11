@@ -65,7 +65,7 @@ export const GodownDetails = () => {
         type: selectedFile.type,
         name: selectedFile.name,
       },
-      clientId: 16,
+      clientId: 22,
       uploaded_by: 'Nishith Upadhyay',
       params: 'Godown',
       client_name: nameofOwner,

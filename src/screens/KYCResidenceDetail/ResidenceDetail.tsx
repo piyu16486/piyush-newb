@@ -55,7 +55,7 @@ export const ResidenceDetail = () => {
         type: selectedFile.type,
         name: selectedFile.name,
       },
-      clientId: 16,
+      clientId: 22,
       uploaded_by: 'Nishith Upadhyay',
       params: 'residenceProof',
       client_name: nameofOwner,

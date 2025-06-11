@@ -37,7 +37,7 @@ import {
   uploadUdhyamRequest,
   uploadUdhyamSuccess,
 } from './client.slice';
-import {ClientApis} from '@services/api';
+import {Api, ClientApis} from '@services/api';
 import {
   clientActions,
   ClientFormType,
@@ -121,6 +121,16 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
+function* deleteClientSaga(action) {
+  try {
+    yield call(Api.deleteClient, action.payload.id);
+    yield put(deleteClientSuccess(action.payload.id));
+    yield put(getClients()); // Refresh list after delete
+  } catch (error) {
+    yield put(deleteClientFailure(error));
+  }
+}
+
 function* saveBasicDetails(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
@@ -150,7 +160,9 @@ function* saveClientFirmDetails(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
+  const clientId: number = yield select(clientSelector.getClientId);
   const clientFirmDetailForm = clientFormData.ClientFirmScreen;
+
   const body = {
     client_name: clientFirmDetailForm.clientName,
     firm_name: clientFirmDetailForm.firmName,
@@ -168,10 +180,11 @@ function* saveClientFirmDetails(): unknown {
 
   const {data, error}: Result<IclientFirmResponse> = yield call(
     ClientApis.saveClientFirmForm,
-    body,
+    (clientId, body),
   );
+
   if (!error) {
-    yield put(clientActions.saveClientId(data.message));
+    yield put(clientActions.saveClientFirmDetails());
   }
 }
 
@@ -179,25 +192,28 @@ function* saveVendorDetails(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientVedorDetailForm = clientFormData.VendorScreen;
+  const clientId: number = yield select(clientSelector.getClientId);
+  const vendorForm = clientFormData.VendorScreen;
+
   const body = {
-    product_category: clientVedorDetailForm.product,
-    // product_type: clientVedorDetailForm.product,
-    vendor_name: clientVedorDetailForm.vendorName,
-    // address: clientVedorDetailForm.v,
-    // city: string,
-    // state: string,
-    // pin_code: string,
-    vendor_contact_number: clientVedorDetailForm.vendorContact,
-    // monthly_sales_value: number,
+    product_category: vendorForm.Product,
+    vendor_name: vendorForm.vendorName,
+    address: vendorForm.address,
+    city: vendorForm.city,
+    state: vendorForm.state,
+    pin_code: vendorForm.pincode,
+    vendor_contact_number: vendorForm.vendorContact,
+    monthly_sales_value: vendorForm.monthlySales,
   };
 
   const {data, error}: Result<IVendorResponse> = yield call(
     ClientApis.saveVendorForm,
+    clientId,
     body,
   );
+
   if (!error) {
-    yield put(clientActions.saveClientId(data.data));
+    yield put(clientActions.saveVendorDetails());
   }
 }
 
@@ -205,21 +221,23 @@ function* savevisitDetails(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientVisitDetailForm = clientFormData.VisitScreen;
+  const clientId: number = yield select(clientSelector.getClientId);
+  const visitForm = clientFormData.VisitScreen;
+
   const body = {
-    // client_response: clientVisitDetailForm,
-    intent: clientVisitDetailForm.intent,
-    //   "date_of_next_visit": "2025-05-10T14:30:00Z",
-    reason_for_not_interested: clientVisitDetailForm.reason,
-    are_you_interested_for: clientVisitDetailForm.interested,
+    intent: visitForm.intent,
+    reason_for_not_interested: visitForm.reason,
+    are_you_interested_for: visitForm.interested,
   };
 
   const {data, error}: Result<IvisitResponse> = yield call(
     ClientApis.savevisitForm,
+    clientId,
     body,
   );
+
   if (!error) {
-    yield put(clientActions.saveClientId(data.message));
+    yield put(clientActions.saveVisitDetails());
   }
 }
 
@@ -258,7 +276,8 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
     formData.append('uploaded_by', uploaded_by);
 
     files.forEach((file, index) => {
-      formData.append('doc', {
+      formData.append(`files[${index}]`, {
+        // Unique key for each file
         uri: file.uri,
         type: file.type,
         name: file.name,
@@ -628,4 +647,11 @@ export default function* clientSaga() {
   yield takeLatest(uploadCompanyPanRequest.type, handleUploadCompanyPan);
   yield takeLatest(getBankList.type, hnadleGetBankList);
   yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
+}
+function deleteClientSuccess(id: any): any {
+  throw new Error('Function not implemented.');
+}
+
+function deleteClientFailure(error: unknown): any {
+  throw new Error('Function not implemented.');
 }

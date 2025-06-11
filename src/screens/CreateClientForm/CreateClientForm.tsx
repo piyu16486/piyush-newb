@@ -27,13 +27,39 @@ import {
 } from './CreateClientForm.type';
 import {useDispatch, useSelector} from 'react-redux';
 import {clientActions, ClientFormType, clientSelector} from '@store/client';
+import {useRoute} from '@react-navigation/native';
 
 const CurrentForm = ({currentFormKey}: {currentFormKey: FormTypes}) => {
   const formData: ClientFormType = useSelector(
     clientSelector.getClientFormData,
   );
   const dispatch = useDispatch();
-  const inputDetails = formInputDetails[currentFormKey];
+  let inputDetails = [...formInputDetails[currentFormKey]];
+
+  // Conditional filtering for VisitScreen
+  if (currentFormKey === 'VisitScreen') {
+    const userResponse = formData.VisitScreen?.UserResponse;
+
+    if (userResponse === 'Interested') {
+      inputDetails = inputDetails.filter(
+        item =>
+          item.name === 'intent' ||
+          item.name === 'nextVisitDate' ||
+          item.name === 'UserResponse',
+      );
+    } else if (userResponse === 'Not interested') {
+      inputDetails = inputDetails.filter(
+        item =>
+          item.name === 'reason' ||
+          item.name === 'interested' ||
+          item.name === 'UserResponse',
+      );
+    } else {
+      // Default: only show UserResponse if nothing selected
+      inputDetails = inputDetails.filter(item => item.name === 'UserResponse');
+    }
+  }
+
   return inputDetails.map((item, index) => (
     <FormInput
       key={index}

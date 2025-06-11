@@ -3,8 +3,9 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {Colors} from '@constants/index';
 import {useNavigation} from '@react-navigation/native';
+import {IClientInfoResponseDatum} from '@store/client';
 
-interface KycCardProps {
+interface String {
   clientId: string;
   clientName: string;
   location: string;
@@ -18,46 +19,40 @@ interface KycCardProps {
 }
 
 const ChipColors = {
-  Complete: Colors.green, // Green
-  Pending: Colors.primaryColor, // Amber
+  Complete: Colors.green,
+  Pending: Colors.primaryColor,
 };
 
-export const KycCard: React.FC<KycCardProps> = ({
-  clientId,
-  clientName,
-  location,
-  initiator,
-  sourceDHCO,
-  referenceDetails,
-  monthlyTurnover,
-  eligibiltyAmount,
-  intent,
-  status,
-}) => {
+type KycCardProps = {
+  data: IClientInfoResponseDatum;
+};
+
+export const KycCard: React.FC<KycCardProps> = ({data}) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.card}>
-      <View style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
-        <Text style={styles.statusText}>{status}</Text>
+      <View
+        style={[styles.statusBadge, {backgroundColor: ChipColors['Complete']}]}>
+        <Text style={styles.statusText}>{'Complete'}</Text>
       </View>
 
       {[
-        {label: 'Client Id', value: clientId},
-        {label: 'Client Name', value: clientName},
-        {label: 'Location', value: location},
+        {label: 'Client Id', value: data.id},
+        {label: 'Client Name', value: data.client_name},
+        {label: 'Location', value: data.location},
         {
           label: 'Initiator',
-          value: initiator,
+          value: 'ToDoInitiator',
         },
-        {label: 'Source (D/H/C/O)', value: sourceDHCO},
+        {label: 'Source (D/H/C/O)', value: data.source_of_lead},
         {
           label: 'Reference Details',
-          value: referenceDetails,
+          value: 'ToDO Reference Details',
         },
-        {label: 'Monthly Turnover', value: monthlyTurnover},
-        {label: 'Eligibility Amount :', value: eligibiltyAmount},
-        {label: 'Intent', value: intent},
+        {label: 'Monthly Turnover', value: 'ToDo Monthly Turnover'},
+        {label: 'Eligibility Amount :', value: 'ToDo Eligibility Amount'},
+        {label: 'Intent', value: 'ToDo Intent'},
       ].map((item, index) => (
         <Text style={styles.text} key={index}>
           <Text style={styles.label}>{item.label}: </Text>

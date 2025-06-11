@@ -120,12 +120,12 @@ export const KycDocument = () => {
       <View style={styles.Cardlist}>
         <FlatList
           data={KycData}
-          keyExtractor={item => item.clientId}
+          // keyExtractor={item => item.clientId}
           renderItem={({item}) => (
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => navigation.navigate('KYCFormSelection')}>
-              <KycCard {...item} />
+              <KycCard data={item} />
             </TouchableOpacity>
           )}
           refreshing={false}

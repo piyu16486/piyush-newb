@@ -116,6 +116,11 @@ export const TaskLogTabs = () => {
                 keyExtractor={item => item.clientId}
                 renderItem={({item}) => <TaskCard {...item} />}
                 contentContainerStyle={{flexGrow: 1}}
+                onRefresh={callgetTaskhistory}
+                ListEmptyComponent={
+                  <Text style={styles.emptyList}>No Task Found</Text>
+                }
+                refreshing={false}
               />
             </View>
           </View>

@@ -60,8 +60,8 @@ export const CompanyPanCard = () => {
     }
 
     const payload: IuploadCompanyPanPayload = {
-      clientId: 16, // ✅ fixed
-      uploaded_by: 'Nishith Upadhyay', // ✅ fixed
+      clientId: 22,
+      uploaded_by: 'Nishith Upadhyay',
       docDetails: {
         name_as_per_pan: namePan,
         pan_number: panNumber,

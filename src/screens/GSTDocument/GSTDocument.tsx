@@ -51,7 +51,7 @@ export const GSTDocument = () => {
     }
 
     const payload = {
-      clientId: 16,
+      clientId: 22,
       uploaded_by: 'Nishith Upadhyay',
       doc: {
         uri: gstImage.uri,

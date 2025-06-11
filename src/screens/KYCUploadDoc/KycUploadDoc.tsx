@@ -22,7 +22,14 @@ import {
 } from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -33,6 +40,7 @@ type KycNavigationType = CompositeNavigationProp<
 export const KycUploadDoc = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [name, setName] = useState('');
   const [image, setImage] = useState<DocumentPickerResponse | undefined>();
@@ -48,7 +56,7 @@ export const KycUploadDoc = () => {
     if (name && image) {
       const payload = {
         client_name: name,
-        clientId: 16,
+        clientId: 22,
         doc: {
           name: image.name ?? Date.now().toString(),
           type: image.type ?? 'image/png',
@@ -57,6 +65,7 @@ export const KycUploadDoc = () => {
         params: 'Profile',
         uploaded_by: 'Nishith Upadhyay',
       };
+      setLoading(true);
       console.log('disp uploadKycRequest');
       dispatch(clientActions.uploadKycRequest(payload));
     }
@@ -66,6 +75,14 @@ export const KycUploadDoc = () => {
     setName('');
     setImage(undefined);
   };
+
+  {
+    loading && (
+      <View style={styles.loadingOverlay}>
+        <ActivityIndicator size="large" color={Colors.primaryColor} />
+      </View>
+    );
+  }
 
   return (
     <Container>
@@ -111,7 +128,7 @@ export const KycUploadDoc = () => {
             <TouchableOpacity
               style={[styles.saveButton, {backgroundColor: Colors.white}]}
               activeOpacity={0.7}
-              onPress={() => console.log('Save Pressed')}>
+              onPress={handleSubmit}>
               <Text style={[styles.saveText, {color: Colors.green}]}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -208,5 +225,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: scaleWidth(10),
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    zIndex: 10,
   },
 });

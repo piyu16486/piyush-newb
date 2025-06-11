@@ -30,8 +30,8 @@ type ClientCardProps = {
   data: IClientInfoResponseDatum;
   onPressReadMore: (id: number) => void;
   onPressCard: (id: number) => void;
-  onEdit?: (id: number) => void; // Optional edit handler
-  onDelete?: (id: number) => void; // Optional delete handler
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
 export const ClientCard: React.FC<ClientCardProps> = ({
@@ -75,7 +75,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         onPress={() => onPressCard(data.id)}
         activeOpacity={0.7}>
         <View style={[styles.statusBadge, {backgroundColor: ChipColors.Warm}]}>
-          <Text style={styles.statusText}>{'Warm'}</Text>
+          <Text style={styles.statusText}>{'Hot'}</Text>
         </View>
 
         <Text style={styles.label}>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   dropdownMenu: {
     position: 'absolute',
-    top: 40, // Just below the three dots button
+    top: 40,
     right: 10,
     backgroundColor: '#fff',
     borderRadius: 6,
