@@ -18,6 +18,7 @@ import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -28,6 +29,12 @@ type KycNavigationType = CompositeNavigationProp<
 export const GSTDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    nameonGstCertificate: false,
+    gstNumber: false,
+    gstImage: false,
+  });
   const [nameonGstCertificate, setNameonGstCertificate] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [gstImage, setGstImage] = useState<
@@ -39,16 +46,30 @@ export const GSTDocument = () => {
   const handleSubmit = () => {
     console.log(nameonGstCertificate, gstNumber, gstImage);
 
-    const allFieldsFilled = nameonGstCertificate && gstNumber && gstImage;
+    if (!nameonGstCertificate || !gstNumber || !gstImage) {
+      setErrors({
+        nameonGstCertificate: !nameonGstCertificate,
+        gstNumber: !gstNumber,
+        gstImage: !gstImage,
+      });
 
-    if (!allFieldsFilled) {
-      console.warn('Please fill all GST details and upload the image.');
+      let missingFields = [];
+      if (!nameonGstCertificate) missingFields.push('Name as GST Certificate');
+      if (!gstNumber) missingFields.push('Gst Number');
+      if (!gstImage) missingFields.push('Gst Image');
+
       Alert.alert(
-        'Validation Error',
-        'Please fill all fields and upload the GST image.',
+        'Missing Fields',
+        `Please Provide the following:\n${missingFields.join('\n')}`,
       );
       return;
     }
+
+    setErrors({
+      nameonGstCertificate: false,
+      gstNumber: false,
+      gstImage: false,
+    });
 
     const payload = {
       clientId: 22,
@@ -63,8 +84,18 @@ export const GSTDocument = () => {
       params: 'GST',
     };
 
-    console.log('Dispatching uploadGstRequest:', payload);
+    console.log('Disp uploadGstRequest:', payload);
+    setLoading(true);
     dispatch(clientActions.uploadGstRequest(payload));
+    setTimeout(() => {
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploadded',
+        text2: `${nameonGstCertificate}'s document submitted succesfully`,
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -86,14 +117,38 @@ export const GSTDocument = () => {
           <Input
             label="Name as per GST Certificate"
             value={nameonGstCertificate}
-            onChangeText={setNameonGstCertificate}
-            containerStyle={{marginBottom: scaleHeight(24)}}
+            onChangeText={text => {
+              setNameonGstCertificate(text);
+              if (errors.nameonGstCertificate && text.trim()) {
+                setErrors(prev => ({...prev, nameonGstCertificate: false}));
+              }
+            }}
+            containerStyle={[
+              {marginBottom: scaleHeight(24)},
+              errors.nameonGstCertificate && {
+                borderColor: Colors.red,
+                borderWidth: 1,
+                borderRadius: 5,
+              },
+            ]}
           />
           <Input
             label="GST Number"
             value={gstNumber}
-            onChangeText={setGstNumber}
-            containerStyle={{marginBottom: scaleHeight(14)}}
+            onChangeText={text => {
+              setGstNumber(text);
+              if (errors.gstNumber && text.trim()) {
+                setErrors(prev => ({...prev, gstNumber: false}));
+              }
+            }}
+            containerStyle={[
+              {marginBottom: scaleHeight(24)},
+              errors.gstNumber && {
+                borderColor: Colors.red,
+                borderWidth: 1,
+                borderRadius: 5,
+              },
+            ]}
           />
 
           {gstImage ? (
@@ -102,6 +157,9 @@ export const GSTDocument = () => {
             <DashedButton
               label="Upload GST Certificate"
               onPress={() => setIsVisible(true)}
+              containerStyle={
+                errors.gstImage ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -110,6 +168,8 @@ export const GSTDocument = () => {
             onClose={file => {
               if (file) {
                 setGstImage(file);
+                if (errors.gstImage)
+                  setErrors(prev => ({...prev, gstImage: false}));
               }
               setIsVisible(false);
             }}

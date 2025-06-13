@@ -18,6 +18,7 @@ import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -28,6 +29,7 @@ type KycNavigationType = CompositeNavigationProp<
 export const UdhyamCertificate = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [uploadType, setUploadType] = useState<
     'frontImage' | 'backImage' | null
   >(null);
@@ -39,6 +41,12 @@ export const UdhyamCertificate = () => {
   const [udhyamBackImage, setUdhyamBackImage] = useState<
     DocumentPickerResponse | undefined
   >();
+  const [errors, setErrors] = useState({
+    udhyamAdharName: false,
+    udhyamNumber: false,
+    udhyamFrontImage: false,
+    udhyamBackImage: false,
+  });
 
   const dispatch = useDispatch();
 
@@ -50,19 +58,38 @@ export const UdhyamCertificate = () => {
       udhyamBackImage,
     );
 
-    const allFieldsFilled =
-      udhyamAdharName && udhyamNumber && udhyamFrontImage && udhyamBackImage;
+    if (
+      !udhyamAdharName ||
+      !udhyamNumber ||
+      !udhyamFrontImage ||
+      !udhyamBackImage
+    ) {
+      setErrors({
+        udhyamAdharName: !udhyamAdharName,
+        udhyamNumber: !udhyamNumber,
+        udhyamFrontImage: !udhyamFrontImage,
+        udhyamBackImage: !udhyamBackImage,
+      });
 
-    if (!allFieldsFilled) {
-      console.warn(
-        'Please fill all required Udhyam details and upload both images.',
-      );
+      let missingFields = [];
+      if (!udhyamAdharName) missingFields.push('Udhyam AdharName');
+      if (!udhyamNumber) missingFields.push('Udhyam Number');
+      if (!udhyamFrontImage) missingFields.push('Udhyam FrontImage');
+      if (!udhyamBackImage) missingFields.push('Udhyam BackImage');
+
       Alert.alert(
-        'Validation Error',
-        'Please fill all fields and upload both front and back images.',
+        'Missing Fields',
+        `Please provide the following:\n${missingFields.join('\n')}`,
       );
       return;
     }
+
+    setErrors({
+      udhyamAdharName: false,
+      udhyamNumber: false,
+      udhyamFrontImage: false,
+      udhyamBackImage: false,
+    });
 
     const payload = {
       clientId: 22,
@@ -85,8 +112,19 @@ export const UdhyamCertificate = () => {
       },
     };
 
-    console.log('Dispatching uploadUdhyamRequest:', payload);
+    console.log('Disp uploadUdhyamRequest:', payload);
+    setLoading(true);
     dispatch(clientActions.uploadUdhyamRequest(payload));
+    setTimeout(() => {
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploaded',
+        text2: `${udhyamAdharName}'s document submitted successfully`,
+        position: 'top',
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -109,14 +147,38 @@ export const UdhyamCertificate = () => {
           <Input
             label="Name as per Udhyam Aadhar"
             value={udhyamAdharName}
-            onChangeText={setUdhyamAdharName}
-            containerStyle={{marginBottom: scaleHeight(24)}}
+            onChangeText={text => {
+              setUdhyamAdharName(text);
+              if (errors.udhyamAdharName && text.trim()) {
+                setErrors(prev => ({...prev, udhyamAdharName: false}));
+              }
+            }}
+            containerStyle={[
+              {marginBottom: scaleHeight(24)},
+              errors.udhyamAdharName && {
+                borderColor: Colors.red,
+                borderWidth: 1,
+                borderRadius: 5,
+              },
+            ]}
           />
           <Input
             label="URN Number"
             value={udhyamNumber}
-            onChangeText={setUdhyamNumber}
-            containerStyle={{marginBottom: scaleHeight(14)}}
+            onChangeText={text => {
+              setUdhyamNumber(text);
+              if (errors.udhyamNumber && text.trim()) {
+                setErrors(prev => ({...prev, udhyamNumber: false}));
+              }
+            }}
+            containerStyle={[
+              {marginBottom: scaleHeight(14)},
+              errors.udhyamNumber && {
+                borderColor: Colors.red,
+                borderWidth: 1,
+                borderRadius: 5,
+              },
+            ]}
           />
 
           {udhyamFrontImage ? (
@@ -128,6 +190,9 @@ export const UdhyamCertificate = () => {
                 setUploadType('frontImage');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.udhyamFrontImage ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -140,6 +205,9 @@ export const UdhyamCertificate = () => {
                 setUploadType('backImage');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.udhyamBackImage ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -150,9 +218,13 @@ export const UdhyamCertificate = () => {
                 switch (uploadType) {
                   case 'frontImage':
                     setUdhyamFrontImage(file);
+                    if (errors.udhyamFrontImage)
+                      setErrors(prev => ({...prev, udhyamFrontImage: false}));
                     break;
                   case 'backImage':
                     setUdhyamBackImage(file);
+                    if (errors.udhyamBackImage)
+                      setErrors(prev => ({...prev, udhyamBackImage: false}));
                     break;
                 }
               }

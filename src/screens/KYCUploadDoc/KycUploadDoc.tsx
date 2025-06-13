@@ -30,6 +30,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -45,6 +46,11 @@ export const KycUploadDoc = () => {
   const [name, setName] = useState('');
   const [image, setImage] = useState<DocumentPickerResponse | undefined>();
 
+  const [errors, setErrors] = useState({
+    name: false,
+    image: false,
+  });
+
   const dispatch = useDispatch();
 
   const handleSave = () => {
@@ -52,23 +58,47 @@ export const KycUploadDoc = () => {
   };
 
   const handleSubmit = () => {
-    console.log(name, image);
-    if (name && image) {
-      const payload = {
-        client_name: name,
-        clientId: 22,
-        doc: {
-          name: image.name ?? Date.now().toString(),
-          type: image.type ?? 'image/png',
-          uri: image.uri,
-        },
-        params: 'Profile',
-        uploaded_by: 'Nishith Upadhyay',
-      };
-      setLoading(true);
-      console.log('disp uploadKycRequest');
-      dispatch(clientActions.uploadKycRequest(payload));
+    if (!name || !image) {
+      setErrors({
+        name: !name,
+        image: !image,
+      });
+
+      Alert.alert(
+        'Missing Fields',
+        !name && !image
+          ? 'Please enter Name and upload Image.'
+          : `${!name ? 'Name' : 'Image'} is required.`,
+      );
+      return;
     }
+
+    setErrors({name: false, image: false});
+
+    const payload = {
+      client_name: name,
+      clientId: 22,
+      doc: {
+        name: image!.name ?? Date.now().toString(),
+        type: image!.type ?? 'image/png',
+        uri: image!.uri,
+      },
+      params: 'Profile',
+      uploaded_by: 'Nishith Upadhyay',
+    };
+
+    setLoading(true);
+    dispatch(clientActions.uploadKycRequest(payload));
+    setTimeout(() => {
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploaded',
+        text2: `${name}'s document submitted successfully`,
+        position: 'top',
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -96,8 +126,18 @@ export const KycUploadDoc = () => {
           label="Your Name"
           placeholder="Value"
           value={name}
-          onChangeText={setName}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setName(text);
+            if (errors.name) setErrors(prev => ({...prev, name: false}));
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.name && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
         {image ? (
           <Text>File Name: {image.name}</Text>
@@ -105,6 +145,9 @@ export const KycUploadDoc = () => {
           <DashedButton
             label="Upload Your Picture"
             onPress={() => setIsVisible(true)}
+            containerStyle={
+              errors.image ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
         <UploadModal
@@ -112,6 +155,7 @@ export const KycUploadDoc = () => {
           onClose={file => {
             if (file) {
               setImage(file);
+              if (errors.image) setErrors(prev => ({...prev, image: false}));
             }
             setIsVisible(false);
           }}

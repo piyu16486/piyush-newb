@@ -104,7 +104,10 @@ export const KYCFormSelection = () => {
     docs.map(({label, key}, index) => (
       <TouchableOpacity
         key={index}
-        style={styles.card}
+        style={[
+          styles.card,
+          kycChecked?.[key] ? {backgroundColor: Colors.frostedPlains} : {},
+        ]}
         onPress={() => handler(label)}>
         <Text style={styles.cardText}>{label}</Text>
         {kycChecked?.[key] ? (
@@ -126,20 +129,10 @@ export const KYCFormSelection = () => {
             <Text style={styles.subHeading}>
               Please Submit the following documents to verify your profile
             </Text>
-            {[
-              'Upload your Picture',
-              'PAN Card Details',
-              'Aadhar Card Details',
-              'Residence Details',
-            ].map((text, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.card}
-                onPress={() => handleNavigation(text)}>
-                <Text style={styles.cardText}>{text}</Text>
-                <RightChevron width={20} height={17} />
-              </TouchableOpacity>
-            ))}
+            {renderList(
+              personalDocs as {label: string; key: keyof typeof kycChecked}[],
+              handleNavigation,
+            )}
           </View>
         );
       case 'business':
@@ -151,22 +144,10 @@ export const KYCFormSelection = () => {
             <Text style={styles.subHeading}>
               Please Submit the following documents to verify your profile
             </Text>
-            {[
-              'Udhyam Certificate',
-              'GST Documents',
-              'Godown Details',
-              'Company PAN Card Details',
-              'Shareholding Details',
-              'Company Information',
-            ].map((text, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.card}
-                onPress={() => handleNavigation2(text)}>
-                <Text style={styles.cardText}>{text}</Text>
-                <RightChevron width={20} height={17} />
-              </TouchableOpacity>
-            ))}
+            {renderList(
+              businessDocs as {label: string; key: keyof typeof kycChecked}[],
+              handleNavigation2,
+            )}
           </View>
         );
       case 'bank':
@@ -263,8 +244,8 @@ export const KYCFormSelection = () => {
               return (
                 <TouchableOpacity
                   key={label}
-                  onPress={() => setActiveTab(key)}
-                  style={styles.tab}>
+                  style={styles.tab}
+                  onPress={() => setActiveTab(key)}>
                   <Text
                     style={[
                       styles.tabText,

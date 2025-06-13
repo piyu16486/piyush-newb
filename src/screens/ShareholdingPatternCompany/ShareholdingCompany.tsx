@@ -25,7 +25,9 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -36,30 +38,63 @@ type KycNavigationType = CompositeNavigationProp<
 export const ShareholdingCompany = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [shareholdingImage, setShareholdingImage] = useState<
     DocumentPickerResponse | undefined
   >();
+  const [errors, setErrors] = useState({
+    companyName: false,
+    shareholdingImage: false,
+  });
 
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
     console.log(companyName, shareholdingImage);
-    if (companyName && shareholdingImage) {
-      const payload = {
-        clientId: 22,
-        uploaded_by: 'Nishith Upadhyay',
-        client_name: companyName,
-        doc: {
-          name: shareholdingImage.name ?? Date.now().toString(),
-          type: shareholdingImage.type ?? 'image.png',
-          uri: shareholdingImage.uri,
-        },
-        params: 'ShareHolding',
-      };
-      console.log('Disp uploadShareholdingRequest');
-      dispatch(clientActions.uploadShareholdingRequest(payload));
+    if (!companyName || !shareholdingImage) {
+      setErrors({
+        companyName: !companyName,
+        shareholdingImage: !shareholdingImage,
+      });
+
+      Alert.alert(
+        'Missing Fields',
+        !companyName && !shareholdingImage
+          ? 'Please provide following documents.'
+          : `${!companyName ? 'Company Name' : 'Image'} is required.`,
+      );
+      return;
     }
+    setErrors({
+      companyName: false,
+      shareholdingImage: false,
+    });
+
+    const payload = {
+      clientId: 22,
+      uploaded_by: 'Nishith Upadhyay',
+      client_name: companyName,
+      doc: {
+        name: shareholdingImage.name ?? Date.now().toString(),
+        type: shareholdingImage.type ?? 'image.png',
+        uri: shareholdingImage.uri,
+      },
+      params: 'ShareHolding',
+    };
+    console.log('Disp uploadShareholdingRequest', payload);
+    setLoading(true);
+    dispatch(clientActions.uploadShareholdingRequest(payload));
+    setLoading(false);
+    setTimeout(() => {
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploaded',
+        text2: `${companyName}'s document submitted successfully`,
+        position: 'top',
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -82,9 +117,20 @@ export const ShareholdingCompany = () => {
         </View>
         <Input
           label="Company Name"
-          value={companyName}
-          onChangeText={setCompanyName}
-          containerStyle={{marginBottom: scaleHeight(20)}}
+          value={companyName} // setCompanyName
+          onChangeText={text => {
+            setCompanyName(text);
+            if (errors.companyName)
+              setErrors(prev => ({...prev, companyName: false}));
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(20)},
+            errors.companyName && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
 
         {shareholdingImage ? (
@@ -93,6 +139,9 @@ export const ShareholdingCompany = () => {
           <DashedButton
             label="Upload Shareholding Pattern"
             onPress={() => setIsVisible(true)}
+            containerStyle={
+              errors.shareholdingImage ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
 
@@ -101,6 +150,8 @@ export const ShareholdingCompany = () => {
           onClose={file => {
             if (file) {
               setShareholdingImage(file);
+              if (errors.shareholdingImage)
+                setErrors(prev => ({...prev, image: false}));
             }
             setIsVisible(false);
           }}

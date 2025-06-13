@@ -17,7 +17,9 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -28,6 +30,7 @@ type KycNavigationType = CompositeNavigationProp<
 export const CompanyDocument = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [uploadType, setUploadType] = useState<
     'aoaDoc' | 'moaDoc' | 'coiDoc' | 'otherDoc' | null
   >(null);
@@ -43,48 +46,86 @@ export const CompanyDocument = () => {
   const [otherDocument, setOtherDocument] = useState<
     DocumentPickerResponse | undefined
   >();
+  const [errors, setErrors] = useState({
+    aoaDocument: false,
+    moaDocument: false,
+    coiDocument: false,
+    otherDocument: false,
+  });
 
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
     console.log(aoaDocument, moaDocument, coiDocument, otherDocument);
 
-    const allFieldsFilled =
-      aoaDocument && moaDocument && coiDocument && otherDocument;
+    if (!aoaDocument || !moaDocument || !coiDocument || !otherDocument) {
+      setErrors({
+        aoaDocument: !aoaDocument,
+        moaDocument: !moaDocument,
+        coiDocument: !coiDocument,
+        otherDocument: !otherDocument,
+      });
 
-    if (allFieldsFilled) {
-      const payload = {
-        clientId: 22,
-        uploaded_by: 'Nishith Upadhyay',
-        doc: [
-          {
-            uri: aoaDocument.uri,
-            name: aoaDocument.name ?? Date.now().toString(),
-            type: aoaDocument.type ?? 'image/png',
-          },
-          {
-            uri: moaDocument.uri,
-            name: moaDocument.name ?? Date.now().toString(),
-            type: moaDocument.type ?? 'image/png',
-          },
-          {
-            uri: coiDocument.uri,
-            name: coiDocument.name ?? Date.now().toString(),
-            type: coiDocument.type ?? 'image/png',
-          },
-          {
-            uri: otherDocument.uri,
-            name: otherDocument.name ?? Date.now().toString(),
-            type: otherDocument.type ?? 'image/png',
-          },
-        ],
-      };
+      let missingFields = [];
+      if (!aoaDocument) missingFields.push('AOA Document');
+      if (!moaDocument) missingFields.push('MOA Document');
+      if (!coiDocument) missingFields.push('COI Document');
+      if (!otherDocument) missingFields.push('Other Document');
 
-      console.log('Disp uploadCompanyInfoRequest', payload);
-      dispatch(clientActions.uploadCompanyInfoRequest(payload));
-    } else {
-      console.warn('Please fill all required images of Company Document');
+      Alert.alert(
+        'Missing Fields',
+        `Please provide the following: \n${missingFields.join('\n')}`,
+      );
+      return;
     }
+
+    setErrors({
+      aoaDocument: false,
+      moaDocument: false,
+      coiDocument: false,
+      otherDocument: false,
+    });
+
+    const payload = {
+      clientId: 22,
+      uploaded_by: 'Nishith Upadhyay',
+      doc: [
+        {
+          uri: aoaDocument.uri,
+          name: aoaDocument.name ?? Date.now().toString(),
+          type: aoaDocument.type ?? 'image/png',
+        },
+        {
+          uri: moaDocument.uri,
+          name: moaDocument.name ?? Date.now().toString(),
+          type: moaDocument.type ?? 'image/png',
+        },
+        {
+          uri: coiDocument.uri,
+          name: coiDocument.name ?? Date.now().toString(),
+          type: coiDocument.type ?? 'image/png',
+        },
+        {
+          uri: otherDocument.uri,
+          name: otherDocument.name ?? Date.now().toString(),
+          type: otherDocument.type ?? 'image/png',
+        },
+      ],
+    };
+
+    console.log('Disp uploadCompanyInfoRequest', payload);
+    setLoading(true);
+    dispatch(clientActions.uploadCompanyInfoRequest(payload));
+    setTimeout(() => {
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploaded',
+        text2: `${aoaDocument}'s document submitted successfully`,
+        position: 'top',
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -118,6 +159,9 @@ export const CompanyDocument = () => {
                 setUploadType('aoaDoc');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.aoaDocument ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -131,6 +175,9 @@ export const CompanyDocument = () => {
                 setUploadType('moaDoc');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.moaDocument ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -144,6 +191,9 @@ export const CompanyDocument = () => {
                 setUploadType('coiDoc');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.coiDocument ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
@@ -157,6 +207,9 @@ export const CompanyDocument = () => {
                 setUploadType('otherDoc');
                 setIsVisible(true);
               }}
+              containerStyle={
+                errors.otherDocument ? {borderColor: Colors.red} : undefined
+              }
             />
           )}
 
