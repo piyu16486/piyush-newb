@@ -47,6 +47,9 @@ const Endpoints = {
 
   // BankList dropdown
   apiBankList: '/client-info-master/bank-list',
+
+  // Soft Sanction
+  apiInputFields: '/client-info-master/soft-sanction/inputs/UGRO',
 } as const;
 
 export default Endpoints;
