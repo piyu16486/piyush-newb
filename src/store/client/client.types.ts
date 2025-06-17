@@ -73,11 +73,18 @@ export type ClientState = {
   CompanyInfoData: IUploadCompanyInfoResponse | null;
   CompanyInfoError: string | null;
 
+  // Bank List
   BankLoader: boolean;
   BankList: Array<IBankListResponseDatum>;
 
+  // Kyc Checked Mark
   KycCheckedLoader: boolean;
   kycCheckedList: Array<IKycCheckedResponseDatum>;
+
+  // SoftSanction Bank Method
+  SoftSanctionLoading: boolean;
+  SoftSanctionData: Array<IsoftSanctionMethodDatum>;
+  SoftSanctionError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -551,4 +558,22 @@ export interface IKycCheckedResponse {
 export interface IKycCheckedResponseDatum {
   document_id: number;
   document_type: string;
+}
+
+export interface ISoftSanctionPayload {
+  bank_name: string;
+  product_name: string;
+  method_name: string;
+  done_by: string;
+}
+
+export interface ISoftSanctionResponse {
+  statusCode: number;
+  data: IsoftSanctionMethodDatum[];
+}
+
+export interface IsoftSanctionMethodDatum {
+  id: number;
+  method_name: string;
+  label: string;
 }

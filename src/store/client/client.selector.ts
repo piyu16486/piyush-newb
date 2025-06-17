@@ -144,6 +144,11 @@ const getCompanyInfoError = createSelector(
   state => state.CompanyInfoError,
 );
 
+const getSoftSanctionMethod = createSelector(
+  _selectState,
+  _state => _state.SoftSanctionData,
+);
+
 export default {
   getClientList,
   getClientFormData,
@@ -183,4 +188,5 @@ export default {
   getCompanyInfoLoading,
   getCompanyInfoData,
   getCompanyInfoError,
+  getSoftSanctionMethod,
 };

@@ -24,5 +24,4 @@ const lightColors = {
   balancedGray: '#2d2d2d',
   frostedPlains: '#e0ffe0',
 } as const;
-
 export default lightColors;

@@ -14,9 +14,12 @@ const Endpoints = {
   // Client apis
   apiGetAllClients: '/client-info-master/list',
   apiSaveBasicDetails: '/client-info-master/basic-details',
-  apiSaveClientFirmDerails: '/client-info-master/client-firm-details/16',
-  apiSaveVendorDetails: '/client-info-master/vendor-details/16',
-  apiSaveVisitDetails: '/client-info-master/follow-up/16',
+  apiSaveClientFirmDetails: (clientId: string) =>
+    `/client-info-master/client-firm-details/${clientId}`,
+  apiSaveVendorDetails: (clientId: string) =>
+    `/client-info-master/vendor-details/${clientId}`,
+  apiSaveVisitDetails: (clientId: string) =>
+    `/client-info-master/follow-up/${clientId}`,
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',
@@ -49,7 +52,7 @@ const Endpoints = {
   apiBankList: '/client-info-master/bank-list',
 
   // Soft Sanction
-  apiInputFields: '/client-info-master/soft-sanction/inputs/UGRO',
+  apiGetSoftSanction: '/client-info-master/soft-sanction/inputs/UGRO',
 } as const;
 
 export default Endpoints;

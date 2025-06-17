@@ -9,6 +9,8 @@ import {
   IKycCheckedResponseDatum,
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
+  IsoftSanctionMethodDatum,
+  ISoftSanctionPayload,
   ITaskHistoryResponseDatum,
   IuplaodCompanyPanResponse,
   IUploadAdharDocumentResponse,
@@ -57,18 +59,22 @@ const clientFormData: ClientFormType = {
     existingFunding: '',
   },
   VendorScreen: {
-    monthlySales: '',
-    product: '',
-    vendorContact: '',
+    Product: '',
+    state: '',
+    city: '',
     vendorName: '',
+    address: '',
+    pincode: '',
+    vendorContact: '',
     vendorEmail: '',
+    monthlySales: '',
   },
   VisitScreen: {
     intent: '',
-    nextVisitDate: '',
     interested: '',
+    UserResponse: '',
+    nextVisitDate: '',
     reason: '',
-    visitRemarks: '',
   },
 };
 
@@ -123,10 +129,22 @@ const initialState: ClientState = {
   goDownLoading: false,
   goDownData: null,
   goDownError: null,
+  // CompanyPan Upload
+  CompanyPanLoading: false,
+  CompanyPanData: null,
+  CompanyPanError: null,
   // Shareholding Kyc
   ShareholdingLoading: false,
   ShareholdingData: null,
   ShareholdingError: null,
+  // CompanyInfo Upload
+  CompanyInfoLoading: false,
+  CompanyInfoData: null,
+  CompanyInfoError: null,
+  // SoftSanction Bank Method
+  SoftSanctionLoading: false,
+  SoftSanctionData: [],
+  SoftSanctionError: null,
 };
 
 const clientSlice = createSlice({
@@ -479,6 +497,29 @@ const clientSlice = createSlice({
       state.CompanyInfoData = null;
       state.CompanyInfoError = null;
     },
+    setSoftSanctionLoader: (state, action: PayloadAction<boolean>) => {
+      state.SoftSanctionLoading = action.payload;
+    },
+    getSoftSanctionRequest: (
+      state,
+      _action: PayloadAction<ISoftSanctionPayload>,
+    ) => {
+      state.SoftSanctionLoading = true;
+    },
+    getSoftSanction: state => {
+      state.SoftSanctionLoading = true;
+    },
+    setSoftSanctionList: (
+      state,
+      action: PayloadAction<Array<IsoftSanctionMethodDatum>>,
+    ) => {
+      state.SoftSanctionLoading = false;
+      state.SoftSanctionData = action.payload;
+    },
+    resetSoftSanction: state => {
+      state.SoftSanctionData = [];
+      state.SoftSanctionLoading = false;
+    },
   },
 });
 
@@ -551,5 +592,10 @@ export const {
   uploadCompanyInfoSuccess,
   uploadCompanyInfoFailure,
   clearCompanyInfo,
+  setSoftSanctionLoader,
+  getSoftSanctionRequest,
+  getSoftSanction,
+  setSoftSanctionList,
+  resetSoftSanction,
 } = clientSlice.actions;
 export default clientSlice.reducer;
