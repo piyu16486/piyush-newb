@@ -67,7 +67,7 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
       </View>
 
       {/* Modal */}
-      <Modal visible={showModal} transparent animationType="slide">
+      <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.overlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Run Soft Sanction</Text>
@@ -87,14 +87,15 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
                 value={purchaseValue}
                 onChangeText={setPurchaseValue}
               />
-              {/* <Text style={styles.inputDescription}>
+            </View>
+            {/* <Text style={styles.inputDescription}>
                 Last 12 M Purchases of brand 1 (GSTMar24)
               </Text>
               <Input
                 label="Purchases"
                 containerStyle={{marginBottom: scaleHeight(20)}}
               /> */}
-
+            <View style={styles.modalSection}>
               <Text style={styles.modalLabel}>Turnover</Text>
               <Text style={styles.modalSubLabel}>Existing W/C Limits</Text>
               <TextInput

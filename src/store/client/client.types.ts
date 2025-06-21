@@ -85,6 +85,16 @@ export type ClientState = {
   SoftSanctionLoading: boolean;
   SoftSanctionData: Array<IsoftSanctionMethodDatum>;
   SoftSanctionError: string | null;
+
+  // SoftSanction Bank Product
+  SoftSanctionBNKPROLoading: boolean;
+  SoftSanctionBNKPROData: Array<IsoftSanctionBankProductDatum>;
+  SoftSanctionBNKPROError: string | null;
+
+  // FilterBox
+  FilterboxLoading: boolean;
+  FilterboxData: IFilterResponse | null;
+  FilterboxError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -576,4 +586,27 @@ export interface IsoftSanctionMethodDatum {
   id: number;
   method_name: string;
   label: string;
+}
+
+export interface IsoftSanctionBankProductResponse {
+  statusCode: number;
+  data: IsoftSanctionBankProductDatum[];
+}
+
+export interface IsoftSanctionBankProductDatum {
+  soft_sanction_ruleset_id: string;
+  method_name: string;
+}
+
+export interface IFilterPayload {
+  locations: string[];
+  firstNames: any[];
+  lastNames: any[];
+  sourceOfLead: any[];
+}
+
+export interface IFilterResponse {
+  message: string;
+  error: string;
+  statusCode: number;
 }

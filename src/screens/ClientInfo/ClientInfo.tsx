@@ -1,11 +1,12 @@
 import {Filter, Plus, Search} from '@assets/Icons';
-import {AppBar, ClientCard, Container} from '@components/index';
+import {AppBar, ClientCard, Container, FilterDropDown} from '@components/index';
+import fontWeight from '@constants/FontWeight';
 import {ClientScreens, Colors, FontWeight} from '@constants/index';
 import {DrawerScreenProps} from '@react-navigation/drawer';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ClientCardReadMore} from '@screens/ReadMore/ClientCardReadMore';
-import {clientActions, clientSelector} from '@store/client';
+import {clientActions, clientSelector, IFilterPayload} from '@store/client';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -34,6 +35,8 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
 
   const dispatch = useDispatch();
   const clientsData = useSelector(clientSelector.getClientList);
+  const filterbox = useSelector(clientSelector.getFilterbox);
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
   const callGetClients = () => {
     dispatch(clientActions.getClients());
@@ -53,6 +56,69 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
 
   const onPressCard = (id: number) => {
     navigation.navigate(ClientScreens.ClientLeadInfoTab, {clientId: id});
+  };
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredClients = clientsData.filter(item => {
+    const query = searchQuery.toLowerCase();
+    return (
+      item.id?.toString().toLowerCase().includes(query) ||
+      item.client_name?.toLowerCase().includes(query) ||
+      item.location?.toLowerCase().includes(query) ||
+      item.source_of_lead?.toLowerCase().includes(query) ||
+      item.reference_details?.toLowerCase().includes(query) ||
+      item.monthly_turnover?.toLowerCase().includes(query) ||
+      item.estimated_funding_required?.toString().includes(query) ||
+      item.financier_name?.toLowerCase().includes(query)
+    );
+  });
+
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [filterOptions, setFilterOptions] = useState([
+    {
+      label: 'Location',
+      checked: false,
+      isNested: true,
+      subOptions: ['Mumbai', 'Pune', 'Bangalore'],
+    },
+    {label: 'Initiator', checked: false},
+    {label: 'Source', checked: false},
+  ]);
+
+  const toggleOption = (index: number, subIndex?: number) => {
+    const updated = [...filterOptions];
+
+    if (subIndex !== undefined) {
+      const selectedCity = updated[index].subOptions?.[subIndex];
+      Alert.alert('Selected City', selectedCity ?? 'Unknown');
+      // You can push this selectedCity to a selectedCities state array if needed.
+    } else {
+      updated[index].checked = !updated[index].checked;
+    }
+
+    setFilterOptions(updated);
+  };
+
+  const buildFilterPayload = (): IFilterPayload => {
+    const selectedFilters = filterOptions
+      .filter(option => option.checked)
+      .map(option => option.label.toLowerCase());
+
+    const payload: IFilterPayload = {
+      locations: selectedFilters.includes('location') ? ['Mumbai'] : [],
+      firstNames: selectedFilters.includes('initiator') ? ['Miral'] : [],
+      lastNames: [],
+      sourceOfLead: selectedFilters.includes('source') ? ['Referral'] : [],
+    };
+
+    return payload;
+  };
+
+  const applyFilter = () => {
+    const payload = buildFilterPayload();
+    dispatch(clientActions.FilterRequest(payload));
+    setIsFilterApplied(true); // now show filtered list
+    setFilterVisible(false);
   };
 
   return (
@@ -77,18 +143,22 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
               <TextInput
                 style={styles.input}
                 placeholder="Search Clients"
-                placeholderTextColor="#999"
+                placeholderTextColor={Colors.balancedGray}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
               />
             </View>
-            <View style={styles.filterBox}>
-              <View>
-                <Filter height={12} width={12} />
+            <TouchableOpacity onPress={() => setFilterVisible(true)}>
+              <View style={styles.filterBox}>
+                <View>
+                  <Filter height={12} width={12} />
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.cardList}>
             <FlatList
-              data={clientsData}
+              data={filteredClients}
               renderItem={({item}) => (
                 <ClientCard
                   data={item}
@@ -105,6 +175,27 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
           </View>
           <TouchableOpacity style={styles.plusButton} onPress={onPressFAB}>
             <Plus height={24} width={24} />
+          </TouchableOpacity>
+        </>
+      )}
+      {filterVisible && (
+        <>
+          <FilterDropDown
+            visible={filterVisible}
+            onClose={() => setFilterVisible(false)}
+            options={filterOptions}
+            onToggleOption={toggleOption}
+          />
+          <TouchableOpacity
+            onPress={applyFilter}
+            style={{marginTop: 10, alignSelf: 'center'}}>
+            <Text
+              style={{
+                color: Colors.primaryColor,
+                fontWeight: fontWeight.SemiBold,
+              }}>
+              Apply Filters
+            </Text>
           </TouchableOpacity>
         </>
       )}

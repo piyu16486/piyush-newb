@@ -18,6 +18,7 @@ type ReportNavigationType = CompositeNavigationProp<
   NativeStackNavigationProp<ReportNavigatorType>
 >;
 
+
 export const Report = () => {
   const navigation = useNavigation<ReportNavigationType>();
   const dispatch = useDispatch();

@@ -1,10 +1,12 @@
 import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {
+  FilterRequest,
   getBankList,
   getClients,
   getLead,
   getReport,
   getSoftSanction,
+  getSoftSanctionBnkPro,
   getTaskHistory,
   saveClientBasicDetails,
   setKycCheckedList,
@@ -78,6 +80,9 @@ import {
   IClientFirmPayload,
   IvendorPayload,
   IVisitPayload,
+  IsoftSanctionBankProductResponse,
+  IFilterPayload,
+  IFilterResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
@@ -640,6 +645,32 @@ function* handleGetSoftSantion(): unknown {
   }
 }
 
+function* handleGetSoftSantionBnkPro(): unknown {
+  const {data, error}: Result<IsoftSanctionBankProductResponse> = yield call(
+    ClientApis.getSoftSanctionProductBank,
+  );
+  if (!error) {
+    yield put(clientActions.setSoftSanctionBnkProList(data.data));
+  } else {
+    yield put(clientActions.setSoftSanctionBnkProList([]));
+  }
+}
+
+function* handleFilterbox(action: PayloadAction<IFilterPayload>) {
+  try {
+    const {data, error}: {data: IFilterResponse | null; error: any} =
+      yield call(clientApi.FilterBox, action.payload);
+
+    if (data) {
+      yield put(clientActions.FilterSucess(data));
+    } else {
+      yield put(clientActions.FilterFailure(error?.message || 'Unknown error'));
+    }
+  } catch (error: any) {
+    yield put(clientActions.FilterFailure(error.message || 'Unexpected error'));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
@@ -662,4 +693,6 @@ export default function* clientSaga() {
   yield takeLatest(getBankList.type, hnadleGetBankList);
   yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
   yield takeLatest(getSoftSanction.type, handleGetSoftSantion);
+  yield takeLatest(getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
+  yield takeLatest(FilterRequest.type, handleFilterbox);
 }

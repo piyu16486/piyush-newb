@@ -53,6 +53,11 @@ const Endpoints = {
 
   // Soft Sanction
   apiGetSoftSanction: '/client-info-master/soft-sanction/inputs/UGRO',
+  apiGetSoftSanctionBankProduct:
+    '/client-info-master/soft-sanction/methods?bank=UGRO&product=PID',
+
+  // Filter Box
+  apiFilterBox: '/client-info-master/filter',
 } as const;
 
 export default Endpoints;

@@ -149,6 +149,16 @@ const getSoftSanctionMethod = createSelector(
   _state => _state.SoftSanctionData,
 );
 
+const getSoftSanctionBnkPro = createSelector(
+  _selectState,
+  _state => _state.SoftSanctionBNKPROData,
+);
+
+const getFilterbox = createSelector(
+  _selectState,
+  _state => _state.FilterboxData,
+);
+
 export default {
   getClientList,
   getClientFormData,
@@ -189,4 +199,6 @@ export default {
   getCompanyInfoData,
   getCompanyInfoError,
   getSoftSanctionMethod,
+  getSoftSanctionBnkPro,
+  getFilterbox,
 };

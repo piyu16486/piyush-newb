@@ -19,6 +19,9 @@ import {
   IvisitResponse,
   IKycCheckedResponse,
   ISoftSanctionResponse,
+  IsoftSanctionBankProductResponse,
+  IFilterPayload,
+  IFilterResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
 
@@ -353,6 +356,38 @@ const getSoftSanction = async () => {
   };
 };
 
+const getSoftSanctionProductBank = async () => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<IsoftSanctionBankProductResponse>
+  >(Api.get(Endpoints.apiGetSoftSanctionBankProduct));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const FilterBox = async (payload: IFilterPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IFilterResponse>>(
+    Api.post(Endpoints.apiFilterBox, payload),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
 export default {
   getAllClients,
   getRemarkReport,
@@ -375,4 +410,6 @@ export default {
   getBankList,
   getKycChecked,
   getSoftSanction,
+  getSoftSanctionProductBank,
+  FilterBox,
 };

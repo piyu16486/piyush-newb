@@ -6,9 +6,12 @@ import {
   ClientState,
   IBankListResponseDatum,
   IClientInfoResponseDatum,
+  IFilterPayload,
+  IFilterResponse,
   IKycCheckedResponseDatum,
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
+  IsoftSanctionBankProductDatum,
   IsoftSanctionMethodDatum,
   ISoftSanctionPayload,
   ITaskHistoryResponseDatum,
@@ -145,6 +148,14 @@ const initialState: ClientState = {
   SoftSanctionLoading: false,
   SoftSanctionData: [],
   SoftSanctionError: null,
+  // SoftSanction BNKPRO
+  SoftSanctionBNKPROLoading: false,
+  SoftSanctionBNKPROData: [],
+  SoftSanctionBNKPROError: null,
+  // Filterbox
+  FilterboxLoading: false,
+  FilterboxData: null,
+  FilterboxError: null,
 };
 
 const clientSlice = createSlice({
@@ -520,6 +531,40 @@ const clientSlice = createSlice({
       state.SoftSanctionData = [];
       state.SoftSanctionLoading = false;
     },
+    setSoftSanctionBnkProLoader: (state, action: PayloadAction<boolean>) => {
+      state.SoftSanctionBNKPROLoading = action.payload;
+    },
+    getSoftSanctionBnkPro: state => {
+      state.SoftSanctionBNKPROLoading = true;
+    },
+    setSoftSanctionBnkProList: (
+      state,
+      action: PayloadAction<Array<IsoftSanctionBankProductDatum>>,
+    ) => {
+      state.SoftSanctionBNKPROLoading = false;
+      state.SoftSanctionBNKPROData = action.payload;
+    },
+    resetSoftSanctionBnkPro: state => {
+      state.SoftSanctionBNKPROData = [];
+      state.SoftSanctionBNKPROLoading = false;
+    },
+    FilterRequest(state, action: PayloadAction<IFilterPayload>) {
+      state.FilterboxLoading = true;
+      state.FilterboxError = null;
+    },
+    FilterSucess(state, action: PayloadAction<IFilterResponse>) {
+      state.FilterboxLoading = false;
+      state.FilterboxData = action.payload;
+    },
+    FilterFailure(state, action: PayloadAction<string>) {
+      state.FilterboxLoading = false;
+      state.FilterboxError = action.payload;
+    },
+    clearFilter(state) {
+      state.FilterboxLoading = false;
+      state.FilterboxData = null;
+      state.FilterboxError = null;
+    },
   },
 });
 
@@ -597,5 +642,13 @@ export const {
   getSoftSanction,
   setSoftSanctionList,
   resetSoftSanction,
+  setSoftSanctionBnkProLoader,
+  getSoftSanctionBnkPro,
+  setSoftSanctionBnkProList,
+  resetSoftSanctionBnkPro,
+  FilterRequest,
+  FilterSucess,
+  FilterFailure,
+  clearFilter,
 } = clientSlice.actions;
 export default clientSlice.reducer;
