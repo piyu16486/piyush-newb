@@ -183,7 +183,17 @@ export interface ILeadProgressResponse {
   data: Array<ILeadProgressResponseDatum>;
 }
 
-export interface ILeadProgressResponseDatum {}
+export interface ILeadProgressResponseDatum {
+  id: number;
+  source_of_lead: string;
+  location: string;
+  client_name: any;
+  monthly_turnover: any;
+  bank_name: any;
+  estimated_funding_required: any;
+  user: any;
+  report: Array<{id: number; client: number; created_at: string}>;
+}
 
 export interface ITaskHistoryResponse {
   statusCode: number;

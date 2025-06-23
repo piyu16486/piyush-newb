@@ -48,7 +48,7 @@ const getBankList = createSelector(_selectState, _state => _state.BankList);
 
 const getkycChecked = createSelector(
   _selectState,
-  _state => _state.kycCheckedList,
+  _state => _state.kycCheckedList.map(value => value.document_type),
 );
 
 const getUplaodpanLoading = createSelector(

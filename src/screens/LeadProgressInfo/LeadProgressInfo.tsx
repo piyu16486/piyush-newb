@@ -1,5 +1,6 @@
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
+import {ILeadProgressResponseDatum} from '@store/client';
 import {scaleFont, scaleHeight} from '@utils/Scale';
 import React from 'react';
 import {
@@ -20,34 +21,38 @@ interface StatusItem {
 
 export const LeadProgressInfo = ({
   onPressReadLess,
+  data,
+  progressStatusData,
 }: {
   onPressReadLess: () => void;
+  data: ILeadProgressResponseDatum | null;
+  progressStatusData: Array<any>;
 }) => {
-  const progressStatusData = [
-    {
-      id: '1',
-      status: 'Login',
-      date: '10-10-2025',
-      remark: 'Completed',
-      tat: '3',
-    },
-    {
-      id: '2',
-      status: 'Credit Assessment',
-      date: '10-10-2025',
-      remark: 'Completed',
-      tat: '3',
-    },
-    {
-      id: '3',
-      status: 'PSD and Digital Links',
-      date: '10-10-2025',
-      remark: 'Reason for Late',
-      tat: '3',
-    },
-  ];
+  // const progressStatusData = [
+  //   {
+  //     id: '1',
+  //     status: 'Login',
+  //     date: '10-10-2025',
+  //     remark: 'Completed',
+  //     tat: '3',
+  //   },
+  //   {
+  //     id: '2',
+  //     status: 'Credit Assessment',
+  //     date: '10-10-2025',
+  //     remark: 'Completed',
+  //     tat: '3',
+  //   },
+  //   {
+  //     id: '3',
+  //     status: 'PSD and Digital Links',
+  //     date: '10-10-2025',
+  //     remark: 'Reason for Late',
+  //     tat: '3',
+  //   },
+  // ];
 
-  const renderStatusItem = ({item}: {item: StatusItem}) => (
+  const renderStatusItem = ({item}: {item: any}) => (
     <View style={styles.statusBlock}>
       <Text style={styles.label}>
         <Text style={styles.bold}>Status :</Text> {item.status}
@@ -74,28 +79,32 @@ export const LeadProgressInfo = ({
         <Text style={styles.sectionHeader}>Basic Details</Text>
         {/* All Basic Details */}
         <Text style={styles.label}>
-          <Text style={styles.bold}>Client ID :</Text> 0001
+          <Text style={styles.bold}>Client ID :</Text> {data?.id}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Client Name :</Text> S D Verma
+          <Text style={styles.bold}>Client Name :</Text> {data?.client_name}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Location :</Text> Delhi
+          <Text style={styles.bold}>Location :</Text> {data?.location}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Initiator :</Text> Delhi
+          <Text style={styles.bold}>Initiator :</Text> {data?.location}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Source (D/H/C/O) :</Text> Source D
+          <Text style={styles.bold}>Source (D/H/C/O) :</Text>
+          {data?.source_of_lead}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Reference Details :</Text> 9889823222
+          <Text style={styles.bold}>Reference Details :</Text> TODO REF
+          9889823222
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Monthly Turnover :</Text> 20,00,000
+          <Text style={styles.bold}>Monthly Turnover :</Text>
+          {data?.monthly_turnover}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>Sanction Requested :</Text> 25,00,000
+          <Text style={styles.bold}>Sanction Requested :</Text>
+          {data?.estimated_funding_required}
         </Text>
         <Text style={styles.label}>
           <Text style={styles.bold}>Process Start :</Text> 10-02-2023

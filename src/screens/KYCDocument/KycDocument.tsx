@@ -141,7 +141,9 @@ export const KycDocument = () => {
           renderItem={({item}) => (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('KYCFormSelection')}>
+              onPress={() =>
+                navigation.navigate('KYCFormSelection', {clientID: item.id})
+              }>
               <KycCard data={item} />
             </TouchableOpacity>
           )}

@@ -3,12 +3,17 @@ import {
   FilterRequest,
   getBankList,
   getClients,
+  getKycChecked,
   getLead,
+  getLeadDesciption,
   getReport,
   getSoftSanction,
   getSoftSanctionBnkPro,
   getTaskHistory,
   saveClientBasicDetails,
+  saveClientFirmDetails,
+  saveVendorDetails,
+  saveVisitDetails,
   setKycCheckedList,
   uploadAdharFailure,
   uploadAdharRequest,
@@ -88,6 +93,7 @@ import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
 import {PayloadAction} from '@reduxjs/toolkit';
 import moment from 'moment';
+import {PayloadWithCallback} from '@type/global.types';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -118,6 +124,20 @@ function* handleGetLeadProgress(): unknown {
   if (!error) {
     yield put(clientActions.setLeadList(data.data));
   } else {
+  }
+}
+
+function* handleGetLeadDesProgress({
+  payload,
+}: PayloadAction<PayloadWithCallback<string, [Array<any>]>>): unknown {
+  const {data, error}: Result<ILeadProgressResponse> = yield call(
+    clientApi.getLeadDesProgress,
+    payload.payload,
+  );
+  if (!error) {
+    payload.callbackSuccess?.(data.data);
+  } else {
+    payload.callbackError?.();
   }
 }
 
@@ -158,11 +178,12 @@ function* saveBasicDetails(): unknown {
   }
 }
 
-function* saveClientFirmDetails(): unknown {
+function* saveClientFirm(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
+  console.log('----->>>>', clientId);
   const clientFirmDetailForm = clientFormData.ClientFirmScreen;
 
   const body: IClientFirmPayload = {
@@ -189,15 +210,15 @@ function* saveClientFirmDetails(): unknown {
   );
 
   if (!error) {
-    yield put(clientActions.saveClientFirmDetails());
+    // yield put(clientActions.saveClientFirmDetails());
   }
 }
 
-function* saveVendorDetails(): unknown {
+function* saveVendor(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
   const vendorForm = clientFormData.VendorScreen;
 
   const body: IvendorPayload = {
@@ -219,15 +240,15 @@ function* saveVendorDetails(): unknown {
   );
 
   if (!error) {
-    yield put(clientActions.saveVendorDetails()); // savevisitDetails
+    // yield put(clientActions.saveVendorDetails()); // savevisitDetails
   }
 }
 
-function* savevisitDetails(): unknown {
+function* savevisit(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
   const visitForm = clientFormData.VisitScreen;
 
   const body: IVisitPayload = {
@@ -245,7 +266,7 @@ function* savevisitDetails(): unknown {
   );
 
   if (!error) {
-    yield put(clientActions.saveVisitDetails());
+    // yield put(clientActions.saveVisitDetails());
   }
 }
 
@@ -284,7 +305,7 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
     formData.append('uploaded_by', uploaded_by);
 
     files.forEach((file, index) => {
-      formData.append(`files[${index}]`, {
+      formData.append('doc', {
         // Unique key for each file
         uri: file.uri,
         type: file.type,
@@ -623,9 +644,10 @@ function* hnadleGetBankList(): unknown {
   }
 }
 
-function* handleGetKycChecked(): unknown {
+function* handleGetKycChecked({payload}: PayloadAction<string>): unknown {
   const {data, error}: Result<IKycCheckedResponse> = yield call(
     clientApi.getKycChecked,
+    payload,
   );
   if (!error) {
     yield put(clientActions.setKycCheckedList(data.data));
@@ -675,11 +697,12 @@ export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
+  yield takeLatest(getLeadDesciption.type, handleGetLeadDesProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
   yield takeLatest(saveClientBasicDetails.type, saveBasicDetails);
-  yield takeLatest(saveClientBasicDetails.type, saveClientFirmDetails);
-  yield takeLatest(saveClientBasicDetails.type, saveVendorDetails);
-  yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
+  yield takeLatest(saveClientFirmDetails.type, saveClientFirm);
+  yield takeLatest(saveVendorDetails.type, saveVendor);
+  yield takeLatest(saveVisitDetails.type, savevisit);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
   yield takeLatest(uploadPanRequest.type, handleUploadPan);
   yield takeLatest(uploadAdharRequest.type, handleUploadAdhar);
@@ -691,7 +714,7 @@ export default function* clientSaga() {
   yield takeLatest(uploadCompanyInfoRequest.type, handleUploadCompanyInfo);
   yield takeLatest(uploadCompanyPanRequest.type, handleUploadCompanyPan);
   yield takeLatest(getBankList.type, hnadleGetBankList);
-  yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
+  yield takeLatest(getKycChecked.type, handleGetKycChecked);
   yield takeLatest(getSoftSanction.type, handleGetSoftSantion);
   yield takeLatest(getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
   yield takeLatest(FilterRequest.type, handleFilterbox);

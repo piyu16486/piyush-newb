@@ -1,16 +1,14 @@
 import {Filter, Plus, Search} from '@assets/Icons';
-import {AppBar, ClientCard, Container, FilterDropDown} from '@components/index';
-import fontWeight from '@constants/FontWeight';
+import {AppBar, ClientCard, Container} from '@components/index';
 import {ClientScreens, Colors, FontWeight} from '@constants/index';
 import {DrawerScreenProps} from '@react-navigation/drawer';
-import {CompositeScreenProps} from '@react-navigation/native';
+import {CompositeScreenProps, useFocusEffect} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ClientCardReadMore} from '@screens/ReadMore/ClientCardReadMore';
-import {clientActions, clientSelector, IFilterPayload} from '@store/client';
+import {clientActions, clientSelector} from '@store/client';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, {useCallback, useState} from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -35,15 +33,15 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
 
   const dispatch = useDispatch();
   const clientsData = useSelector(clientSelector.getClientList);
-  const filterbox = useSelector(clientSelector.getFilterbox);
-  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
   const callGetClients = () => {
     dispatch(clientActions.getClients());
   };
-  useEffect(() => {
-    callGetClients();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      callGetClients();
+    }, []),
+  );
 
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
@@ -73,54 +71,6 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
     );
   });
 
-  const [filterVisible, setFilterVisible] = useState(false);
-  const [filterOptions, setFilterOptions] = useState([
-    {
-      label: 'Location',
-      checked: false,
-      isNested: true,
-      subOptions: ['Mumbai', 'Pune', 'Bangalore'],
-    },
-    {label: 'Initiator', checked: false},
-    {label: 'Source', checked: false},
-  ]);
-
-  const toggleOption = (index: number, subIndex?: number) => {
-    const updated = [...filterOptions];
-
-    if (subIndex !== undefined) {
-      const selectedCity = updated[index].subOptions?.[subIndex];
-      Alert.alert('Selected City', selectedCity ?? 'Unknown');
-      // You can push this selectedCity to a selectedCities state array if needed.
-    } else {
-      updated[index].checked = !updated[index].checked;
-    }
-
-    setFilterOptions(updated);
-  };
-
-  const buildFilterPayload = (): IFilterPayload => {
-    const selectedFilters = filterOptions
-      .filter(option => option.checked)
-      .map(option => option.label.toLowerCase());
-
-    const payload: IFilterPayload = {
-      locations: selectedFilters.includes('location') ? ['Mumbai'] : [],
-      firstNames: selectedFilters.includes('initiator') ? ['Miral'] : [],
-      lastNames: [],
-      sourceOfLead: selectedFilters.includes('source') ? ['Referral'] : [],
-    };
-
-    return payload;
-  };
-
-  const applyFilter = () => {
-    const payload = buildFilterPayload();
-    dispatch(clientActions.FilterRequest(payload));
-    setIsFilterApplied(true); // now show filtered list
-    setFilterVisible(false);
-  };
-
   return (
     <Container>
       <AppBar title="Client Information Master" navigation={navigation} />
@@ -148,13 +98,14 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
                 onChangeText={setSearchQuery}
               />
             </View>
-            <TouchableOpacity onPress={() => setFilterVisible(true)}>
+            <TouchableOpacity>
               <View style={styles.filterBox}>
                 <View>
                   <Filter height={12} width={12} />
                 </View>
               </View>
             </TouchableOpacity>
+            ,
           </View>
           <View style={styles.cardList}>
             <FlatList
@@ -175,27 +126,6 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
           </View>
           <TouchableOpacity style={styles.plusButton} onPress={onPressFAB}>
             <Plus height={24} width={24} />
-          </TouchableOpacity>
-        </>
-      )}
-      {filterVisible && (
-        <>
-          <FilterDropDown
-            visible={filterVisible}
-            onClose={() => setFilterVisible(false)}
-            options={filterOptions}
-            onToggleOption={toggleOption}
-          />
-          <TouchableOpacity
-            onPress={applyFilter}
-            style={{marginTop: 10, alignSelf: 'center'}}>
-            <Text
-              style={{
-                color: Colors.primaryColor,
-                fontWeight: fontWeight.SemiBold,
-              }}>
-              Apply Filters
-            </Text>
           </TouchableOpacity>
         </>
       )}

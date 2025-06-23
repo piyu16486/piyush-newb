@@ -1,14 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  FlatList,
-} from 'react-native';
-import Colors from '@constants/Colors';
+import {StyleSheet, View, Text} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 import {RightChevron} from '@assets/Icons';
+import Colors from '@constants/Colors';
 
 type FilterOption = {
   label: string;
@@ -18,76 +12,90 @@ type FilterOption = {
 };
 
 interface Props {
-  visible: boolean;
-  onClose: () => void;
   options: FilterOption[];
   onToggleOption: (index: number) => void;
 }
 
-export const FilterDropDown: React.FC<Props> = ({
-  visible,
-  onClose,
-  options,
-  onToggleOption,
-}) => {
+export const FilterDropDown: React.FC<Props> = ({options, onToggleOption}) => {
+  const formattedOptions = options.map((item, index) => ({
+    label: item.label,
+    value: index.toString(),
+  }));
+
   return (
-    <Modal transparent visible={visible} animationType="fade">
-      <TouchableOpacity style={styles.overlay} onPress={onClose}>
-        <View style={styles.container}>
-          {options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.item}
-              onPress={() => onToggleOption(index)}>
+    <View style={styles.wrapper}>
+      <Dropdown
+        style={styles.dropdown}
+        containerStyle={styles.dropdownContainer}
+        data={formattedOptions}
+        labelField="label"
+        valueField="value"
+        placeholder="Filter"
+        onChange={item => {
+          const index = parseInt(item.value, 10);
+          onToggleOption(index);
+        }}
+        renderItem={(item: any) => {
+          const isChecked = options[parseInt(item.value, 10)].checked;
+          return (
+            <View style={styles.item}>
               <View style={styles.checkbox}>
-                {option.checked && <View style={styles.checkedBox} />}
+                {isChecked && <View style={styles.checkedBox} />}
               </View>
-              <Text style={styles.label}>{option.label}</Text>
+              <Text style={styles.label}>{item.label}</Text>
               <RightChevron />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </TouchableOpacity>
-    </Modal>
+            </View>
+          );
+        }}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  wrapper: {
+    marginRight: 10,
+    marginTop: 10,
+    zIndex: 999,
   },
-  container: {
-    position: 'absolute',
-    width: 220,
+  dropdown: {
+    height: 40,
+    width: 140,
+    borderColor: Colors.balancedGray,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
     backgroundColor: Colors.white,
-    borderRadius: 10,
-    padding: 12,
+  },
+  dropdownContainer: {
+    borderRadius: 8,
+    padding: 8,
+    backgroundColor: Colors.white,
     elevation: 5,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     borderWidth: 2,
     borderColor: Colors.balancedGray,
-    marginRight: 12,
+    marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkedBox: {
-    width: 12,
-    height: 12,
+    width: 10,
+    height: 10,
     backgroundColor: Colors.green,
   },
   label: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.black,
   },
 });

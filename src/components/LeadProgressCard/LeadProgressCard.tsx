@@ -1,19 +1,21 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import Colors from '@constants/Colors';
+import {ILeadProgressResponseDatum} from '@store/client';
 
 interface LeadProgressProps {
-  clientId: string;
-  clientName: string;
-  location: string;
-  initiator: string;
-  sourceDHCO: string;
-  referenceDetails: string;
-  monthlyTurnover: string;
-  sanctionRequested: string;
-  processStart: string;
-  status: 'Warm' | 'Hot' | 'Cold';
-  onPressReadMore: (id: string) => void;
+  // clientId: string;
+  // clientName: string;
+  // location: string;
+  // initiator: string;
+  // sourceDHCO: string;
+  // referenceDetails: string;
+  // monthlyTurnover: string;
+  // sanctionRequested: string;
+  // processStart: string;
+  // status: 'Warm' | 'Hot' | 'Cold';
+  data: ILeadProgressResponseDatum;
+  onPressReadMore: (id: string, item: ILeadProgressResponseDatum) => void;
 }
 
 const ChipColors = {
@@ -23,40 +25,31 @@ const ChipColors = {
 };
 
 export const LeadProgressCard: React.FC<LeadProgressProps> = ({
-  clientId,
-  clientName,
-  location,
-  initiator,
-  sourceDHCO,
-  referenceDetails,
-  monthlyTurnover,
-  sanctionRequested,
-  processStart,
-  status,
+  data,
   onPressReadMore,
 }) => {
   return (
     <View style={styles.card}>
-      <View style={[styles.statusBadge, {backgroundColor: ChipColors[status]}]}>
-        <Text style={styles.statusText}>{status}</Text>
+      <View style={[styles.statusBadge, {backgroundColor: ChipColors.Warm}]}>
+        <Text style={styles.statusText}>{'warm'}</Text>
       </View>
 
       {[
-        {label: 'Client Id', value: clientId},
-        {label: 'Client Name', value: clientName},
-        {label: 'Location', value: location},
+        {label: 'Client Id', value: data.id},
+        {label: 'Client Name', value: data.client_name ?? 'N/A'},
+        {label: 'Location', value: data.location},
         {
           label: 'Initiator',
-          value: initiator,
+          value: 'TODO: Initiator',
         },
-        {label: 'Source (D/H/C/O)', value: sourceDHCO},
+        {label: 'Source (D/H/C/O)', value: data.source_of_lead},
         {
           label: 'Reference Details',
-          value: referenceDetails,
+          value: 'TODO REF DETAIL',
         },
-        {label: 'Monthly Turnover', value: monthlyTurnover},
-        {label: 'Sanction Requested', value: sanctionRequested},
-        {label: 'Process Start', value: processStart},
+        {label: 'Monthly Turnover', value: data.monthly_turnover ?? 0},
+        {label: 'Sanction Requested', value: data.estimated_funding_required},
+        {label: 'Process Start', value: 'TODO Process start'},
       ].map((item, index) => (
         <Text style={styles.text} key={index}>
           <Text style={styles.label}>{item.label}: </Text>
@@ -66,7 +59,7 @@ export const LeadProgressCard: React.FC<LeadProgressProps> = ({
       {/* "Read More" Button */}
       <TouchableOpacity
         style={styles.readMoreButton}
-        onPress={() => onPressReadMore(clientId)}>
+        onPress={() => onPressReadMore(data.id.toString(), data)}>
         <Text style={styles.readMoreText}>Read more</Text>
       </TouchableOpacity>
     </View>

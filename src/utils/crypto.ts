@@ -1,3 +1,4 @@
+import {Config} from '@config/index';
 import CryptoJS from 'react-native-crypto-js';
 
 export class DecryptionError extends Error {
@@ -5,17 +6,20 @@ export class DecryptionError extends Error {
     super(message);
   }
 }
+export function decryptUtility(
+  encryptedString: string,
+  parse: true,
+): Record<string, any>;
+export function decryptUtility(encryptedString: string, parse?: false): string;
 
 export function decryptUtility(
   encryptedString: string,
-  valueType: 'single value' | 'object',
-  rkEncryptionKey: string,
-  rkEncryptionIv: string,
+  parse?: boolean,
 ): Record<string, any> | string {
   try {
-    const key = CryptoJS.enc.Utf8.parse(rkEncryptionKey);
-    const iv = CryptoJS.enc.Utf8.parse(rkEncryptionIv);
-
+    const key = CryptoJS.enc.Base64.parse(Config.RK_ENCRYPTION_KEY);
+    const iv = CryptoJS.enc.Base64.parse(Config.RK_ENCRYPTION_IV);
+    console.log('------->>>>>>', key, iv);
     const decrypted = CryptoJS.AES.decrypt(encryptedString, key, {
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7,
@@ -23,16 +27,12 @@ export function decryptUtility(
     });
 
     const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
-    if (!decryptedText) {
-      throw new Error('Decryption resulted in an empty string');
-    }
+    console.log('------>>>>>', decryptedText);
 
-    return valueType === 'single value'
-      ? decryptedText
-      : JSON.parse(decryptedText);
+    return parse ? JSON.parse(decryptedText) : decryptedText;
   } catch (error) {
     console.error('Decryption failed: ', error);
-    return '';
+    return parse ? {} : '';
   }
 }
 

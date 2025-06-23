@@ -12,9 +12,14 @@ import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DocumentPickerResponse} from '@react-native-documents/picker';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {clientActions} from '@store/client';
+import {clientActions, clientSelector} from '@store/client';
 import {
   HomeNavigatorType,
   ClientNavigatorType,
@@ -31,7 +36,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -42,7 +47,7 @@ export const KycUploadDoc = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const {params} = useRoute<RouteProp<KycNavigatorType, 'KycUploadDoc'>>();
   const [name, setName] = useState('');
   const [image, setImage] = useState<DocumentPickerResponse | undefined>();
 
@@ -77,7 +82,7 @@ export const KycUploadDoc = () => {
 
     const payload = {
       client_name: name,
-      clientId: 22,
+      clientId: params.clientID,
       doc: {
         name: image!.name ?? Date.now().toString(),
         type: image!.type ?? 'image/png',

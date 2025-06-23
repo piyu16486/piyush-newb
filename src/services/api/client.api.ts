@@ -72,6 +72,21 @@ const getLeadProgress = async () => {
     error: null,
   };
 };
+const getLeadDesProgress = async (leadID: string) => {
+  const {data, error} = await tryCatch<AxiosResponse<ILeadProgressResponse>>(
+    Api.get(Endpoints.apiInfoLeadProgress(leadID)),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
 
 const getTaskHistory = async () => {
   const {data, error} = await tryCatch<AxiosResponse<ITaskHistoryResponse>>(
@@ -324,9 +339,9 @@ const getBankList = async () => {
   };
 };
 
-const getKycChecked = async () => {
+const getKycChecked = async (clientID: string) => {
   const {data, error} = await tryCatch<AxiosResponse<IKycCheckedResponse>>(
-    Api.get(Endpoints.apiGetKycChecked),
+    Api.get(Endpoints.apiGetKycChecked(clientID)),
   );
   if (error) {
     return {
@@ -392,6 +407,7 @@ export default {
   getAllClients,
   getRemarkReport,
   getLeadProgress,
+  getLeadDesProgress,
   getTaskHistory,
   saveBasicDetailForm,
   saveClientFirmForm,

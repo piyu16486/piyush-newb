@@ -18,7 +18,6 @@ type ReportNavigationType = CompositeNavigationProp<
   NativeStackNavigationProp<ReportNavigatorType>
 >;
 
-
 export const Report = () => {
   const navigation = useNavigation<ReportNavigationType>();
   const dispatch = useDispatch();
@@ -64,37 +63,6 @@ export const Report = () => {
     // Add more items as needed
   ];
 
-  const renderItem = ({item}) => (
-    <View style={styles.card}>
-      <View style={styles.statusBadge}>
-        <Text style={styles.statusText}>{item.status}</Text>
-      </View>
-
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Lead Name :</Text> {item.leadName}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Visit Date :</Text> {item.visitDate}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Visitor Name :</Text> {item.visitorName}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Task Type :</Text> {item.taskType}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Task Description :</Text>
-        {'\n'}
-        {item.taskDescription}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Remark :</Text>
-        {'\n'}
-        {item.remark}
-      </Text>
-    </View>
-  );
-
   return (
     <Container>
       <AppBar title="Report" navigation={navigation} />
@@ -125,8 +93,37 @@ export const Report = () => {
       </View>
       <FlatList
         data={reportData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <View style={styles.card}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>{'Completed'}</Text>
+            </View>
+
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Lead Name :</Text> {item.client_name}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Visit Date :</Text> {item.user}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Visitor Name :</Text>'TODO Visitor name'
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Task Type :</Text> {item.task}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Task Description :</Text>
+              {'\n'}
+              {item.taskDescription}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Remark :</Text>
+              {'\n'}
+              {item.remark}
+            </Text>
+          </View>
+        )}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.container}
         refreshing={false}
         onRefresh={callGetReport}

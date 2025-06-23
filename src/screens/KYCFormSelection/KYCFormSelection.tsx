@@ -15,7 +15,12 @@ import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {clientActions, clientSelector} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
@@ -37,20 +42,20 @@ type KycNavigationType = CompositeNavigationProp<
 
 export const KYCFormSelection = () => {
   const navigation = useNavigation<KycNavigationType>();
+  const {params} = useRoute<RouteProp<KycNavigatorType, 'KYCFormSelection'>>();
   const [isVisible, setIsVisible] = useState(false);
-
   const dispatch = useDispatch();
   const kycChecked = useSelector(clientSelector.getkycChecked);
 
   const checkedKyc = () => {
-    dispatch(clientActions.getKycChecked());
+    dispatch(clientActions.getKycChecked(params.clientID.toString()));
   };
   useEffect(() => {
     checkedKyc();
   }, []);
 
   const personalDocs = [
-    {label: 'Upload your Picture', key: 'photo'},
+    {label: 'Upload your Picture', key: 'profile'},
     {label: 'PAN Card Details', key: 'pan'},
     {label: 'Aadhar Card Details', key: 'aadhaar'},
     {label: 'Residence Details', key: 'residence'},
@@ -70,7 +75,13 @@ export const KYCFormSelection = () => {
   );
 
   const handleNavigation = (text: string) => {
-    const navMap: {[key: string]: keyof KycNavigatorType} = {
+    const navMap: {
+      [key: string]:
+        | 'KycUploadDoc'
+        | 'KycUploadPan'
+        | 'KycUploadAdhar'
+        | 'ResidenceDetail';
+    } = {
       'Upload your Picture': 'KycUploadDoc',
       'PAN Card Details': 'KycUploadPan',
       'Aadhar Card Details': 'KycUploadAdhar',
@@ -78,7 +89,7 @@ export const KYCFormSelection = () => {
     };
     const screen = navMap[text];
     screen
-      ? navigation.navigate(screen)
+      ? navigation.navigate(screen, {clientID: params.clientID})
       : console.warn('Screen not found for', text);
   };
 
@@ -98,7 +109,7 @@ export const KYCFormSelection = () => {
   };
 
   const renderList = (
-    docs: {label: string; key: keyof typeof kycChecked}[],
+    docs: {label: string; key: string}[],
     handler: (label: string) => void,
   ) =>
     docs.map(({label, key}, index) => (
@@ -106,11 +117,11 @@ export const KYCFormSelection = () => {
         key={index}
         style={[
           styles.card,
-          kycChecked?.[key] ? {backgroundColor: Colors.frostedPlains} : {},
+          kycChecked.includes(key)? {backgroundColor: Colors.frostedPlains} : {},
         ]}
         onPress={() => handler(label)}>
         <Text style={styles.cardText}>{label}</Text>
-        {kycChecked?.[key] ? (
+        {kycChecked.includes(key) ? (
           <RightCheckmark width={20} height={20} />
         ) : (
           <RightChevron width={20} height={17} />

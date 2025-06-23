@@ -36,6 +36,7 @@ import {
   IUploadUdhyamPayload,
   IUploadUdhyamResponse,
 } from './client.types';
+import {PayloadWithCallback} from '@type/global.types';
 
 const clientFormData: ClientFormType = {
   BasicDetails: {
@@ -197,6 +198,7 @@ const clientSlice = createSlice({
     },
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
+      state.clientFormId = undefined;
     },
     // Save Client
     saveClientBasicDetails: state => {
@@ -237,6 +239,12 @@ const clientSlice = createSlice({
     },
     // Lead Progress Actions
     getLead: state => {
+      state.leadLoader = true;
+    },
+    getLeadDesciption: (
+      state,
+      _payload: PayloadAction<PayloadWithCallback<string, [Array<any>]>>,
+    ) => {
       state.leadLoader = true;
     },
     setLeadList: (
@@ -302,7 +310,7 @@ const clientSlice = createSlice({
     setKycCheckedLoader: (state, action: PayloadAction<boolean>) => {
       state.KycCheckedLoader = action.payload;
     },
-    getKycChecked: state => {
+    getKycChecked: (state, action: PayloadAction<string>) => {
       state.KycCheckedLoader = true;
     },
     setKycCheckedList: (
@@ -586,6 +594,7 @@ export const {
   getLead,
   setLeadList,
   resetLeadList,
+  getLeadDesciption,
   getTaskHistory,
   setTaskHistoryList,
   resetTaskHistoryList,

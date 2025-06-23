@@ -25,8 +25,9 @@ const Endpoints = {
   apiGetReport: '/client-info-master/remark-reports',
 
   // Lead apis
-  apiGetLeadProgress: '/client-info-master/16/lead-progress',
-  apiInfoLeadProgress: '/client-info-master/16/lead-progress',
+  apiGetLeadProgress: '/client-info-master/lead-progress/client/list',
+  apiInfoLeadProgress: (leadID: string) =>
+    `/client-info-master/${leadID}/lead-progress`,
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
@@ -46,7 +47,8 @@ const Endpoints = {
   apiCompanyInformation: '/client-info-master/business-kyc/company-docs',
 
   // Get Api to check document uploaded or not
-  apiGetKycChecked: '/client-info-master/personal-kyc/check/16',
+  apiGetKycChecked: (clientID: string) =>
+    `/client-info-master/personal-kyc/check/${clientID}`,
 
   // BankList dropdown
   apiBankList: '/client-info-master/bank-list',
