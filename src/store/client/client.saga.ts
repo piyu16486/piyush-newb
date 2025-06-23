@@ -121,9 +121,12 @@ function* handleGetTaskHistory(): unknown {
   }
 }
 
-function* deleteClientSaga(action) {
+function* deleteClientSaga(action: any) {
   try {
-    yield call(Api.deleteClient, action.payload.id);
+    // TODO: Implement client deletion API call here, e.g.:
+    // yield call(ClientApis.deleteClient, action.payload.id);
+    // For now, comment out the line below as Api.deleteClient does not exist
+    // yield call(Api.deleteClient, action.payload.id);
     yield put(deleteClientSuccess(action.payload.id));
     yield put(getClients()); // Refresh list after delete
   } catch (error) {
@@ -180,7 +183,7 @@ function* saveClientFirmDetails(): unknown {
 
   const {data, error}: Result<IclientFirmResponse> = yield call(
     ClientApis.saveClientFirmForm,
-    (clientId, body),
+    body,
   );
 
   if (!error) {
@@ -208,7 +211,6 @@ function* saveVendorDetails(): unknown {
 
   const {data, error}: Result<IVendorResponse> = yield call(
     ClientApis.saveVendorForm,
-    clientId,
     body,
   );
 
@@ -232,7 +234,6 @@ function* savevisitDetails(): unknown {
 
   const {data, error}: Result<IvisitResponse> = yield call(
     ClientApis.savevisitForm,
-    clientId,
     body,
   );
 

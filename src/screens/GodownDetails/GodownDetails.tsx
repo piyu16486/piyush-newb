@@ -33,7 +33,7 @@ export const GodownDetails = () => {
   const [uploadType, setUploadType] = useState<
     'agreementCopy' | 'electricityBill' | null
   >(null);
-  const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
+  const [ownershipStatus, setOwnershipStatus] = useState<string | undefined>(undefined);
   const [nameofOwner, setnameofOwner] = useState('');
   const [agreementCopy, setAgreementCopy] = useState<
     DocumentPickerResponse | undefined

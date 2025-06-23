@@ -175,6 +175,8 @@ export interface ITaskHistoryResponse {
 }
 
 export interface ITaskHistoryResponseDatum {
+  clientId: string;
+  historyStatus: "Completed" | "Pending";
   id: number;
   assigned_by: string;
   assigned_to: string;

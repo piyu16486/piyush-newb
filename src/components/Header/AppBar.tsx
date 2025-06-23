@@ -17,7 +17,7 @@ import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {CompositeNavigationProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-export type AppBarProps = {
+export type AppBarProps<TNav = any> = {
   title?: string;
   containerStyle?: StyleProp<ViewStyle>;
   titleTextStyle?: StyleProp<TextStyle>;
@@ -27,13 +27,10 @@ export type AppBarProps = {
   leftIconProps?: TouchableOpacityProps;
   leftIconContainerStyle?: StyleProp<ViewStyle>;
 
-  navigation?: CompositeNavigationProp<
-    NativeStackNavigationProp<ClientNavigatorType>,
-    DrawerNavigationProp<HomeNavigatorType>
-  >;
+  navigation?: TNav;
 };
 
-export const AppBar: React.FC<AppBarProps> = ({
+export const AppBar = <TNav,>({
   title = '',
   containerStyle,
   leftIconContainerStyle,
@@ -42,15 +39,15 @@ export const AppBar: React.FC<AppBarProps> = ({
   leftIconProps,
   titleTextStyle,
   navigation,
-}) => {
+}: AppBarProps<TNav>) => {
   return (
     <View style={[styles.container, containerStyle]}>
       <TouchableOpacity
         onPress={() => {
           if (onPressLeftIcon) {
             onPressLeftIcon();
-          } else {
-            navigation?.openDrawer();
+          } else if (navigation && typeof (navigation as any).openDrawer === 'function') {
+            (navigation as any).openDrawer();
           }
         }}
         style={[leftIconContainerStyle]}

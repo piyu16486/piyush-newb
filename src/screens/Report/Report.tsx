@@ -63,7 +63,7 @@ export const Report = () => {
     // Add more items as needed
   ];
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }: { item: IRemarkReportResponseDatum }) => (
     <View style={styles.card}>
       <View style={styles.statusBadge}>
         <Text style={styles.statusText}>{item.status}</Text>

@@ -23,6 +23,7 @@ export const ClientNavigator = () => {
         name={ClientScreens.CreateClientForm}
         component={CreateClientForm}
       />
+      
       <Stack.Screen name="ClientLeadInfoTab" component={ClientLeadInfoTab} />
     </Stack.Navigator>
   );

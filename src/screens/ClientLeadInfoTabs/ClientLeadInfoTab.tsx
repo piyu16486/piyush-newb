@@ -135,9 +135,8 @@ export const ClientLeadInfoTab = () => {
 
             {/* Date and Time Input */}
             <DateNTimePicker
-              mode="datetime"
               label="Schedule"
-              value={schedule}
+              value={schedule ? schedule.toISOString() : undefined}
               onConfirm={setSchedule}
             />
 

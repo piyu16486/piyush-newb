@@ -122,9 +122,9 @@ export const LeadProgress = () => {
           <View style={styles.Cardlist}>
             <FlatList
               data={LeadData}
-              keyExtractor={item => item.clientId}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={({item}) => (
-                <LeadProgressCard {...item} onPressReadMore={onPressReadMore} />
+                <LeadProgressCard clientId={''} clientName={''} location={''} initiator={''} sourceDHCO={''} referenceDetails={''} monthlyTurnover={''} sanctionRequested={''} processStart={''} status={'Warm'} {...item} onPressReadMore={onPressReadMore} />
               )}
               contentContainerStyle={{flexGrow: 1}}
               refreshing={false}

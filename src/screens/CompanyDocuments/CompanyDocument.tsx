@@ -8,7 +8,7 @@ import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {clientActions} from '@store/client';
-import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
+import {HomeNavigatorType, ClientNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {
@@ -20,13 +20,13 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 
-type KycNavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<KycNavigatorType>
+type NavigationType = CompositeNavigationProp<
+  NativeStackNavigationProp<ClientNavigatorType>,
+  DrawerNavigationProp<HomeNavigatorType>
 >;
 
 export const CompanyDocument = () => {
-  const navigation = useNavigation<KycNavigationType>();
+  const navigation = useNavigation<NavigationType>();
   const [isVisible, setIsVisible] = useState(false);
   const [uploadType, setUploadType] = useState<
     'aoaDoc' | 'moaDoc' | 'coiDoc' | 'otherDoc' | null

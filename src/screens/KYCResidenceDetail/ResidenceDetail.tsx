@@ -89,7 +89,7 @@ export const ResidenceDetail = () => {
               {label: 'Rented', value: 'rented'},
               {label: 'Owned', value: 'owned'},
             ]}
-            value={ownershipStatus}
+            value={ownershipStatus ?? undefined}
             onChange={val => setOwnershipStatus(val)}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />

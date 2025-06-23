@@ -114,7 +114,7 @@ export const TaskLogTabs = () => {
               <FlatList
                 data={TaskHitoryData}
                 keyExtractor={item => item.clientId}
-                renderItem={({item}) => <TaskCard {...item} />}
+                renderItem={({item}) => <TaskCard tasktype={''} taskDescription={''} clientName={''} location={''} referenceDetails={''} sourceDHCO={''} status={'Warm'} {...item} />}
                 contentContainerStyle={{flexGrow: 1}}
                 onRefresh={callgetTaskhistory}
                 ListEmptyComponent={
@@ -133,7 +133,7 @@ export const TaskLogTabs = () => {
             <DateNTimePicker
               mode="datetime"
               label="Schedule"
-              value={schedule}
+              value={schedule ? schedule.toISOString() : undefined}
               onConfirm={setSchedule}
             />
 

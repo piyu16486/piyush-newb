@@ -13,8 +13,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import fontWeight from '@constants/FontWeight';
 
 type NavigationType = CompositeNavigationProp<
-  DrawerNavigationProp<HomeNavigatorType>,
-  NativeStackNavigationProp<ClientNavigatorType, 'FormSelectionScreen'>
+  NativeStackNavigationProp<ClientNavigatorType>,
+  DrawerNavigationProp<HomeNavigatorType>
 >;
 
 const BKYCVData = [
@@ -76,7 +76,7 @@ export const BusinessKYCValidation = () => {
           <View style={styles.Cardlist}>
             <FlatList
               data={BKYCVData}
-              keyExtractor={item => item.documentName}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={({item}) => <PersonalKYCValidationCard {...item} />}
               contentContainerStyle={{flexGrow: 1}} // ✅ Prevents UI collapsing| FormSelection -> FormSelectionScreen || tabs ->ClientLeadInfoTab || Readmore ->ClientCardReadMore
             />
