@@ -2,14 +2,13 @@ import {Filter, Plus, Search} from '@assets/Icons';
 import {AppBar, ClientCard, Container} from '@components/index';
 import {ClientScreens, Colors, FontWeight} from '@constants/index';
 import {DrawerScreenProps} from '@react-navigation/drawer';
-import {CompositeScreenProps} from '@react-navigation/native';
+import {CompositeScreenProps, useFocusEffect} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ClientCardReadMore} from '@screens/ReadMore/ClientCardReadMore';
 import {clientActions, clientSelector} from '@store/client';
 import {ClientNavigatorType, HomeNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, {useCallback, useState} from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -38,9 +37,11 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
   const callGetClients = () => {
     dispatch(clientActions.getClients());
   };
-  useEffect(() => {
-    callGetClients();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      callGetClients();
+    }, []),
+  );
 
   const onPressReadMore = useCallback(() => {
     setShowReadMore(prev => !prev);
@@ -54,6 +55,21 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
   const onPressCard = (id: number) => {
     navigation.navigate(ClientScreens.ClientLeadInfoTab, {clientId: id});
   };
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredClients = clientsData.filter(item => {
+    const query = searchQuery.toLowerCase();
+    return (
+      item.id?.toString().toLowerCase().includes(query) ||
+      item.client_name?.toLowerCase().includes(query) ||
+      item.location?.toLowerCase().includes(query) ||
+      item.source_of_lead?.toLowerCase().includes(query) ||
+      item.reference_details?.toLowerCase().includes(query) ||
+      item.monthly_turnover?.toLowerCase().includes(query) ||
+      item.estimated_funding_required?.toString().includes(query) ||
+      item.financier_name?.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <Container>
@@ -77,18 +93,23 @@ export const ClientInfo: React.FC<ClientInfoProps> = ({navigation}) => {
               <TextInput
                 style={styles.input}
                 placeholder="Search Clients"
-                placeholderTextColor="#999"
+                placeholderTextColor={Colors.balancedGray}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
               />
             </View>
-            <View style={styles.filterBox}>
-              <View>
-                <Filter height={12} width={12} />
+            <TouchableOpacity>
+              <View style={styles.filterBox}>
+                <View>
+                  <Filter height={12} width={12} />
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
+            ,
           </View>
           <View style={styles.cardList}>
             <FlatList
-              data={clientsData}
+              data={filteredClients}
               renderItem={({item}) => (
                 <ClientCard
                   data={item}

@@ -63,6 +63,7 @@ export const Report = () => {
     // Add more items as needed
   ];
 
+<<<<<<< HEAD
   const renderItem = ({ item }: { item: IRemarkReportResponseDatum }) => (
     <View style={styles.card}>
       <View style={styles.statusBadge}>
@@ -94,6 +95,8 @@ export const Report = () => {
     </View>
   );
 
+=======
+>>>>>>> e3f31c83d49f91458eb9f57ae0deb77459a306da
   return (
     <Container>
       <AppBar title="Report" navigation={navigation} />
@@ -124,8 +127,37 @@ export const Report = () => {
       </View>
       <FlatList
         data={reportData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <View style={styles.card}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>{'Completed'}</Text>
+            </View>
+
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Lead Name :</Text> {item.client_name}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Visit Date :</Text> {item.user}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Visitor Name :</Text>'TODO Visitor name'
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Task Type :</Text> {item.task}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Task Description :</Text>
+              {'\n'}
+              {item.taskDescription}
+            </Text>
+            <Text style={styles.label}>
+              <Text style={styles.bold}>Remark :</Text>
+              {'\n'}
+              {item.remark}
+            </Text>
+          </View>
+        )}
+        keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.container}
         refreshing={false}
         onRefresh={callGetReport}

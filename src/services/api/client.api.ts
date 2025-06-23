@@ -18,6 +18,10 @@ import {
   IVisitPayload,
   IvisitResponse,
   IKycCheckedResponse,
+  ISoftSanctionResponse,
+  IsoftSanctionBankProductResponse,
+  IFilterPayload,
+  IFilterResponse,
 } from '@store/client';
 import {CustomRequestConfig} from './api';
 
@@ -68,6 +72,21 @@ const getLeadProgress = async () => {
     error: null,
   };
 };
+const getLeadDesProgress = async (leadID: string) => {
+  const {data, error} = await tryCatch<AxiosResponse<ILeadProgressResponse>>(
+    Api.get(Endpoints.apiInfoLeadProgress(leadID)),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
 
 const getTaskHistory = async () => {
   const {data, error} = await tryCatch<AxiosResponse<ITaskHistoryResponse>>(
@@ -89,64 +108,31 @@ const saveBasicDetailForm = async (body: IBasicDetailsPayload) => {
   const {data, error} = await tryCatch<AxiosResponse<IBasicDetailsResponse>>(
     Api.post(Endpoints.apiSaveBasicDetails, body),
   );
-  if (error) {
-    return {
-      data: null,
-      error: error,
-    };
-  }
-  return {
-    data: data.data,
-    error: null,
-  };
+  return {data: data?.data ?? null, error};
 };
 
-const saveClientFirmForm = async (body: IClientFirmPayload) => {
+const saveClientFirmForm = async (
+  clientId: string,
+  body: IClientFirmPayload,
+) => {
   const {data, error} = await tryCatch<AxiosResponse<IclientFirmResponse>>(
-    Api.post(Endpoints.apiSaveClientFirmDerails, body),
+    Api.post(Endpoints.apiSaveClientFirmDetails(clientId), body),
   );
-  if (error) {
-    return {
-      data: null,
-      error: error,
-    };
-  }
-  return {
-    data: data.data,
-    error: null,
-  };
+  return {data: data?.data ?? null, error};
 };
 
-const saveVendorForm = async (body: IvendorPayload) => {
+const saveVendorForm = async (clientId: string, body: IvendorPayload) => {
   const {data, error} = await tryCatch<AxiosResponse<IVendorResponse>>(
-    Api.post(Endpoints.apiSaveVendorDetails, body),
+    Api.post(Endpoints.apiSaveVendorDetails(clientId), body),
   );
-  if (error) {
-    return {
-      data: null,
-      error: error,
-    };
-  }
-  return {
-    data: data.data,
-    error: null,
-  };
+  return {data: data?.data ?? null, error};
 };
 
-const savevisitForm = async (body: IVisitPayload) => {
+const saveVisitForm = async (clientId: string, body: IVisitPayload) => {
   const {data, error} = await tryCatch<AxiosResponse<IvisitResponse>>(
-    Api.post(Endpoints.apiSaveVisitDetails, body),
+    Api.post(Endpoints.apiSaveVisitDetails(clientId), body),
   );
-  if (error) {
-    return {
-      data: null,
-      error: error,
-    };
-  }
-  return {
-    data: data.data,
-    error: null,
-  };
+  return {data: data?.data ?? null, error};
 };
 
 const uploadKycDocument = async (formData: FormData) => {
@@ -353,9 +339,57 @@ const getBankList = async () => {
   };
 };
 
-const getKycChecked = async () => {
+const getKycChecked = async (clientID: string) => {
   const {data, error} = await tryCatch<AxiosResponse<IKycCheckedResponse>>(
-    Api.get(Endpoints.apiGetKycChecked),
+    Api.get(Endpoints.apiGetKycChecked(clientID)),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const getSoftSanction = async () => {
+  const {data, error} = await tryCatch<AxiosResponse<ISoftSanctionResponse>>(
+    Api.get(Endpoints.apiGetSoftSanction),
+  );
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const getSoftSanctionProductBank = async () => {
+  const {data, error} = await tryCatch<
+    AxiosResponse<IsoftSanctionBankProductResponse>
+  >(Api.get(Endpoints.apiGetSoftSanctionBankProduct));
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  return {
+    data: data.data,
+    error: null,
+  };
+};
+
+const FilterBox = async (payload: IFilterPayload) => {
+  const {data, error} = await tryCatch<AxiosResponse<IFilterResponse>>(
+    Api.post(Endpoints.apiFilterBox, payload),
   );
   if (error) {
     return {
@@ -373,11 +407,12 @@ export default {
   getAllClients,
   getRemarkReport,
   getLeadProgress,
+  getLeadDesProgress,
   getTaskHistory,
   saveBasicDetailForm,
   saveClientFirmForm,
   saveVendorForm,
-  savevisitForm,
+  saveVisitForm,
   uploadKycDocument,
   uploadPanDocument,
   uploadAadharDocument,
@@ -390,4 +425,7 @@ export default {
   uploadCopmanyInfoDocument,
   getBankList,
   getKycChecked,
+  getSoftSanction,
+  getSoftSanctionProductBank,
+  FilterBox,
 };

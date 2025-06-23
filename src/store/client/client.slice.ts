@@ -6,9 +6,14 @@ import {
   ClientState,
   IBankListResponseDatum,
   IClientInfoResponseDatum,
+  IFilterPayload,
+  IFilterResponse,
   IKycCheckedResponseDatum,
   ILeadProgressResponseDatum,
   IRemarkReportResponseDatum,
+  IsoftSanctionBankProductDatum,
+  IsoftSanctionMethodDatum,
+  ISoftSanctionPayload,
   ITaskHistoryResponseDatum,
   IuplaodCompanyPanResponse,
   IUploadAdharDocumentResponse,
@@ -31,6 +36,7 @@ import {
   IUploadUdhyamPayload,
   IUploadUdhyamResponse,
 } from './client.types';
+import {PayloadWithCallback} from '@type/global.types';
 
 const clientFormData: ClientFormType = {
   BasicDetails: {
@@ -57,18 +63,22 @@ const clientFormData: ClientFormType = {
     existingFunding: '',
   },
   VendorScreen: {
-    monthlySales: '',
-    product: '',
-    vendorContact: '',
+    Product: '',
+    state: '',
+    city: '',
     vendorName: '',
+    address: '',
+    pincode: '',
+    vendorContact: '',
     vendorEmail: '',
+    monthlySales: '',
   },
   VisitScreen: {
     intent: '',
-    nextVisitDate: '',
     interested: '',
+    UserResponse: '',
+    nextVisitDate: '',
     reason: '',
-    visitRemarks: '',
   },
 };
 
@@ -123,10 +133,30 @@ const initialState: ClientState = {
   goDownLoading: false,
   goDownData: null,
   goDownError: null,
+  // CompanyPan Upload
+  CompanyPanLoading: false,
+  CompanyPanData: null,
+  CompanyPanError: null,
   // Shareholding Kyc
   ShareholdingLoading: false,
   ShareholdingData: null,
   ShareholdingError: null,
+  // CompanyInfo Upload
+  CompanyInfoLoading: false,
+  CompanyInfoData: null,
+  CompanyInfoError: null,
+  // SoftSanction Bank Method
+  SoftSanctionLoading: false,
+  SoftSanctionData: [],
+  SoftSanctionError: null,
+  // SoftSanction BNKPRO
+  SoftSanctionBNKPROLoading: false,
+  SoftSanctionBNKPROData: [],
+  SoftSanctionBNKPROError: null,
+  // Filterbox
+  FilterboxLoading: false,
+  FilterboxData: null,
+  FilterboxError: null,
 };
 
 const clientSlice = createSlice({
@@ -168,6 +198,7 @@ const clientSlice = createSlice({
     },
     resetAllClientFormData: state => {
       state.clientFormData = clientFormData;
+      state.clientFormId = undefined;
     },
     // Save Client
     saveClientBasicDetails: state => {
@@ -208,6 +239,12 @@ const clientSlice = createSlice({
     },
     // Lead Progress Actions
     getLead: state => {
+      state.leadLoader = true;
+    },
+    getLeadDesciption: (
+      state,
+      _payload: PayloadAction<PayloadWithCallback<string, [Array<any>]>>,
+    ) => {
       state.leadLoader = true;
     },
     setLeadList: (
@@ -273,7 +310,7 @@ const clientSlice = createSlice({
     setKycCheckedLoader: (state, action: PayloadAction<boolean>) => {
       state.KycCheckedLoader = action.payload;
     },
-    getKycChecked: state => {
+    getKycChecked: (state, action: PayloadAction<string>) => {
       state.KycCheckedLoader = true;
     },
     setKycCheckedList: (
@@ -479,6 +516,63 @@ const clientSlice = createSlice({
       state.CompanyInfoData = null;
       state.CompanyInfoError = null;
     },
+    setSoftSanctionLoader: (state, action: PayloadAction<boolean>) => {
+      state.SoftSanctionLoading = action.payload;
+    },
+    getSoftSanctionRequest: (
+      state,
+      _action: PayloadAction<ISoftSanctionPayload>,
+    ) => {
+      state.SoftSanctionLoading = true;
+    },
+    getSoftSanction: state => {
+      state.SoftSanctionLoading = true;
+    },
+    setSoftSanctionList: (
+      state,
+      action: PayloadAction<Array<IsoftSanctionMethodDatum>>,
+    ) => {
+      state.SoftSanctionLoading = false;
+      state.SoftSanctionData = action.payload;
+    },
+    resetSoftSanction: state => {
+      state.SoftSanctionData = [];
+      state.SoftSanctionLoading = false;
+    },
+    setSoftSanctionBnkProLoader: (state, action: PayloadAction<boolean>) => {
+      state.SoftSanctionBNKPROLoading = action.payload;
+    },
+    getSoftSanctionBnkPro: state => {
+      state.SoftSanctionBNKPROLoading = true;
+    },
+    setSoftSanctionBnkProList: (
+      state,
+      action: PayloadAction<Array<IsoftSanctionBankProductDatum>>,
+    ) => {
+      state.SoftSanctionBNKPROLoading = false;
+      state.SoftSanctionBNKPROData = action.payload;
+    },
+    resetSoftSanctionBnkPro: state => {
+      state.SoftSanctionBNKPROData = [];
+      state.SoftSanctionBNKPROLoading = false;
+    },
+    FilterRequest(state, action: PayloadAction<IFilterPayload>) {
+      state.FilterboxLoading = true;
+      state.FilterboxError = null;
+    },
+    FilterSucess(state, action: PayloadAction<IFilterResponse>) {
+      state.FilterboxLoading = false;
+      state.FilterboxData = action.payload;
+    },
+    FilterFailure(state, action: PayloadAction<string>) {
+      state.FilterboxLoading = false;
+      state.FilterboxError = action.payload;
+    },
+    clearFilter(state) {
+      state.FilterboxLoading = false;
+      state.FilterboxData = null;
+      state.FilterboxError = null;
+    },
   },
 });
 
@@ -500,6 +594,7 @@ export const {
   getLead,
   setLeadList,
   resetLeadList,
+  getLeadDesciption,
   getTaskHistory,
   setTaskHistoryList,
   resetTaskHistoryList,
@@ -551,5 +646,18 @@ export const {
   uploadCompanyInfoSuccess,
   uploadCompanyInfoFailure,
   clearCompanyInfo,
+  setSoftSanctionLoader,
+  getSoftSanctionRequest,
+  getSoftSanction,
+  setSoftSanctionList,
+  resetSoftSanction,
+  setSoftSanctionBnkProLoader,
+  getSoftSanctionBnkPro,
+  setSoftSanctionBnkProList,
+  resetSoftSanctionBnkPro,
+  FilterRequest,
+  FilterSucess,
+  FilterFailure,
+  clearFilter,
 } = clientSlice.actions;
 export default clientSlice.reducer;

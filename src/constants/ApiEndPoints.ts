@@ -14,16 +14,20 @@ const Endpoints = {
   // Client apis
   apiGetAllClients: '/client-info-master/list',
   apiSaveBasicDetails: '/client-info-master/basic-details',
-  apiSaveClientFirmDerails: '/client-info-master/client-firm-details/16',
-  apiSaveVendorDetails: '/client-info-master/vendor-details/16',
-  apiSaveVisitDetails: '/client-info-master/follow-up/16',
+  apiSaveClientFirmDetails: (clientId: string) =>
+    `/client-info-master/client-firm-details/${clientId}`,
+  apiSaveVendorDetails: (clientId: string) =>
+    `/client-info-master/vendor-details/${clientId}`,
+  apiSaveVisitDetails: (clientId: string) =>
+    `/client-info-master/follow-up/${clientId}`,
 
   // Report apis
   apiGetReport: '/client-info-master/remark-reports',
 
   // Lead apis
-  apiGetLeadProgress: '/client-info-master/16/lead-progress',
-  apiInfoLeadProgress: '/client-info-master/16/lead-progress',
+  apiGetLeadProgress: '/client-info-master/lead-progress/client/list',
+  apiInfoLeadProgress: (leadID: string) =>
+    `/client-info-master/${leadID}/lead-progress`,
 
   // Tasks apis
   apiGetTaskHistory: '/client-info-master/john.doe@example.com/tasks',
@@ -43,10 +47,19 @@ const Endpoints = {
   apiCompanyInformation: '/client-info-master/business-kyc/company-docs',
 
   // Get Api to check document uploaded or not
-  apiGetKycChecked: '/client-info-master/personal-kyc/check/16',
+  apiGetKycChecked: (clientID: string) =>
+    `/client-info-master/personal-kyc/check/${clientID}`,
 
   // BankList dropdown
   apiBankList: '/client-info-master/bank-list',
+
+  // Soft Sanction
+  apiGetSoftSanction: '/client-info-master/soft-sanction/inputs/UGRO',
+  apiGetSoftSanctionBankProduct:
+    '/client-info-master/soft-sanction/methods?bank=UGRO&product=PID',
+
+  // Filter Box
+  apiFilterBox: '/client-info-master/filter',
 } as const;
 
 export default Endpoints;

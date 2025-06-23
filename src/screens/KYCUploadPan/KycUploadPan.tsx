@@ -5,6 +5,7 @@ import {
   Input,
   DashedButton,
   UploadModal,
+  DateNTimePicker,
 } from '@components/index';
 import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
@@ -16,6 +17,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {clientActions} from '@store/client';
 import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
+import moment from 'moment';
 import React, {useState} from 'react';
 import {
   View,
@@ -23,7 +25,9 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -35,6 +39,19 @@ export const KycUplaodPan = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
 
+  const [errors, setErrors] = useState({
+    namePan: false,
+    panNumber: false,
+    dateofBirth: false,
+    coApplicantNamePan: false,
+    coApplicantPanNumber: false,
+    coApplicantDateofBirth: false,
+    frontImage: false,
+    backImage: false,
+    coApplicantFrontImage: false,
+    coApplicantBackImage: false,
+  });
+  const [loading, setLoading] = useState(false);
   const [uploadType, setUploadType] = useState<
     'mainFront' | 'mainBack' | 'coFront' | 'coBack' | null
   >(null);
@@ -73,6 +90,64 @@ export const KycUplaodPan = () => {
       coApplicantFrontImage,
       coApplicantBackImage,
     );
+
+    if (
+      !namePan ||
+      !panNumber ||
+      !dateofBirth ||
+      !frontImage ||
+      !backImage ||
+      !coApplicantNamePan ||
+      !coApplicantPanNumber ||
+      !coApplicantDateofBirth ||
+      !coApplicantFrontImage ||
+      !coApplicantBackImage
+    ) {
+      setErrors({
+        namePan: !namePan,
+        panNumber: !panNumber,
+        dateofBirth: !dateofBirth,
+        coApplicantNamePan: !coApplicantNamePan,
+        coApplicantPanNumber: !coApplicantPanNumber,
+        coApplicantDateofBirth: !coApplicantDateofBirth,
+        frontImage: !frontImage,
+        backImage: !backImage,
+        coApplicantFrontImage: !coApplicantFrontImage,
+        coApplicantBackImage: !coApplicantBackImage,
+      });
+
+      let missingFields = [];
+      if (!namePan) missingFields.push('Name as Pan');
+      if (!panNumber) missingFields.push('Pan Number');
+      if (!dateofBirth) missingFields.push('Date of Birth');
+      if (!frontImage) missingFields.push('Front Image');
+      if (!backImage) missingFields.push('Back Image');
+      if (!coApplicantNamePan) missingFields.push('CoApplicant Name as Pan');
+      if (!coApplicantPanNumber) missingFields.push('CoApplicant Pan Number');
+      if (!coApplicantDateofBirth)
+        missingFields.push('CoApplicant Date of Birth');
+      if (!coApplicantFrontImage) missingFields.push('CoApplicant front image');
+      if (!coApplicantBackImage) missingFields.push('CoApplicant back image');
+
+      Alert.alert(
+        'Missing Fields',
+        `Please provide the Following:\n${missingFields.join('\n')}`,
+      );
+      return;
+    }
+
+    setErrors({
+      namePan: false,
+      panNumber: false,
+      dateofBirth: false,
+      coApplicantNamePan: false,
+      coApplicantPanNumber: false,
+      coApplicantDateofBirth: false,
+      frontImage: false,
+      backImage: false,
+      coApplicantFrontImage: false,
+      coApplicantBackImage: false,
+    });
 
     const allFieldsFilled =
       namePan &&
@@ -126,8 +201,19 @@ export const KycUplaodPan = () => {
         ],
       };
 
-      console.log('Dispatching uploadPanRequest', payload);
+      console.log('Disp uploadPanRequest', payload);
+      setLoading(true);
       dispatch(clientActions.uploadPanRequest(payload));
+      setTimeout(() => {
+        setLoading(false);
+        Toast.show({
+          type: 'success',
+          text1: 'Document Uploaded',
+          text2: `${namePan}'s document submitted successfully`,
+          position: 'top',
+        });
+        handleClear();
+      }, 1500);
     } else {
       console.warn('Please fill all required PAN details and upload images.');
     }
@@ -158,20 +244,61 @@ export const KycUplaodPan = () => {
         <Input
           label="Name as per PAN"
           value={namePan}
-          onChangeText={setNamePan}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setNamePan(text);
+            if (errors.namePan && text.trim()) {
+              setErrors(prev => ({...prev, namePan: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.namePan && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
         <Input
           label="PAN number"
           value={panNumber}
-          onChangeText={setPanNumber}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setPanNumber(text);
+            if (errors.panNumber && text.trim()) {
+              setErrors(prev => ({...prev, panNumber: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.panNumber && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
-        <Input
+        <DateNTimePicker
           label="Date of Birth"
           value={dateofBirth}
-          onChangeText={setDateofBirth}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onConfirm={date => {
+            const formatted = moment(date).format('DD-MM-YYYY'); // or 'YYYY-MM-DD'
+            setDateofBirth(formatted);
+            if (errors.dateofBirth) {
+              setErrors(prev => ({...prev, dateofBirth: false}));
+            }
+          }}
+          datePickerProps={{
+            mode: 'date',
+            maximumDate: new Date(), // optional: restrict future dates
+          }}
+          // containerStyle={[
+          //   {marginBottom: scaleHeight(24)},
+          //   errors.dateofBirth && {
+          //     borderColor: Colors.red,
+          //     borderWidth: 1,
+          //     borderRadius: 5,
+          //   },
+          // ]}
         />
 
         {frontImage ? (
@@ -183,6 +310,9 @@ export const KycUplaodPan = () => {
               setUploadType('mainFront');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.frontImage ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
 
@@ -195,6 +325,9 @@ export const KycUplaodPan = () => {
               setUploadType('mainBack');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.backImage ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
 
@@ -203,20 +336,61 @@ export const KycUplaodPan = () => {
         <Input
           label="Name as per PAN"
           value={coApplicantNamePan}
-          onChangeText={setCoApplicantNamePan}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setCoApplicantNamePan(text);
+            if (errors.coApplicantNamePan && text.trim()) {
+              setErrors(prev => ({...prev, coApplicantNamePan: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.coApplicantNamePan && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
         <Input
           label="PAN number"
           value={coApplicantPanNumber}
-          onChangeText={setCoApplicantPanNumber}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setCoApplicantPanNumber(text);
+            if (errors.coApplicantPanNumber && text.trim()) {
+              setErrors(prev => ({...prev, coApplicantPanNumber: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.coApplicantPanNumber && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
-        <Input
+        <DateNTimePicker
           label="Date of Birth"
           value={coApplicantDateofBirth}
-          onChangeText={setCoApplicantDateofBirth}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onConfirm={date => {
+            const formatted = moment(date).format('DD-MM-YYYY'); // or 'YYYY-MM-DD'
+            setCoApplicantDateofBirth(formatted);
+            if (errors.coApplicantDateofBirth) {
+              setErrors(prev => ({...prev, coApplicantDateofBirth: false}));
+            }
+          }}
+          datePickerProps={{
+            mode: 'date',
+            maximumDate: new Date(), // optional: restrict future dates
+          }}
+          // containerStyle={[
+          //   {marginBottom: scaleHeight(24)},
+          //   errors.dateofBirth && {
+          //     borderColor: Colors.red,
+          //     borderWidth: 1,
+          //     borderRadius: 5,
+          //   },
+          // ]}
         />
 
         {coApplicantFrontImage ? (
@@ -228,6 +402,11 @@ export const KycUplaodPan = () => {
               setUploadType('coFront');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.coApplicantFrontImage
+                ? {borderColor: Colors.red}
+                : undefined
+            }
           />
         )}
 
@@ -240,6 +419,11 @@ export const KycUplaodPan = () => {
               setUploadType('coBack');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.coApplicantBackImage
+                ? {borderColor: Colors.red}
+                : undefined
+            }
           />
         )}
 
@@ -250,15 +434,26 @@ export const KycUplaodPan = () => {
               switch (uploadType) {
                 case 'mainFront':
                   setFrontImage(file);
+                  if (errors.frontImage)
+                    setErrors(prev => ({...prev, frontImage: false}));
                   break;
                 case 'mainBack':
                   setBackImage(file);
+                  if (errors.backImage)
+                    setErrors(prev => ({...prev, backImage: false}));
                   break;
                 case 'coFront':
                   setCoApplicantFrontImage(file);
+                  if (errors.coApplicantFrontImage)
+                    setErrors(prev => ({
+                      ...prev,
+                      coApplicantFrontImage: false,
+                    }));
                   break;
                 case 'coBack':
                   setCoApplicantBackImage(file);
+                  if (errors.coApplicantBackImage)
+                    setErrors(prev => ({...prev, coApplicantBackImage: false}));
                   break;
               }
             }

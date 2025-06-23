@@ -1,3 +1,4 @@
+import {Input} from '@components/Input/Input';
 import fontWeight from '@constants/FontWeight';
 import {Colors} from '@constants/index';
 import {scaleFont, scaleHeight} from '@utils/Scale';
@@ -66,7 +67,7 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
       </View>
 
       {/* Modal */}
-      <Modal visible={showModal} transparent animationType="slide">
+      <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.overlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Run Soft Sanction</Text>
@@ -87,7 +88,13 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
                 onChangeText={setPurchaseValue}
               />
             </View>
-
+            {/* <Text style={styles.inputDescription}>
+                Last 12 M Purchases of brand 1 (GSTMar24)
+              </Text>
+              <Input
+                label="Purchases"
+                containerStyle={{marginBottom: scaleHeight(20)}}
+              /> */}
             <View style={styles.modalSection}>
               <Text style={styles.modalLabel}>Turnover</Text>
               <Text style={styles.modalSubLabel}>Existing W/C Limits</Text>
@@ -98,6 +105,10 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
                 value={turnoverValue}
                 onChangeText={setTurnoverValue}
               />
+              {/* <Input
+                label="Turnover"
+                containerStyle={{marginBottom: scaleHeight(20)}}
+              /> */}
             </View>
 
             <View style={styles.modalButtons}>
@@ -209,6 +220,12 @@ const styles = StyleSheet.create({
   runText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  inputDescription: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 4,
+    marginLeft: 4,
   },
 });
 

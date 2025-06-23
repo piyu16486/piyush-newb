@@ -88,11 +88,11 @@ export type ReportNavigatorType = {
 
 export type KycNavigatorType = {
   KycDocument: undefined;
-  KYCFormSelection: undefined;
-  KycUploadDoc: undefined;
-  KycUploadPan: undefined;
-  KycUploadAdhar: undefined;
-  ResidenceDetail: undefined;
+  KYCFormSelection: {clientID: number};
+  KycUploadDoc: {clientID: number};
+  KycUploadPan: {clientID: number};
+  KycUploadAdhar: {clientID: number};
+  ResidenceDetail: {clientID: number};
   KycElectricityBill: undefined;
   KycOwner: undefined;
   UdhyamCertificate: undefined;

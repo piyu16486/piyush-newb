@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+} from 'react-native';
 import DateTimePickerModal, {
   ReactNativeModalDateTimePickerProps,
 } from 'react-native-modal-datetime-picker';
@@ -17,6 +23,7 @@ interface DateTimePickerProps {
   onConfirm?: (date: Date) => void;
   value?: string;
   placeholder?: string;
+  containerStyle?: ViewStyle;
 }
 
 export const DateNTimePicker: React.FC<DateTimePickerProps> = ({
@@ -25,6 +32,7 @@ export const DateNTimePicker: React.FC<DateTimePickerProps> = ({
   placeholder = 'Select Date',
   value = '',
   datePickerProps,
+  containerStyle,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const showPicker = () => setIsVisible(true);
@@ -36,7 +44,7 @@ export const DateNTimePicker: React.FC<DateTimePickerProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity onPress={showPicker} style={styles.inputBox}>
         <View style={styles.inputRow}>

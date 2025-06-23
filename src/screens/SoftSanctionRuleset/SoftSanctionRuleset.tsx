@@ -39,7 +39,13 @@ export const SoftSanctionRuleset = () => {
       methodName: 'Turnover Method',
       rulesetId: 'UGPDTM001',
       ruleName: 'Rule Name',
-      rulestCondition: 'Rule Condition',
+      rulestCondition: `• Monthly Turnover ()
+• Last 12 M Turnover (Monthly Turnover * 12)
+• Projected Turnover (Last 12 M Turnover * 1.25)
+• CREDIT PERIOD Offered ()
+• 20% of Projected TO (Projected Turnover * 0.2)
+• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
+• Existing W/C Limits ().`,
     },
     {
       bankName: 'Urgo',
@@ -47,7 +53,13 @@ export const SoftSanctionRuleset = () => {
       methodName: 'Turnover Method',
       rulesetId: 'UGPDTM001',
       ruleName: 'Rule Name',
-      rulestCondition: 'Rule Condition',
+      rulestCondition: `• Monthly Turnover ()
+• Last 12 M Turnover (Monthly Turnover * 12)
+• Projected Turnover (Last 12 M Turnover * 1.25)
+• CREDIT PERIOD Offered ()
+• 20% of Projected TO (Projected Turnover * 0.2)
+• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
+• Existing W/C Limits ().`,
     },
     {
       bankName: 'Urgo',
@@ -55,7 +67,13 @@ export const SoftSanctionRuleset = () => {
       methodName: 'Turnover Method',
       rulesetId: 'UGPDTM001',
       ruleName: 'Rule Name',
-      rulestCondition: 'Rule Condition',
+      rulestCondition: `• Monthly Turnover ()
+• Last 12 M Turnover (Monthly Turnover * 12)
+• Projected Turnover (Last 12 M Turnover * 1.25)
+• CREDIT PERIOD Offered ()
+• 20% of Projected TO (Projected Turnover * 0.2)
+• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
+• Existing W/C Limits ().`,
     },
     {
       bankName: 'Urgo',
@@ -63,7 +81,13 @@ export const SoftSanctionRuleset = () => {
       methodName: 'Turnover Method',
       rulesetId: 'UGPDTM001',
       ruleName: 'Rule Name',
-      rulestCondition: 'Rule Condition',
+      rulestCondition: `• Monthly Turnover ()
+• Last 12 M Turnover (Monthly Turnover * 12)
+• Projected Turnover (Last 12 M Turnover * 1.25)
+• CREDIT PERIOD Offered ()
+• 20% of Projected TO (Projected Turnover * 0.2)
+• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
+• Existing W/C Limits ().`,
     },
   ];
 

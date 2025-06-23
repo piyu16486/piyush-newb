@@ -12,7 +12,11 @@ import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {LeadProgressInfo} from '@screens/LeadProgressInfo/LeadProgressInfo';
 import {useDispatch, useSelector} from 'react-redux';
-import {clientActions, clientSelector} from '@store/client';
+import {
+  clientActions,
+  clientSelector,
+  ILeadProgressResponseDatum,
+} from '@store/client';
 import FontWeight from '@constants/FontWeight';
 
 type LeadNavigationType = CompositeNavigationProp<
@@ -74,12 +78,28 @@ const leadData = [
 export const LeadProgress = () => {
   const navigation = useNavigation<LeadNavigationType>();
   const [showReadMore, setShowReadMore] = useState(false);
-  const onPressReadMore = useCallback(() => {
-    setShowReadMore(prev => !prev);
-  }, []);
+  const [progressStatusData, setProgressStatusData] = useState<Array<any>>([]);
+  const [currentLeadData, setCurrentLeadData] =
+    useState<ILeadProgressResponseDatum | null>(null);
+  const onPressReadMore = (
+    leadId: string,
+    item: ILeadProgressResponseDatum,
+  ) => {
+    // setShowReadMore(prev => !prev);
+    dispatch(
+      clientActions.getLeadDesciption({
+        payload: leadId,
+        callbackSuccess: progressData => {
+          setShowReadMore(true);
+          setCurrentLeadData(item);
+          setProgressStatusData(progressData);
+        },
+      }),
+    );
+  };
 
   const dispatch = useDispatch();
-  const LeadData = useSelector(clientSelector.getLeadProgress);
+  const leadData = useSelector(clientSelector.getLeadProgress);
   const callgetleads = () => {
     dispatch(clientActions.getLead());
   };
@@ -95,14 +115,21 @@ export const LeadProgress = () => {
         <Text style={styles.Subheader}>Lead Progress Information</Text>
       </View>
       {showReadMore ? (
-        <LeadProgressInfo onPressReadLess={onPressReadMore} />
+        <LeadProgressInfo
+          data={currentLeadData}
+          progressStatusData={progressStatusData}
+          onPressReadLess={() => {
+            setShowReadMore(false);
+            setCurrentLeadData(null);
+          }}
+        />
       ) : (
         <>
           <View style={styles.RowContainer}>
             <View style={styles.Subrowcontainer}>
               <Text style={styles.Subrowcontainertxt}>Leads</Text>
               <View style={styles.Badge}>
-                <Text style={styles.Badgetext}>{LeadData.length}</Text>
+                <Text style={styles.Badgetext}>{leadData.length}</Text>
               </View>
             </View>
             <View style={styles.Searchbox}>
@@ -121,10 +148,20 @@ export const LeadProgress = () => {
           </View>
           <View style={styles.Cardlist}>
             <FlatList
+<<<<<<< HEAD
               data={LeadData}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({item}) => (
                 <LeadProgressCard clientId={''} clientName={''} location={''} initiator={''} sourceDHCO={''} referenceDetails={''} monthlyTurnover={''} sanctionRequested={''} processStart={''} status={'Warm'} {...item} onPressReadMore={onPressReadMore} />
+=======
+              data={leadData}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({item}) => (
+                <LeadProgressCard
+                  data={item}
+                  onPressReadMore={onPressReadMore}
+                />
+>>>>>>> e3f31c83d49f91458eb9f57ae0deb77459a306da
               )}
               contentContainerStyle={{flexGrow: 1}}
               refreshing={false}

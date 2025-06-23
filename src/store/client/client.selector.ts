@@ -48,7 +48,7 @@ const getBankList = createSelector(_selectState, _state => _state.BankList);
 
 const getkycChecked = createSelector(
   _selectState,
-  _state => _state.kycCheckedList,
+  _state => _state.kycCheckedList.map(value => value.document_type),
 );
 
 const getUplaodpanLoading = createSelector(
@@ -144,6 +144,21 @@ const getCompanyInfoError = createSelector(
   state => state.CompanyInfoError,
 );
 
+const getSoftSanctionMethod = createSelector(
+  _selectState,
+  _state => _state.SoftSanctionData,
+);
+
+const getSoftSanctionBnkPro = createSelector(
+  _selectState,
+  _state => _state.SoftSanctionBNKPROData,
+);
+
+const getFilterbox = createSelector(
+  _selectState,
+  _state => _state.FilterboxData,
+);
+
 export default {
   getClientList,
   getClientFormData,
@@ -183,4 +198,7 @@ export default {
   getCompanyInfoLoading,
   getCompanyInfoData,
   getCompanyInfoError,
+  getSoftSanctionMethod,
+  getSoftSanctionBnkPro,
+  getFilterbox,
 };

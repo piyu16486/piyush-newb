@@ -23,7 +23,9 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
 type KycNavigationType = CompositeNavigationProp<
@@ -35,6 +37,17 @@ export const KycUploadAdhar = () => {
   const navigation = useNavigation<KycNavigationType>();
   const [isVisible, setIsVisible] = useState(false);
 
+  const [errors, setErrors] = useState({
+    nameAdhar: false,
+    adharNumber: false,
+    frontImage: false,
+    backImage: false,
+    coApplicantNameAdhar: false,
+    coApplicantAdharNumber: false,
+    coApplicantFrontImage: false,
+    coApplicantBackImage: false,
+  });
+  const [loading, setLoading] = useState(false);
   const [uploadType, setUploadType] = useState<
     'mainFront' | 'mainBack' | 'coFront' | 'coBack' | null
   >(null);
@@ -68,6 +81,55 @@ export const KycUploadAdhar = () => {
       coApplicantFrontImage,
       coApplicantBackImage,
     );
+
+    if (
+      !nameAdhar ||
+      !adharNumber ||
+      !frontImage ||
+      !backImage ||
+      !coApplicantNameAdhar ||
+      !coApplicantAdharNumber ||
+      !coApplicantFrontImage ||
+      !coApplicantBackImage
+    ) {
+      setErrors({
+        nameAdhar: !nameAdhar,
+        adharNumber: !adharNumber,
+        coApplicantNameAdhar: !coApplicantNameAdhar,
+        coApplicantAdharNumber: !coApplicantAdharNumber,
+        frontImage: !frontImage,
+        backImage: !backImage,
+        coApplicantFrontImage: !coApplicantFrontImage,
+        coApplicantBackImage: !coApplicantBackImage,
+      });
+
+      let missingFields = [];
+      if (!nameAdhar) missingFields.push('Name as Pan');
+      if (!adharNumber) missingFields.push('Pan Number');
+      if (!frontImage) missingFields.push('Front Image');
+      if (!backImage) missingFields.push('Back Image');
+      if (!coApplicantNameAdhar) missingFields.push('CoApplicant Name as Pan');
+      if (!coApplicantAdharNumber) missingFields.push('CoApplicant Pan Number');
+      if (!coApplicantFrontImage) missingFields.push('CoApplicant front image');
+      if (!coApplicantBackImage) missingFields.push('CoApplicant back image');
+
+      Alert.alert(
+        'Missing Fields',
+        `Please provide the Following:\n${missingFields.join('\n')}`,
+      );
+      return;
+    }
+
+    setErrors({
+      nameAdhar: false,
+      adharNumber: false,
+      frontImage: false,
+      backImage: false,
+      coApplicantNameAdhar: false,
+      coApplicantAdharNumber: false,
+      coApplicantFrontImage: false,
+      coApplicantBackImage: false,
+    });
 
     const allFieldsFilled =
       nameAdhar &&
@@ -118,7 +180,18 @@ export const KycUploadAdhar = () => {
       };
 
       console.log('Disp uploadAdharRequest', payload);
+      setLoading(true);
       dispatch(clientActions.uploadAdharRequest(payload));
+      setTimeout(() => {
+        setLoading(false);
+        Toast.show({
+          type: 'success',
+          text1: 'Document Uploaded',
+          text2: `${nameAdhar}'s document submitted successfully`,
+          position: 'top',
+        });
+        handleClear();
+      }, 1500);
     } else {
       console.warn('Please fill all required Adhar Details and upload images.');
     }
@@ -149,14 +222,38 @@ export const KycUploadAdhar = () => {
         <Input
           label="Name as per Aadhar Card"
           value={nameAdhar}
-          onChangeText={setNameAdhar}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setNameAdhar(text);
+            if (errors.nameAdhar && text.trim()) {
+              setErrors(prev => ({...prev, nameAdhar: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.nameAdhar && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
         <Input
           label="Aadhar number"
           value={adharNumber}
-          onChangeText={setAdharNumber}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setAdharNumber(text);
+            if (errors.adharNumber && text.trim()) {
+              setErrors(prev => ({...prev, adharNumber: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.adharNumber && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
 
         {frontImage ? (
@@ -168,6 +265,9 @@ export const KycUploadAdhar = () => {
               setUploadType('mainFront');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.frontImage ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
 
@@ -180,6 +280,9 @@ export const KycUploadAdhar = () => {
               setUploadType('mainBack');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.backImage ? {borderColor: Colors.red} : undefined
+            }
           />
         )}
 
@@ -190,14 +293,38 @@ export const KycUploadAdhar = () => {
         <Input
           label="Name as per Aadhar Card"
           value={coApplicantNameAdhar}
-          onChangeText={setCoApplicantNameAdhar}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setCoApplicantNameAdhar(text);
+            if (errors.coApplicantNameAdhar && text.trim()) {
+              setErrors(prev => ({...prev, coApplicantNameAdhar: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.coApplicantNameAdhar && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
         <Input
           label="Aadhar number"
           value={coApplicantAdharNumber}
-          onChangeText={setCoApplicantAdharNumber}
-          containerStyle={{marginBottom: scaleHeight(24)}}
+          onChangeText={text => {
+            setCoApplicantAdharNumber(text);
+            if (errors.coApplicantAdharNumber && text.trim()) {
+              setErrors(prev => ({...prev, coApplicantAdharNumber: false}));
+            }
+          }}
+          containerStyle={[
+            {marginBottom: scaleHeight(24)},
+            errors.coApplicantAdharNumber && {
+              borderColor: Colors.red,
+              borderWidth: 1,
+              borderRadius: 5,
+            },
+          ]}
         />
 
         {coApplicantFrontImage ? (
@@ -209,6 +336,11 @@ export const KycUploadAdhar = () => {
               setUploadType('coFront');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.coApplicantFrontImage
+                ? {borderColor: Colors.red}
+                : undefined
+            }
           />
         )}
 
@@ -221,6 +353,11 @@ export const KycUploadAdhar = () => {
               setUploadType('coBack');
               setIsVisible(true);
             }}
+            containerStyle={
+              errors.coApplicantBackImage
+                ? {borderColor: Colors.red}
+                : undefined
+            }
           />
         )}
 

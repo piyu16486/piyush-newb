@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AppBar, Container, KycCard} from '@components/index';
 import {Filter, Search} from '@assets/Icons';
 import Colors from '@constants/Colors';
@@ -90,6 +90,21 @@ export const KycDocument = () => {
     callGetKYC();
   }, []);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredKYC = KycData.filter(item => {
+    const query = searchQuery.toLowerCase();
+    return (
+      item.id?.toString().toLowerCase().includes(query) ||
+      item.client_name?.toLowerCase().includes(query) ||
+      item.location?.toLowerCase().includes(query) ||
+      item.source_of_lead?.toLowerCase().includes(query) ||
+      item.reference_details?.toLowerCase().includes(query) ||
+      item.monthly_turnover?.toLowerCase().includes(query) ||
+      item.eligibiltyamount?.toString().includes(query) ||
+      item.intent?.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <Container>
       <AppBar title="Kyc Document" navigation={navigation} />
@@ -108,7 +123,9 @@ export const KycDocument = () => {
           <TextInput
             style={styles.input}
             placeholder="Search Leads"
-            placeholderTextColor="#999"
+            placeholderTextColor={Colors.balancedGray}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
         </View>
         <View style={styles.Filterbox}>
@@ -119,12 +136,14 @@ export const KycDocument = () => {
       </View>
       <View style={styles.Cardlist}>
         <FlatList
-          data={KycData}
+          data={filteredKYC}
           // keyExtractor={item => item.clientId}
           renderItem={({item}) => (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('KYCFormSelection')}>
+              onPress={() =>
+                navigation.navigate('KYCFormSelection', {clientID: item.id})
+              }>
               <KycCard data={item} />
             </TouchableOpacity>
           )}

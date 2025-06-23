@@ -11,16 +11,30 @@ import Colors from '@constants/Colors';
 import Fonts from '@constants/Fonts';
 import fontWeight from '@constants/FontWeight';
 import {DocumentPickerResponse} from '@react-native-documents/picker';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {IUploadResidenceDetailsPayload} from '@store/client';
 import {uploadResidenceRequest} from '@store/client/client.slice';
+import {HomeNavigatorType, KycNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 import {useDispatch} from 'react-redux';
 
+type KycNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<KycNavigatorType>
+>;
+
 export const ResidenceDetail = () => {
+  const navigation = useNavigation<KycNavigationType>();
+
   const [ownershipStatus, setOwnershipStatus] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [uploadType, setUploadType] = useState<
     'agreementCopy' | 'electricityBill' | null
   >(null);
@@ -32,22 +46,52 @@ export const ResidenceDetail = () => {
     DocumentPickerResponse | undefined
   >();
 
+  const [errors, setErrors] = useState({
+    nameofOwner: false,
+    ownershipStatus: false,
+    agreementCopy: false,
+    electricityBill: false,
+  });
+
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    console.log(nameofOwner, agreementCopy, electricityBill);
-    if (!nameofOwner || !ownershipStatus) {
-      Alert.alert('Validation Error', 'Please fill all required fields.');
-      return;
-    }
-
     const selectedFile =
       ownershipStatus === 'rented' ? agreementCopy : electricityBill;
 
-    if (!selectedFile) {
-      Alert.alert('Validation Error', 'Please upload the required document.');
+    console.log(nameofOwner, agreementCopy, electricityBill);
+    if (!nameofOwner || !ownershipStatus || !selectedFile) {
+      setErrors({
+        nameofOwner: !nameofOwner,
+        ownershipStatus: !ownershipStatus,
+        agreementCopy: ownershipStatus === 'rented' && !agreementCopy,
+        electricityBill: ownershipStatus === 'owned' && !electricityBill,
+      });
+
+      let missingFields = [];
+
+      if (!nameofOwner) missingFields.push('Name of Owner');
+      if (!ownershipStatus) missingFields.push('Ownership Status');
+
+      if (ownershipStatus === 'rented' && !agreementCopy) {
+        missingFields.push('Agreement Copy');
+      } else if (ownershipStatus === 'owned' && !electricityBill) {
+        missingFields.push('Electricity Bill');
+      }
+
+      Alert.alert(
+        'Missing Fields',
+        `Please provide the following:\n${missingFields.join('\n')}`,
+      );
       return;
     }
+
+    setErrors({
+      nameofOwner: false,
+      ownershipStatus: false,
+      agreementCopy: false,
+      electricityBill: false,
+    });
 
     const payload: IUploadResidenceDetailsPayload = {
       doc: {
@@ -64,7 +108,18 @@ export const ResidenceDetail = () => {
     };
 
     console.log('Disp uploadResidenceRequest', payload);
+    setLoading(true);
     dispatch(uploadResidenceRequest(payload));
+    setTimeout(() => {
+      setLoading(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Document Uploaded',
+        text2: `${nameofOwner}'s document submitted successfully`,
+        position: 'top',
+      });
+      handleClear();
+    }, 1500);
   };
 
   const handleClear = () => {
@@ -75,7 +130,7 @@ export const ResidenceDetail = () => {
 
   return (
     <Container>
-      <AppBar title="KYC Document" />
+      <AppBar title="KYC Document" navigation={navigation} />
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Upload Residence Details</Text>
       </View>
@@ -99,35 +154,58 @@ export const ResidenceDetail = () => {
               <Input
                 label="Name of Owner"
                 value={nameofOwner}
-                onChangeText={setnameofOwner}
-                containerStyle={{marginBottom: scaleHeight(20)}}
+                onChangeText={text => {
+                  setnameofOwner(text);
+                  if (errors.nameofOwner)
+                    setErrors(prev => ({...prev, nameofOwner: false}));
+                }}
+                containerStyle={[
+                  {marginBottom: scaleHeight(20)},
+                  errors.nameofOwner && {
+                    borderColor: Colors.red,
+                    borderWidth: 1,
+                    borderRadius: 5,
+                  },
+                ]}
               />
 
               {ownershipStatus === 'rented' ? (
                 <>
-                  {agreementCopy ? (
+                  {!agreementCopy ? (
+                    <DashedButton
+                      label="Upload Agreement Copy"
+                      onPress={() => {
+                        setUploadType('agreementCopy');
+                        setIsVisible(true);
+                      }}
+                      containerStyle={
+                        errors.agreementCopy
+                          ? {borderColor: Colors.red}
+                          : undefined
+                      }
+                    />
+                  ) : (
                     <Text>File Name: {agreementCopy.name}</Text>
-                  ) : null}
-                  <DashedButton
-                    label="Upload Agreement Copy"
-                    onPress={() => {
-                      setUploadType('agreementCopy');
-                      setIsVisible(true);
-                    }}
-                  />
+                  )}
                 </>
               ) : (
                 <>
-                  {electricityBill ? (
+                  {!electricityBill ? (
+                    <DashedButton
+                      label="Upload Electricity Bill"
+                      onPress={() => {
+                        setUploadType('electricityBill');
+                        setIsVisible(true);
+                      }}
+                      containerStyle={
+                        errors.electricityBill
+                          ? {borderColor: Colors.red}
+                          : undefined
+                      }
+                    />
+                  ) : (
                     <Text>File Name: {electricityBill.name}</Text>
-                  ) : null}
-                  <DashedButton
-                    label="Upload Electricity Bill"
-                    onPress={() => {
-                      setUploadType('electricityBill');
-                      setIsVisible(true);
-                    }}
-                  />
+                  )}
                 </>
               )}
 
@@ -138,9 +216,16 @@ export const ResidenceDetail = () => {
                     switch (uploadType) {
                       case 'agreementCopy':
                         setAgreementCopy(file);
+                        if (errors.agreementCopy)
+                          setErrors(prev => ({...prev, agreementCopy: false}));
                         break;
                       case 'electricityBill':
                         setElectricityBill(file);
+                        if (errors.electricityBill)
+                          setErrors(prev => ({
+                            ...prev,
+                            electricityBill: false,
+                          }));
                         break;
                     }
                   }

@@ -1,11 +1,19 @@
 import {call, put, select, takeLatest} from 'redux-saga/effects';
 import {
+  FilterRequest,
   getBankList,
   getClients,
+  getKycChecked,
   getLead,
+  getLeadDesciption,
   getReport,
+  getSoftSanction,
+  getSoftSanctionBnkPro,
   getTaskHistory,
   saveClientBasicDetails,
+  saveClientFirmDetails,
+  saveVendorDetails,
+  saveVisitDetails,
   setKycCheckedList,
   uploadAdharFailure,
   uploadAdharRequest,
@@ -72,11 +80,20 @@ import {
   IUploadAdharDocumentResponse,
   IUploadCompanyInfoPayload,
   IUploadCompanyInfoResponse,
+  ISoftSanctionResponse,
+  IBasicDetailsPayload,
+  IClientFirmPayload,
+  IvendorPayload,
+  IVisitPayload,
+  IsoftSanctionBankProductResponse,
+  IFilterPayload,
+  IFilterResponse,
 } from '.';
 import {Result} from '@utils/TryCatch';
 import clientApi from '@services/api/client.api';
 import {PayloadAction} from '@reduxjs/toolkit';
 import moment from 'moment';
+import {PayloadWithCallback} from '@type/global.types';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -110,6 +127,20 @@ function* handleGetLeadProgress(): unknown {
   }
 }
 
+function* handleGetLeadDesProgress({
+  payload,
+}: PayloadAction<PayloadWithCallback<string, [Array<any>]>>): unknown {
+  const {data, error}: Result<ILeadProgressResponse> = yield call(
+    clientApi.getLeadDesProgress,
+    payload.payload,
+  );
+  if (!error) {
+    payload.callbackSuccess?.(data.data);
+  } else {
+    payload.callbackError?.();
+  }
+}
+
 function* handleGetTaskHistory(): unknown {
   const {data, error}: Result<ITaskHistoryResponse> = yield call(
     clientApi.getTaskHistory,
@@ -139,7 +170,8 @@ function* saveBasicDetails(): unknown {
     clientSelector.getClientFormData,
   );
   const basicDetailForm = clientFormData.BasicDetails;
-  const body = {
+
+  const body: IBasicDetailsPayload = {
     source_of_lead: basicDetailForm.sourceOfLead,
     location: basicDetailForm.location,
     city: basicDetailForm.city,
@@ -154,19 +186,20 @@ function* saveBasicDetails(): unknown {
     body,
   );
 
-  if (!error) {
+  if (!error && data) {
     yield put(clientActions.saveClientId(data.data));
   }
 }
 
-function* saveClientFirmDetails(): unknown {
+function* saveClientFirm(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
+  console.log('----->>>>', clientId);
   const clientFirmDetailForm = clientFormData.ClientFirmScreen;
 
-  const body = {
+  const body: IClientFirmPayload = {
     client_name: clientFirmDetailForm.clientName,
     firm_name: clientFirmDetailForm.firmName,
     contact_number: clientFirmDetailForm.contactNumber,
@@ -174,71 +207,79 @@ function* saveClientFirmDetails(): unknown {
     business_vintage: clientFirmDetailForm.businessVintage,
     sector: clientFirmDetailForm.sector,
     bank_name: clientFirmDetailForm.bankName,
-    cibil_score: clientFirmDetailForm.cibilScore,
+    cibil_score: parseInt(clientFirmDetailForm.cibilScore),
     facility_type: clientFirmDetailForm.facilityType,
-    existing_funding_sanctioned_amount: clientFirmDetailForm.existingFunding,
-    estimated_funding_required: clientFirmDetailForm.estimatedFunding,
-    credit_period_offer: clientFirmDetailForm.creditPeriod,
+    existing_funding_sanctioned_amount: parseInt(
+      clientFirmDetailForm.existingFunding,
+    ),
+    estimated_funding_required: parseInt(clientFirmDetailForm.estimatedFunding),
+    credit_period_offer: parseInt(clientFirmDetailForm.creditPeriod),
   };
 
   const {data, error}: Result<IclientFirmResponse> = yield call(
     ClientApis.saveClientFirmForm,
+    String(clientId),
     body,
   );
 
   if (!error) {
-    yield put(clientActions.saveClientFirmDetails());
+    // yield put(clientActions.saveClientFirmDetails());
   }
 }
 
-function* saveVendorDetails(): unknown {
+function* saveVendor(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
   const vendorForm = clientFormData.VendorScreen;
 
-  const body = {
+  const body: IvendorPayload = {
     product_category: vendorForm.Product,
+    product_type: vendorForm.Product,
     vendor_name: vendorForm.vendorName,
     address: vendorForm.address,
     city: vendorForm.city,
     state: vendorForm.state,
     pin_code: vendorForm.pincode,
     vendor_contact_number: vendorForm.vendorContact,
-    monthly_sales_value: vendorForm.monthlySales,
+    monthly_sales_value: parseInt(vendorForm.monthlySales),
   };
 
   const {data, error}: Result<IVendorResponse> = yield call(
     ClientApis.saveVendorForm,
+    String(clientId),
     body,
   );
 
   if (!error) {
-    yield put(clientActions.saveVendorDetails());
+    // yield put(clientActions.saveVendorDetails()); // savevisitDetails
   }
 }
 
-function* savevisitDetails(): unknown {
+function* savevisit(): unknown {
   const clientFormData: ClientFormType = yield select(
     clientSelector.getClientFormData,
   );
-  const clientId: number = yield select(clientSelector.getClientId);
+  const clientId: number = yield select(clientSelector.getClientFormId);
   const visitForm = clientFormData.VisitScreen;
 
-  const body = {
+  const body: IVisitPayload = {
+    client_response: visitForm.UserResponse,
     intent: visitForm.intent,
+    date_of_next_visit: moment(visitForm.nextVisitDate).format('YYYY-MM-DD'),
     reason_for_not_interested: visitForm.reason,
     are_you_interested_for: visitForm.interested,
   };
 
   const {data, error}: Result<IvisitResponse> = yield call(
-    ClientApis.savevisitForm,
+    ClientApis.saveVisitForm,
+    String(clientId),
     body,
   );
 
   if (!error) {
-    yield put(clientActions.saveVisitDetails());
+    // yield put(clientActions.saveVisitDetails());
   }
 }
 
@@ -277,7 +318,7 @@ function* handleUploadPan(action: PayloadAction<IUploadPanDocumentsPayload>) {
     formData.append('uploaded_by', uploaded_by);
 
     files.forEach((file, index) => {
-      formData.append(`files[${index}]`, {
+      formData.append('doc', {
         // Unique key for each file
         uri: file.uri,
         type: file.type,
@@ -616,9 +657,10 @@ function* hnadleGetBankList(): unknown {
   }
 }
 
-function* handleGetKycChecked(): unknown {
+function* handleGetKycChecked({payload}: PayloadAction<string>): unknown {
   const {data, error}: Result<IKycCheckedResponse> = yield call(
     clientApi.getKycChecked,
+    payload,
   );
   if (!error) {
     yield put(clientActions.setKycCheckedList(data.data));
@@ -627,15 +669,53 @@ function* handleGetKycChecked(): unknown {
   }
 }
 
+function* handleGetSoftSantion(): unknown {
+  const {data, error}: Result<ISoftSanctionResponse> = yield call(
+    ClientApis.getSoftSanction,
+  );
+  if (!error) {
+    yield put(clientActions.setSoftSanctionList(data.data));
+  } else {
+    yield put(clientActions.setSoftSanctionList([]));
+  }
+}
+
+function* handleGetSoftSantionBnkPro(): unknown {
+  const {data, error}: Result<IsoftSanctionBankProductResponse> = yield call(
+    ClientApis.getSoftSanctionProductBank,
+  );
+  if (!error) {
+    yield put(clientActions.setSoftSanctionBnkProList(data.data));
+  } else {
+    yield put(clientActions.setSoftSanctionBnkProList([]));
+  }
+}
+
+function* handleFilterbox(action: PayloadAction<IFilterPayload>) {
+  try {
+    const {data, error}: {data: IFilterResponse | null; error: any} =
+      yield call(clientApi.FilterBox, action.payload);
+
+    if (data) {
+      yield put(clientActions.FilterSucess(data));
+    } else {
+      yield put(clientActions.FilterFailure(error?.message || 'Unknown error'));
+    }
+  } catch (error: any) {
+    yield put(clientActions.FilterFailure(error.message || 'Unexpected error'));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
   yield takeLatest(getLead.type, handleGetLeadProgress);
+  yield takeLatest(getLeadDesciption.type, handleGetLeadDesProgress);
   yield takeLatest(getTaskHistory.type, handleGetTaskHistory);
   yield takeLatest(saveClientBasicDetails.type, saveBasicDetails);
-  yield takeLatest(saveClientBasicDetails.type, saveClientFirmDetails);
-  yield takeLatest(saveClientBasicDetails.type, saveVendorDetails);
-  yield takeLatest(saveClientBasicDetails.type, savevisitDetails);
+  yield takeLatest(saveClientFirmDetails.type, saveClientFirm);
+  yield takeLatest(saveVendorDetails.type, saveVendor);
+  yield takeLatest(saveVisitDetails.type, savevisit);
   yield takeLatest(uploadKycRequest.type, handleUploadKyc);
   yield takeLatest(uploadPanRequest.type, handleUploadPan);
   yield takeLatest(uploadAdharRequest.type, handleUploadAdhar);
@@ -647,12 +727,8 @@ export default function* clientSaga() {
   yield takeLatest(uploadCompanyInfoRequest.type, handleUploadCompanyInfo);
   yield takeLatest(uploadCompanyPanRequest.type, handleUploadCompanyPan);
   yield takeLatest(getBankList.type, hnadleGetBankList);
-  yield takeLatest(setKycCheckedList.type, handleGetKycChecked);
-}
-function deleteClientSuccess(id: any): any {
-  throw new Error('Function not implemented.');
-}
-
-function deleteClientFailure(error: unknown): any {
-  throw new Error('Function not implemented.');
+  yield takeLatest(getKycChecked.type, handleGetKycChecked);
+  yield takeLatest(getSoftSanction.type, handleGetSoftSantion);
+  yield takeLatest(getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
+  yield takeLatest(FilterRequest.type, handleFilterbox);
 }

@@ -73,11 +73,28 @@ export type ClientState = {
   CompanyInfoData: IUploadCompanyInfoResponse | null;
   CompanyInfoError: string | null;
 
+  // Bank List
   BankLoader: boolean;
   BankList: Array<IBankListResponseDatum>;
 
+  // Kyc Checked Mark
   KycCheckedLoader: boolean;
   kycCheckedList: Array<IKycCheckedResponseDatum>;
+
+  // SoftSanction Bank Method
+  SoftSanctionLoading: boolean;
+  SoftSanctionData: Array<IsoftSanctionMethodDatum>;
+  SoftSanctionError: string | null;
+
+  // SoftSanction Bank Product
+  SoftSanctionBNKPROLoading: boolean;
+  SoftSanctionBNKPROData: Array<IsoftSanctionBankProductDatum>;
+  SoftSanctionBNKPROError: string | null;
+
+  // FilterBox
+  FilterboxLoading: boolean;
+  FilterboxData: IFilterResponse | null;
+  FilterboxError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -166,7 +183,17 @@ export interface ILeadProgressResponse {
   data: Array<ILeadProgressResponseDatum>;
 }
 
-export interface ILeadProgressResponseDatum {}
+export interface ILeadProgressResponseDatum {
+  id: number;
+  source_of_lead: string;
+  location: string;
+  client_name: any;
+  monthly_turnover: any;
+  bank_name: any;
+  estimated_funding_required: any;
+  user: any;
+  report: Array<{id: number; client: number; created_at: string}>;
+}
 
 export interface ITaskHistoryResponse {
   statusCode: number;
@@ -553,4 +580,45 @@ export interface IKycCheckedResponse {
 export interface IKycCheckedResponseDatum {
   document_id: number;
   document_type: string;
+}
+
+export interface ISoftSanctionPayload {
+  bank_name: string;
+  product_name: string;
+  method_name: string;
+  done_by: string;
+}
+
+export interface ISoftSanctionResponse {
+  statusCode: number;
+  data: IsoftSanctionMethodDatum[];
+}
+
+export interface IsoftSanctionMethodDatum {
+  id: number;
+  method_name: string;
+  label: string;
+}
+
+export interface IsoftSanctionBankProductResponse {
+  statusCode: number;
+  data: IsoftSanctionBankProductDatum[];
+}
+
+export interface IsoftSanctionBankProductDatum {
+  soft_sanction_ruleset_id: string;
+  method_name: string;
+}
+
+export interface IFilterPayload {
+  locations: string[];
+  firstNames: any[];
+  lastNames: any[];
+  sourceOfLead: any[];
+}
+
+export interface IFilterResponse {
+  message: string;
+  error: string;
+  statusCode: number;
 }

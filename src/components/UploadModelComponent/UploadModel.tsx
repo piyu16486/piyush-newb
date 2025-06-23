@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 
 export const UploadModal = ({
@@ -73,9 +74,51 @@ export const UploadModal = ({
                   </TouchableOpacity>
 
                   {selectedFile && (
-                    <Text style={{marginTop: 8, color: '#444', fontSize: 14}}>
-                      Selected: {selectedFile.name}
-                    </Text>
+                    <View style={{marginTop: 10, alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          marginTop: 8,
+                          color: Colors.balancedGray,
+                          fontSize: scaleFont(14),
+                        }}>
+                        Selected: {selectedFile.name}
+                      </Text>
+
+                      {selectedFile.type?.startsWith('image/') ? (
+                        <View
+                          style={{
+                            borderRadius: 8,
+                            overflow: 'hidden',
+                            borderColor: '#ccc',
+                            borderWidth: 1,
+                          }}>
+                          <Image
+                            source={{uri: selectedFile.uri}}
+                            style={{
+                              width: 150,
+                              height: 150,
+                              resizeMode: 'cover',
+                            }}
+                          />
+                        </View>
+                      ) : selectedFile.name?.endsWith('.pdf') ? (
+                        <Text
+                          style={{
+                            color: Colors.lightGray,
+                            fontSize: scaleFont(12),
+                          }}>
+                          📄 PDF Preview: {selectedFile.name}
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            color: Colors.lightGray,
+                            fontSize: scaleFont(12),
+                          }}>
+                          Unsupported file type
+                        </Text>
+                      )}
+                    </View>
                   )}
                 </View>
               </View>

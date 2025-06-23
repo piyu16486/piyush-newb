@@ -4,6 +4,7 @@ import {Colors} from '@constants/index';
 import {IClientInfoResponseDatum} from '@store/client';
 import {Dots} from '@assets/Icons';
 import {scaleHeight, scaleWidth} from '@utils/Scale';
+import {decryptUtility} from '@utils/crypto';
 
 const Strings = {
   clientId: 'Client ID :',
@@ -74,7 +75,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
       <TouchableOpacity
         onPress={() => onPressCard(data.id)}
         activeOpacity={0.7}>
-        <View style={[styles.statusBadge, {backgroundColor: ChipColors.Warm}]}>
+        <View style={[styles.statusBadge, {backgroundColor: ChipColors.Hot}]}>
           <Text style={styles.statusText}>{'Hot'}</Text>
         </View>
 
@@ -83,10 +84,11 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         </Text>
         <Text style={styles.label}>
           <Text style={styles.bold}>{Strings.clientName}</Text>
-          {data.client_name}
+          {decryptUtility(data.client_name ?? '')}
         </Text>
         <Text style={styles.label}>
-          <Text style={styles.bold}>{Strings.location}</Text> {data.location}
+          <Text style={styles.bold}>{Strings.location}</Text>
+          {decryptUtility(data.location ?? '')}
         </Text>
         <Text style={styles.label}>
           <Text style={styles.bold}>{Strings.initiator}</Text>
@@ -99,6 +101,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         <Text style={styles.label}>
           <Text style={styles.bold}>{Strings.referenceDetails}</Text>
           {'TODO: Reference Details'}
+          {/* {data.} */}
         </Text>
         <Text style={styles.label}>
           <Text style={styles.bold}>{Strings.monthlyTurnover}</Text>

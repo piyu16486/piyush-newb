@@ -33,8 +33,7 @@ export const MainNavigator = () => {
 
   return (
     <NavigationContainer linking={linking}>
-      {/*{isLoggedIn ? <HomeNavigator /> : <AuthNavigator />}*/}
-      {isLoggedIn ? <HomeNavigator /> : <HomeNavigator />}
+      {isLoggedIn ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };
