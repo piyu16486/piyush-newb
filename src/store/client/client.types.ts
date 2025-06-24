@@ -99,6 +99,10 @@ export type ClientState = {
   rulesetLoading: boolean;
   rulesetData: ISoftSanctionRuleset[];
   rulesetError: string | null;
+
+  softSanctionClientLoading: boolean;
+  softSanctionClientList: ISoftSanctionClient[];
+  softSanctionClientError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -638,4 +642,19 @@ export interface ISoftSanctionRuleset {
 export interface ISoftSanctionRulesetResponse {
   statusCode: number;
   data: ISoftSanctionRuleset[];
+}
+
+export interface ISoftSanctionClient {
+  id: number;
+  location: string;
+  client_name: string;
+  monthly_turnover: string | null;
+  estimated_funding_required: number | null;
+  credit_period_offer: number | null;
+  user: any;
+}
+
+export interface ISoftSanctionClientListResponse {
+  statusCode: number;
+  data: ISoftSanctionClient[];
 }

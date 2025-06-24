@@ -163,6 +163,10 @@ const getSoftSanctionRuleset = createSelector(_selectState, _state => _state.rul
 const getSoftSanctionRulesetLoading = createSelector(_selectState, _state => _state.rulesetLoading);
 const getSoftSanctionRulesetError = createSelector(_selectState, _state => _state.rulesetError);
 
+const getSoftSanctionClientList = createSelector(_selectState, _state => _state.softSanctionClientList);
+const getSoftSanctionClientLoading = createSelector(_selectState, _state => _state.softSanctionClientLoading);
+const getSoftSanctionClientError = createSelector(_selectState, _state => _state.softSanctionClientError);
+
 export default {
   getClientList,
   getClientFormData,
@@ -208,4 +212,7 @@ export default {
   getSoftSanctionRuleset,
   getSoftSanctionRulesetLoading,
   getSoftSanctionRulesetError,
+  getSoftSanctionClientList,
+  getSoftSanctionClientLoading,
+  getSoftSanctionClientError,
 };

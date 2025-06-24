@@ -20,6 +20,7 @@ import {Search} from '@assets/Icons';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '@store/app/store';
 import {clientActions} from '@store/client';
+import clientSelector from '@store/client/client.selector';
 
 type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -46,9 +47,13 @@ export const SoftsanctionProcess = () => {
   const dispatch = useDispatch();
   const bankList = useSelector((state: RootState) => state.client.BankList);
   const methodList = useSelector((state: RootState) => state.client.SoftSanctionBNKPROData);
+  const softSanctionClientList = useSelector(clientSelector.getSoftSanctionClientList);
+  const softSanctionClientLoading = useSelector(clientSelector.getSoftSanctionClientLoading);
+  const softSanctionClientError = useSelector(clientSelector.getSoftSanctionClientError);
 
   useEffect(() => {
     dispatch(clientActions.getBankList());
+    dispatch(clientActions.getSoftSanctionClientList());
   }, []);
 
   useEffect(() => {
@@ -215,6 +220,28 @@ export const SoftsanctionProcess = () => {
               contentContainerStyle={{paddingBottom: 20}}
             />
           </View>
+        )}
+        {softSanctionClientLoading ? (
+          <Text>Loading clients...</Text>
+        ) : softSanctionClientError ? (
+          <Text style={{ color: 'red' }}>{softSanctionClientError}</Text>
+        ) : (
+          <FlatList
+            data={softSanctionClientList}
+            keyExtractor={item => item.id?.toString() ?? 'NA'}
+            renderItem={({item}) => (
+              <LeadCard
+                lead={{
+                  clientId: item.id?.toString() || 'NA',
+                  clientName: item.client_name || 'NA',
+                  location: item.location || 'NA',
+                  turnover: item.monthly_turnover || 'NA',
+                  creditPeriod: item.credit_period_offer?.toString() || 'NA',
+                }}
+              />
+            )}
+            contentContainerStyle={{paddingBottom: 20}}
+          />
         )}
       </ScrollView>
     </Container>
