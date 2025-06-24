@@ -159,6 +159,10 @@ const getFilterbox = createSelector(
   _state => _state.FilterboxData,
 );
 
+const getSoftSanctionRuleset = createSelector(_selectState, _state => _state.rulesetData);
+const getSoftSanctionRulesetLoading = createSelector(_selectState, _state => _state.rulesetLoading);
+const getSoftSanctionRulesetError = createSelector(_selectState, _state => _state.rulesetError);
+
 export default {
   getClientList,
   getClientFormData,
@@ -201,4 +205,7 @@ export default {
   getSoftSanctionMethod,
   getSoftSanctionBnkPro,
   getFilterbox,
+  getSoftSanctionRuleset,
+  getSoftSanctionRulesetLoading,
+  getSoftSanctionRulesetError,
 };

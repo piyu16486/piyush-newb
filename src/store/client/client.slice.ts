@@ -157,6 +157,9 @@ const initialState: ClientState = {
   FilterboxLoading: false,
   FilterboxData: null,
   FilterboxError: null,
+  rulesetLoading: false,
+  rulesetData: [],
+  rulesetError: null,
 };
 
 const clientSlice = createSlice({
@@ -573,6 +576,18 @@ const clientSlice = createSlice({
       state.FilterboxData = null;
       state.FilterboxError = null;
     },
+    getSoftSanctionRuleset: (state, _action) => {
+      state.rulesetLoading = true;
+      state.rulesetError = null;
+    },
+    setSoftSanctionRuleset: (state, action) => {
+      state.rulesetLoading = false;
+      state.rulesetData = action.payload;
+    },
+    setSoftSanctionRulesetError: (state, action) => {
+      state.rulesetLoading = false;
+      state.rulesetError = action.payload;
+    },
   },
 });
 
@@ -659,5 +674,8 @@ export const {
   FilterSucess,
   FilterFailure,
   clearFilter,
+  getSoftSanctionRuleset,
+  setSoftSanctionRuleset,
+  setSoftSanctionRulesetError,
 } = clientSlice.actions;
 export default clientSlice.reducer;

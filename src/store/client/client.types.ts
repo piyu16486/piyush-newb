@@ -95,6 +95,10 @@ export type ClientState = {
   FilterboxLoading: boolean;
   FilterboxData: IFilterResponse | null;
   FilterboxError: string | null;
+
+  rulesetLoading: boolean;
+  rulesetData: ISoftSanctionRuleset[];
+  rulesetError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;
@@ -622,4 +626,16 @@ export interface IFilterResponse {
   message: string;
   error: string;
   statusCode: number;
+}
+
+export interface ISoftSanctionRuleset {
+  bank_name: string;
+  method_name: string;
+  product_name: string;
+  rules: { label: string; value: string | null }[];
+}
+
+export interface ISoftSanctionRulesetResponse {
+  statusCode: number;
+  data: ISoftSanctionRuleset[];
 }

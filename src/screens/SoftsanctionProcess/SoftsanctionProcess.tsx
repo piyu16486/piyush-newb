@@ -39,17 +39,59 @@ export const SoftsanctionProcess = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   const [search, setSearch] = useState<string>('');
   const [showLeads, setShowLeads] = useState(false);
+  const [selectedBank, setSelectedBank] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [selectedRulesetId, setSelectedRulesetId] = useState<string | null>(null);
   const dispatch = useDispatch();
   const bankList = useSelector((state: RootState) => state.client.BankList);
+  const methodList = useSelector((state: RootState) => state.client.SoftSanctionBNKPROData);
 
   useEffect(() => {
     dispatch(clientActions.getBankList());
   }, []);
 
+  useEffect(() => {
+    if (selectedBank && selectedProduct) {
+      const bank = bankList.find(b => b.id.toString() === selectedBank);
+      if (bank) {
+        dispatch({
+          type: clientActions.getSoftSanctionBnkPro.type,
+          payload: { bank: bank.bank_name.trim(), product: selectedProduct },
+        });
+      }
+    }
+  }, [selectedBank, selectedProduct]);
+
+  useEffect(() => {
+    if (selectedMethod && methodList.length > 0) {
+      const method = methodList.find(m => m.method_name === selectedMethod);
+      if (method) {
+        setSelectedRulesetId(method.soft_sanction_ruleset_id);
+      } else {
+        setSelectedRulesetId(null);
+      }
+    } else {
+      setSelectedRulesetId(null);
+    }
+  }, [selectedMethod, methodList]);
+
   const formattedBankList = bankList.map(bank => ({
-    label: bank.bank_name,
+    label: bank.bank_name.trim(),
     value: bank.id.toString(),
   }));
+
+  const formattedMethodList = methodList.map(method => ({
+    label: method.method_name,
+    value: method.method_name,
+  }));
+
+  const formattedRulesetIdList = methodList
+    .filter(method => method.method_name === selectedMethod)
+    .map(method => ({
+      label: method.soft_sanction_ruleset_id,
+      value: method.soft_sanction_ruleset_id,
+    }));
 
   const leads: Lead[] = [
     {
@@ -88,48 +130,49 @@ export const SoftsanctionProcess = () => {
           <Text style={styles.headText}>Ruleset ID Details</Text>
         </View>
         <View style={styles.inputContainer}>
-          {/* <Input label="Bank Name" /> */}
           <CustomDropdown
             label="Bank Name"
             data={formattedBankList}
             placeholder="Bank Name"
+            value={selectedBank ?? undefined}
+            onChange={val => {
+              setSelectedBank(val);
+              setSelectedMethod(null);
+              setSelectedRulesetId(null);
+            }}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
-          {/* <Input label="Product" /> */}
           <CustomDropdown
-            label="Product" // 'Turnover', 'Purchase', 'WC(Stock)', 'Sales', 'Banking Credits'
+            label="Product"
             data={[
               {label: 'PID', value: 'PID'},
               {label: 'VF', value: 'VF'},
               {label: 'DF', value: 'DF'},
             ]}
             placeholder="Product Name"
+            value={selectedProduct ?? undefined}
+            onChange={val => {
+              setSelectedProduct(val);
+              setSelectedMethod(null);
+              setSelectedRulesetId(null);
+            }}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
-          {/* <Input label="Method" /> */}
           <CustomDropdown
             label="Method"
-            data={[
-              {label: 'Turnover', value: 'Turnover'},
-              {label: 'Purchase', value: 'Purchase'},
-              {label: 'WC(Stock)', value: 'WC(Stock)'},
-              {label: 'Sales', value: 'Sales'},
-              {label: 'Banking Credits', value: 'Banking Credits'},
-            ]}
+            data={formattedMethodList}
             placeholder="Method Name"
+            value={selectedMethod ?? undefined}
+            onChange={val => setSelectedMethod(val)}
             containerStyle={{marginBottom: scaleHeight(20)}}
           />
-          {/* <Input label="Rulest ID" /> */}
           <CustomDropdown
             label="Rulest ID"
-            data={[
-              {label: 'Option 1', value: 'option1'},
-              {label: 'Option 2', value: 'option2'},
-              {label: 'Option 3', value: 'option3'},
-              {label: 'Option 4', value: 'option4'},
-              {label: 'Option 5', value: 'option5'},
-            ]}
+            data={formattedRulesetIdList}
             placeholder="All Rules Set IDs here of bank, PID, Method"
+            value={selectedRulesetId ?? undefined}
+            onChange={val => setSelectedRulesetId(val)}
+            containerStyle={{marginBottom: scaleHeight(20)}}
           />
         </View>
         <Button
@@ -137,9 +180,12 @@ export const SoftsanctionProcess = () => {
           style={styles.button}
           onPress={() => {
             setShowLeads(true);
-            navigation.navigate('SoftSanctionRuleset');
+            const bank = bankList.find(b => b.id.toString() === selectedBank);
+            navigation.navigate('SoftSanctionRuleset', {
+              bankName: bank ? bank.bank_name.trim() : '',
+              product: selectedProduct ?? '',
+            } as any);
           }}
-          // SoftSanctionRuleset | RulesetTCPD | UGROPurchaseMethod | UGROTurnoverMethod | to navigate other screen "navigation.navigate('SoftSanctionRuleset')" | setShowLeads(true)
         />
         {showLeads && (
           <View style={styles.container}>

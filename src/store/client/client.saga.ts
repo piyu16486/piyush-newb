@@ -94,6 +94,7 @@ import clientApi from '@services/api/client.api';
 import {PayloadAction} from '@reduxjs/toolkit';
 import moment from 'moment';
 import {PayloadWithCallback} from '@type/global.types';
+import { ISoftSanctionRulesetResponse } from './client.types';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -706,6 +707,17 @@ function* handleFilterbox(action: PayloadAction<IFilterPayload>) {
   }
 }
 
+function* handleGetSoftSanctionRuleset(action) {
+  try {
+    const { bank, product } = action.payload;
+    const url = `http://192.168.31.225:3000/client-info-master/soft-sanction/ruleset?bank=${encodeURIComponent(bank)}&product=${encodeURIComponent(product)}`;
+    const response = yield call(() => fetch(url).then(res => res.json()));
+    yield put(clientActions.setSoftSanctionRuleset(response.data || []));
+  } catch (error) {
+    yield put(clientActions.setSoftSanctionRulesetError(error.message || 'Unknown error'));
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(getClients.type, handleGetClient);
   yield takeLatest(getReport.type, handleGetRemarkReport);
@@ -731,4 +743,5 @@ export default function* clientSaga() {
   yield takeLatest(getSoftSanction.type, handleGetSoftSantion);
   yield takeLatest(getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
   yield takeLatest(FilterRequest.type, handleFilterbox);
+  yield takeLatest(clientActions.getSoftSanctionRuleset.type, handleGetSoftSanctionRuleset);
 }

@@ -1,9 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import {Container, AppBar, LeadCard} from '@components/index';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {CompositeNavigationProp, useNavigation, useRoute} from '@react-navigation/native';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont} from '@utils/Scale';
@@ -13,6 +13,10 @@ import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {FontWeight} from '@constants/index';
 import {LeftChevronCircle} from '@assets/Icons';
 import {SoftRulestCard} from '@components/SoftRulesetCard/SoftRulestCard';
+import Toast from 'react-native-toast-message';
+import { useDispatch, useSelector } from 'react-redux';
+import clientSelector from '@store/client/client.selector';
+import { clientActions } from '@store/client';
 
 type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -30,70 +34,35 @@ type Ruleset = {
 
 export const SoftSanctionRuleset = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
+  const route = useRoute();
+  const dispatch = useDispatch();
   const [search, setSearch] = useState<string>('');
+  const rulesetData = useSelector(clientSelector.getSoftSanctionRuleset);
+  const rulesetLoading = useSelector(clientSelector.getSoftSanctionRulesetLoading);
+  const rulesetError = useSelector(clientSelector.getSoftSanctionRulesetError);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const leads: Ruleset[] = [
-    {
-      bankName: 'Urgo',
-      productName: 'PID',
-      methodName: 'Turnover Method',
-      rulesetId: 'UGPDTM001',
-      ruleName: 'Rule Name',
-      rulestCondition: `• Monthly Turnover ()
-• Last 12 M Turnover (Monthly Turnover * 12)
-• Projected Turnover (Last 12 M Turnover * 1.25)
-• CREDIT PERIOD Offered ()
-• 20% of Projected TO (Projected Turnover * 0.2)
-• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
-• Existing W/C Limits ().`,
-    },
-    {
-      bankName: 'Urgo',
-      productName: 'PID',
-      methodName: 'Turnover Method',
-      rulesetId: 'UGPDTM001',
-      ruleName: 'Rule Name',
-      rulestCondition: `• Monthly Turnover ()
-• Last 12 M Turnover (Monthly Turnover * 12)
-• Projected Turnover (Last 12 M Turnover * 1.25)
-• CREDIT PERIOD Offered ()
-• 20% of Projected TO (Projected Turnover * 0.2)
-• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
-• Existing W/C Limits ().`,
-    },
-    {
-      bankName: 'Urgo',
-      productName: 'PID',
-      methodName: 'Turnover Method',
-      rulesetId: 'UGPDTM001',
-      ruleName: 'Rule Name',
-      rulestCondition: `• Monthly Turnover ()
-• Last 12 M Turnover (Monthly Turnover * 12)
-• Projected Turnover (Last 12 M Turnover * 1.25)
-• CREDIT PERIOD Offered ()
-• 20% of Projected TO (Projected Turnover * 0.2)
-• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
-• Existing W/C Limits ().`,
-    },
-    {
-      bankName: 'Urgo',
-      productName: 'PID',
-      methodName: 'Turnover Method',
-      rulesetId: 'UGPDTM001',
-      ruleName: 'Rule Name',
-      rulestCondition: `• Monthly Turnover ()
-• Last 12 M Turnover (Monthly Turnover * 12)
-• Projected Turnover (Last 12 M Turnover * 1.25)
-• CREDIT PERIOD Offered ()
-• 20% of Projected TO (Projected Turnover * 0.2)
-• Projected TO for credit period (Projected Turnover / 365 * CREDIT PERIOD Offered)
-• Existing W/C Limits ().`,
-    },
-  ];
+  useEffect(() => {
+    // @ts-ignore
+    const { bankName, product } = route.params || {};
+    if (bankName && product) {
+      dispatch(clientActions.getSoftSanctionRuleset({ bank: bankName, product }));
+    }
+  }, [route.params]);
 
-  const filteredLeads = leads.filter(lead =>
-    lead.bankName.toLowerCase().includes(search.toLowerCase()),
+  const filteredRulesets = rulesetData.filter(item =>
+    item.bank_name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleRefresh = () => {
+    // @ts-ignore
+    const { bankName, product } = route.params || {};
+    setRefreshing(true);
+    if (bankName && product) {
+      dispatch(clientActions.getSoftSanctionRuleset({ bank: bankName, product }));
+    }
+    setTimeout(() => setRefreshing(false), 1000); // ensure spinner shows briefly
+  };
 
   return (
     <Container>
@@ -109,23 +78,48 @@ export const SoftSanctionRuleset = () => {
           <LeftChevronCircle height={20} width={20} />
           <Text style={styles.contentText}>Rulesets</Text>
           <View style={styles.countBadge}>
-            <Text style={styles.countText}>{leads.length}</Text>
+            <Text style={styles.countText}>{rulesetData.length}</Text>
           </View>
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
-        <FlatList
-          data={filteredLeads}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('RulesetTCPD')}>
-              <SoftRulestCard Ruleset={item} />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{paddingBottom: 20}}
-        />
+        {rulesetLoading ? (
+          <Text>Loading...</Text>
+        ) : rulesetError ? (
+          <Text style={{ color: 'red' }}>{rulesetError}</Text>
+        ) : (
+          <FlatList
+            data={filteredRulesets}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({item}) => (
+              <View style={{marginBottom: 24, padding: 16, backgroundColor: '#fff', borderRadius: 8, elevation: 2}}>
+                <Text style={{fontWeight: 'bold'}}>Bank Name: <Text style={{fontWeight: 'normal'}}>{item.bank_name}</Text></Text>
+                <Text style={{fontWeight: 'bold'}}>Product Name: <Text style={{fontWeight: 'normal'}}>{item.product_name}</Text></Text>
+                <Text style={{fontWeight: 'bold'}}>Method Name: <Text style={{fontWeight: 'normal'}}>{item.method_name}</Text></Text>
+                <Text style={{fontWeight: 'bold', marginTop: 8}}>Rules:</Text>
+                {item.rules && item.rules.length > 0 ? (
+                  <FlatList
+                    data={item.rules}
+                    keyExtractor={(_, idx) => idx.toString()}
+                    renderItem={({item: rule}) => (
+                      <View style={{marginLeft: 8, marginBottom: 4}}>
+                        <Text style={{fontWeight: '600'}}>{rule.label}</Text>
+                        {rule.value !== null && (
+                          <Text style={{color: '#555'}}>Value: {rule.value}</Text>
+                        )}
+                      </View>
+                    )}
+                  />
+                ) : (
+                  <Text style={{marginLeft: 8}}>No rules found.</Text>
+                )}
+              </View>
+            )}
+            contentContainerStyle={{paddingBottom: 20}}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        )}
       </View>
     </Container>
   );
