@@ -70,6 +70,7 @@ export const SoftsanctionProcess = () => {
     },
   ];
 
+  
   const filteredLeads = leads.filter(lead =>
     lead.clientName.toLowerCase().includes(search.toLowerCase()),
   );

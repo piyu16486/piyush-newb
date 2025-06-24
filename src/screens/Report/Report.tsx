@@ -29,74 +29,7 @@ export const Report = () => {
     callGetReport();
   }, []);
 
-  const taskData = [
-    {
-      id: '1',
-      leadName: 'Bhavya Shah',
-      visitDate: '10-10-2024',
-      visitorName: 'Pritesh Shah',
-      taskType: 'Call',
-      taskDescription: 'Discussed product,\nscheduled a demo',
-      remark: 'Client showed interest in premium packages.',
-      status: 'Complete',
-    },
-    {
-      id: '2',
-      leadName: 'Bhavya Shah',
-      visitDate: '10-10-2024',
-      visitorName: 'Pritesh Shah',
-      taskType: 'Call',
-      taskDescription: 'Discussed product,\nscheduled a demo',
-      remark: 'Client showed interest in premium packages.',
-      status: 'Complete',
-    },
-    {
-      id: '3',
-      leadName: 'Bhavya Shah',
-      visitDate: '10-10-2024',
-      visitorName: 'Pritesh Shah',
-      taskType: 'Call',
-      taskDescription: 'Discussed product,\nscheduled a demo',
-      remark: 'Client showed interest in premium packages.',
-      status: 'Complete',
-    },
-    // Add more items as needed
-  ];
 
-<<<<<<< HEAD
-  const renderItem = ({ item }: { item: IRemarkReportResponseDatum }) => (
-    <View style={styles.card}>
-      <View style={styles.statusBadge}>
-        <Text style={styles.statusText}>{item.status}</Text>
-      </View>
-
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Lead Name :</Text> {item.leadName}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Visit Date :</Text> {item.visitDate}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Visitor Name :</Text> {item.visitorName}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Task Type :</Text> {item.taskType}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Task Description :</Text>
-        {'\n'}
-        {item.taskDescription}
-      </Text>
-      <Text style={styles.label}>
-        <Text style={styles.bold}>Remark :</Text>
-        {'\n'}
-        {item.remark}
-      </Text>
-    </View>
-  );
-
-=======
->>>>>>> e3f31c83d49f91458eb9f57ae0deb77459a306da
   return (
     <Container>
       <AppBar title="Report" navigation={navigation} />
@@ -143,17 +76,17 @@ export const Report = () => {
               <Text style={styles.bold}>Visitor Name :</Text>'TODO Visitor name'
             </Text>
             <Text style={styles.label}>
-              <Text style={styles.bold}>Task Type :</Text> {item.task}
+              <Text style={styles.bold}>Task Type :</Text> {item.task.map(t => t.task_type).join(', ')}
             </Text>
             <Text style={styles.label}>
               <Text style={styles.bold}>Task Description :</Text>
               {'\n'}
-              {item.taskDescription}
+              {item.task.map(t => t.task_description).join(', ')}
             </Text>
             <Text style={styles.label}>
               <Text style={styles.bold}>Remark :</Text>
               {'\n'}
-              {item.remark}
+              {item.task.map(t => t.remark).join(', ')}
             </Text>
           </View>
         )}

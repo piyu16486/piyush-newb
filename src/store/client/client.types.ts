@@ -139,6 +139,9 @@ export interface IClientInfoSuccessResponse {
 }
 
 export interface IClientInfoResponseDatum {
+  reference_details: any;
+  monthly_turnover: any;
+  financier_name: any;
   id: number;
   source_of_lead: string;
   location: string;
@@ -202,8 +205,6 @@ export interface ITaskHistoryResponse {
 }
 
 export interface ITaskHistoryResponseDatum {
-  clientId: string;
-  historyStatus: "Completed" | "Pending";
   id: number;
   assigned_by: string;
   assigned_to: string;
