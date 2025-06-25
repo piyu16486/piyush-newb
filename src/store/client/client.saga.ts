@@ -96,6 +96,8 @@ import moment from 'moment';
 import {PayloadWithCallback} from '@type/global.types';
 import { ISoftSanctionRulesetResponse, ISoftSanctionClientListResponse } from './client.types';
 import { API_URL } from '@config/config';
+import Endpoints from '@constants/ApiEndPoints';
+import { Alert } from 'react-native';
 
 function* handleGetClient(): unknown {
   const {data, error}: Result<IClientInfoSuccessResponse> = yield call(
@@ -708,10 +710,10 @@ function* handleFilterbox(action: PayloadAction<IFilterPayload>) {
   }
 }
 
-function* handleGetSoftSanctionRuleset(action) {
+function* handleGetSoftSanctionRuleset(action: { payload: { bank: any; product: any; }; }) {
   try {
     const { bank, product } = action.payload;
-    const url = `http://192.168.31.225:3000/client-info-master/soft-sanction/ruleset?bank=${encodeURIComponent(bank)}&product=${encodeURIComponent(product)}`;
+    const url = `${API_URL}/client-info-master/soft-sanction/ruleset?bank=${encodeURIComponent(bank)}&product=${encodeURIComponent(product)}`;
     const response = yield call(() => fetch(url).then(res => res.json()));
     yield put(clientActions.setSoftSanctionRuleset(response.data || []));
   } catch (error) {
@@ -726,6 +728,31 @@ function* handleGetSoftSanctionClientList() {
     yield put(clientActions.setSoftSanctionClientList(response.data || []));
   } catch (error) {
     yield put(clientActions.setSoftSanctionClientListError(error.message || 'Unknown error'));
+  }
+}
+
+function* handleGetSoftSanctionFields(action: any): Generator<any, void, any> {
+  try {
+    yield put(clientActions.setSoftSanctionFieldsLoading());
+    const { bankName, productName } = action.payload;
+    const url = `${API_URL}/client-info-master/soft-sanction/inputs/${bankName}?product_name=${encodeURIComponent(productName)}`;
+    // Alert.alert('SoftSanctionFields API URL', url);
+    console.log('SoftSanctionFields API URL:', url);
+    const response: any = yield call(() => Api.get(url));
+    const data = response.data;
+    if (data.statusCode === 200 && Array.isArray(data.data)) {
+      // Group by method_name
+      const grouped: Record<string, any[]> = {};
+      data.data.forEach((item: any) => {
+        if (!grouped[item.method_name]) grouped[item.method_name] = [];
+        grouped[item.method_name].push(item);
+      });
+      yield put(clientActions.setSoftSanctionFields(grouped));
+    } else {
+      yield put(clientActions.setSoftSanctionFieldsError('No fields found'));
+    }
+  } catch (e) {
+    yield put(clientActions.setSoftSanctionFieldsError('Failed to fetch fields'));
   }
 }
 
@@ -756,4 +783,10 @@ export default function* clientSaga() {
   yield takeLatest(FilterRequest.type, handleFilterbox);
   yield takeLatest(clientActions.getSoftSanctionRuleset.type, handleGetSoftSanctionRuleset);
   yield takeLatest(clientActions.getSoftSanctionClientList.type, handleGetSoftSanctionClientList);
+  yield takeLatest(clientActions.getSoftSanctionFields.type, handleGetSoftSanctionFields);
 }
+
+function deleteClientFailure(error: unknown): any {
+  throw new Error('Function not implemented.');
+}
+

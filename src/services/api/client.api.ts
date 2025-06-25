@@ -403,6 +403,13 @@ const FilterBox = async (payload: IFilterPayload) => {
   };
 };
 
+const softSanctionCalculate = async (payload: any) => {
+  const {data, error} = await tryCatch<AxiosResponse<any>>(
+    Api.post(Endpoints.apiSoftSanctionCalculate, payload)
+  );
+  return {data: data?.data ?? null, error};
+};
+
 export default {
   getAllClients,
   getRemarkReport,
@@ -428,4 +435,5 @@ export default {
   getSoftSanction,
   getSoftSanctionProductBank,
   FilterBox,
+  softSanctionCalculate,
 };

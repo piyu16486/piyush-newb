@@ -103,6 +103,10 @@ export type ClientState = {
   softSanctionClientLoading: boolean;
   softSanctionClientList: ISoftSanctionClient[];
   softSanctionClientError: string | null;
+
+  softSanctionFields: Record<string, any[]>;
+  softSanctionFieldsLoading: boolean;
+  softSanctionFieldsError: string | null;
 };
 
 type BasicDetailsType = Record<BasicDetailsNames, string>;

@@ -167,6 +167,10 @@ const getSoftSanctionClientList = createSelector(_selectState, _state => _state.
 const getSoftSanctionClientLoading = createSelector(_selectState, _state => _state.softSanctionClientLoading);
 const getSoftSanctionClientError = createSelector(_selectState, _state => _state.softSanctionClientError);
 
+export const getSoftSanctionFields = (state: { client: any }) => state.client.softSanctionFields;
+export const getSoftSanctionFieldsLoading = (state: { client: any }) => state.client.softSanctionFieldsLoading;
+export const getSoftSanctionFieldsError = (state: { client: any }) => state.client.softSanctionFieldsError;
+
 export default {
   getClientList,
   getClientFormData,
@@ -215,4 +219,7 @@ export default {
   getSoftSanctionClientList,
   getSoftSanctionClientLoading,
   getSoftSanctionClientError,
+  getSoftSanctionFields,
+  getSoftSanctionFieldsLoading,
+  getSoftSanctionFieldsError,
 };

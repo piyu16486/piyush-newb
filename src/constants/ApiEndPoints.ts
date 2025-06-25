@@ -57,6 +57,7 @@ const Endpoints = {
   apiGetSoftSanction: '/client-info-master/soft-sanction/inputs/UGRO',
   apiGetSoftSanctionBankProduct:
     '/client-info-master/soft-sanction/methods?bank=UGRO&product=PID',
+  apiSoftSanctionCalculate: '/client-info-master/soft-sanction/calculate/2',
 
   // Filter Box
   apiFilterBox: '/client-info-master/filter',

@@ -2,7 +2,7 @@ import {Input} from '@components/Input/Input';
 import fontWeight from '@constants/FontWeight';
 import {Colors} from '@constants/index';
 import {scaleFont, scaleHeight} from '@utils/Scale';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,10 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { clientActions } from '@store/client';
+import { getSoftSanctionFields, getSoftSanctionFieldsLoading, getSoftSanctionFieldsError } from '@store/client/client.selector';
+import clientApi from '@services/api/client.api';
 
 type LeadProps = {
   lead: {
@@ -21,20 +25,48 @@ type LeadProps = {
     turnover: string;
     creditPeriod: string;
   };
+  bankName: string;
+  productName: string;
+  methodName: string;
 };
 
-export const LeadCard: React.FC<LeadProps> = ({lead}) => {
+export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, methodName}) => {
   const [showModal, setShowModal] = useState(false);
-  const [purchaseValue, setPurchaseValue] = useState('');
-  const [turnoverValue, setTurnoverValue] = useState('');
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+  const dispatch = useDispatch();
+  const fields = useSelector(getSoftSanctionFields) || {};
+  const loading = useSelector(getSoftSanctionFieldsLoading);
+  const error = useSelector(getSoftSanctionFieldsError);
 
-  const handleRun = () => {
-    console.log('Soft sanction data:', {
-      clientId: lead.clientId,
-      purchaseValue,
-      turnoverValue,
-    });
+  const handleOpenModal = () => {
+    setShowModal(true);
+    dispatch(clientActions.getSoftSanctionFields({ bankName, productName }));
+  };
+
+  const handleInputChange = (id: string, value: string) => {
+    setInputValues(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleRun = async () => {
+    // Prepare payload for API
+    const payload: any = {
+      bank_name: bankName,
+      "Existing W/C Limits": Number(inputValues["Existing W/C Limits"] || 0),
+      Stock: Number(inputValues["Stock"] || 0),
+      "Debtors (upto 150 days)": Number(inputValues["Debtors (upto 150 days)"] || 0),
+      "Less Creditors": Number(inputValues["Less Creditors"] || 0),
+      "Last 12 M Purchases of brand 1": Number(inputValues["Last 12 M Purchases of brand 1"] || 0),
+      Dependency: 0.9884,
+      client_id: lead.clientId,
+    };
+    try {
+      const res = await clientApi.softSanctionCalculate(payload);
+      console.log('Soft sanction API response:', res);
+    } catch (e) {
+      console.log('Soft sanction API error:', e);
+    }
     setShowModal(false);
+    dispatch(clientActions.clearSoftSanctionFields());
   };
 
   return (
@@ -61,7 +93,7 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => setShowModal(true)}>
+          onPress={handleOpenModal}>
           <Text style={styles.buttonText}>Run Soft Sanction</Text>
         </TouchableOpacity>
       </View>
@@ -72,47 +104,27 @@ export const LeadCard: React.FC<LeadProps> = ({lead}) => {
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Run Soft Sanction</Text>
             <Text style={styles.modalSubtitle}>
-              Rulesets (1) for Turnover method (SBI, DF)
+              {loading ? 'Loading fields...' : error ? error : 'Enter values for the following fields:'}
             </Text>
-
-            <View style={styles.modalSection}>
-              <Text style={styles.modalLabel}>Purchases</Text>
-              <Text style={styles.modalSubLabel}>
-                Last 12 M Purchases of brand 1 (GSTMar24)
-              </Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Enter value"
-                keyboardType="numeric"
-                value={purchaseValue}
-                onChangeText={setPurchaseValue}
-              />
-            </View>
-            {/* <Text style={styles.inputDescription}>
-                Last 12 M Purchases of brand 1 (GSTMar24)
-              </Text>
-              <Input
-                label="Purchases"
-                containerStyle={{marginBottom: scaleHeight(20)}}
-              /> */}
-            <View style={styles.modalSection}>
-              <Text style={styles.modalLabel}>Turnover</Text>
-              <Text style={styles.modalSubLabel}>Existing W/C Limits</Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Enter value"
-                keyboardType="numeric"
-                value={turnoverValue}
-                onChangeText={setTurnoverValue}
-              />
-              {/* <Input
-                label="Turnover"
-                containerStyle={{marginBottom: scaleHeight(20)}}
-              /> */}
-            </View>
-
+            {!loading && !error && typeof fields === 'object' && Object.keys(fields).length > 0 && Object.keys(fields).map(method => (
+              <View key={method} style={styles.modalSection}>
+                <Text style={styles.modalLabel}>{method}</Text>
+                {(fields as Record<string, any[]>)[method].map((field: any) => (
+                  <View key={field.id} style={{marginBottom: 10}}>
+                    <Text style={styles.modalSubLabel}>{field.label}</Text>
+                    <TextInput
+                      style={styles.modalInput}
+                      placeholder={`Enter value for ${field.label}`}
+                      keyboardType="numeric"
+                      value={inputValues[field.id]}
+                      onChangeText={val => handleInputChange(field.id, val)}
+                    />
+                  </View>
+                ))}
+              </View>
+            ))}
             <View style={styles.modalButtons}>
-              <TouchableOpacity onPress={() => setShowModal(false)}>
+              <TouchableOpacity onPress={() => { setShowModal(false); dispatch(clientActions.clearSoftSanctionFields()); }}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.runBtn} onPress={handleRun}>

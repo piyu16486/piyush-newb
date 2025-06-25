@@ -163,6 +163,9 @@ const initialState: ClientState = {
   softSanctionClientLoading: false,
   softSanctionClientList: [],
   softSanctionClientError: null,
+  softSanctionFields: {},
+  softSanctionFieldsLoading: false,
+  softSanctionFieldsError: null,
 };
 
 const clientSlice = createSlice({
@@ -603,6 +606,25 @@ const clientSlice = createSlice({
       state.softSanctionClientLoading = false;
       state.softSanctionClientError = action.payload;
     },
+    setSoftSanctionFields: (state, action) => {
+      state.softSanctionFields = action.payload;
+      state.softSanctionFieldsLoading = false;
+      state.softSanctionFieldsError = null;
+    },
+    setSoftSanctionFieldsLoading: (state) => {
+      state.softSanctionFieldsLoading = true;
+      state.softSanctionFieldsError = null;
+    },
+    setSoftSanctionFieldsError: (state, action) => {
+      state.softSanctionFieldsLoading = false;
+      state.softSanctionFieldsError = action.payload;
+    },
+    clearSoftSanctionFields: (state) => {
+      state.softSanctionFields = {};
+      state.softSanctionFieldsLoading = false;
+      state.softSanctionFieldsError = null;
+    },
+    getSoftSanctionFields: (state, action) => {},
   },
 });
 
@@ -695,5 +717,10 @@ export const {
   getSoftSanctionClientList,
   setSoftSanctionClientList,
   setSoftSanctionClientListError,
+  setSoftSanctionFields,
+  setSoftSanctionFieldsLoading,
+  setSoftSanctionFieldsError,
+  clearSoftSanctionFields,
+  getSoftSanctionFields,
 } = clientSlice.actions;
 export default clientSlice.reducer;

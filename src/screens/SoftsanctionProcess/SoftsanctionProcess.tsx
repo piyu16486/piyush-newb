@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {View, Text, StyleSheet, FlatList, TextInput, Alert} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import Colors from '@constants/Colors';
 import fontWeight from '@constants/FontWeight';
 import {scaleFont, scaleHeight, scaleWidth} from '@utils/Scale';
@@ -12,7 +12,7 @@ import {
   LeadCard,
 } from '@components/index';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {CompositeNavigationProp, useNavigation, useFocusEffect} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -53,7 +53,6 @@ export const SoftsanctionProcess = () => {
 
   useEffect(() => {
     dispatch(clientActions.getBankList());
-    dispatch(clientActions.getSoftSanctionClientList());
   }, []);
 
   useEffect(() => {
@@ -81,6 +80,14 @@ export const SoftsanctionProcess = () => {
     }
   }, [selectedMethod, methodList]);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (showLeads) {
+        dispatch(clientActions.getSoftSanctionClientList());
+      }
+    }, [showLeads, dispatch])
+  );
+
   const formattedBankList = bankList.map(bank => ({
     label: bank.bank_name.trim(),
     value: bank.id.toString(),
@@ -98,29 +105,18 @@ export const SoftsanctionProcess = () => {
       value: method.soft_sanction_ruleset_id,
     }));
 
-  const leads: Lead[] = [
-    {
-      clientId: '0001',
-      clientName: 'S D Verma',
-      location: 'Delhi',
-      initiator: 'Sahil Patel',
-      turnover: '20,00,000',
-      creditPeriod: '4',
-    },
-    {
-      clientId: '0002',
-      clientName: 'S D Verma',
-      location: 'Delhi',
-      initiator: 'Sahil Patel',
-      turnover: '20,00,000',
-      creditPeriod: '4',
-    },
-  ];
-
-  
-  const filteredLeads = leads.filter(lead =>
-    lead.clientName.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredLeads = softSanctionClientList
+    .map(lead => ({
+      clientId: lead.id?.toString() || 'NA',
+      clientName: lead.client_name || 'NA',
+      location: lead.location || 'NA',
+      initiator: lead.user?.name || 'NA',
+      turnover: lead.monthly_turnover || 'NA',
+      creditPeriod: lead.credit_period_offer?.toString() || 'NA',
+    }))
+    .filter(lead =>
+      lead.clientName.toLowerCase().includes(search.toLowerCase())
+    );
 
   return (
     <Container>
@@ -198,7 +194,7 @@ export const SoftsanctionProcess = () => {
               <View style={styles.titleWithBadge}>
                 <Text style={styles.header}>Leads</Text>
                 <View style={styles.countBadge}>
-                  <Text style={styles.countText}>{leads.length}</Text>
+                  <Text style={styles.countText}>{softSanctionClientList.length}</Text>
                 </View>
               </View>
               <View style={styles.searchContainer}>
@@ -213,35 +209,26 @@ export const SoftsanctionProcess = () => {
               </View>
             </View>
 
-            <FlatList
-              data={filteredLeads}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({item}) => <LeadCard lead={item} />}
-              contentContainerStyle={{paddingBottom: 20}}
-            />
-          </View>
-        )}
-        {softSanctionClientLoading ? (
-          <Text>Loading clients...</Text>
-        ) : softSanctionClientError ? (
-          <Text style={{ color: 'red' }}>{softSanctionClientError}</Text>
-        ) : (
-          <FlatList
-            data={softSanctionClientList}
-            keyExtractor={item => item.id?.toString() ?? 'NA'}
-            renderItem={({item}) => (
-              <LeadCard
-                lead={{
-                  clientId: item.id?.toString() || 'NA',
-                  clientName: item.client_name || 'NA',
-                  location: item.location || 'NA',
-                  turnover: item.monthly_turnover || 'NA',
-                  creditPeriod: item.credit_period_offer?.toString() || 'NA',
-                }}
+            {softSanctionClientLoading ? (
+              <Text style={{textAlign: 'center', marginTop: 20}}>Loading clients...</Text>
+            ) : softSanctionClientError ? (
+              <Text style={{textAlign: 'center', color: 'red', marginTop: 20}}>{softSanctionClientError}</Text>
+            ) : (
+              <FlatList
+                data={filteredLeads}
+                renderItem={({item}) => (
+                  <LeadCard
+                    lead={item}
+                    bankName={bankList.find(b => b.id.toString() === selectedBank)?.bank_name.trim() || ''}
+                    productName={selectedProduct || ''}
+                    methodName={selectedMethod || ''}
+                  />
+                )}
+                keyExtractor={item => item.clientId}
+                ListEmptyComponent={<Text style={{textAlign: 'center', marginTop: 20}}>No Clients Found</Text>}
               />
             )}
-            contentContainerStyle={{paddingBottom: 20}}
-          />
+          </View>
         )}
       </ScrollView>
     </Container>
