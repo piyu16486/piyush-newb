@@ -684,13 +684,18 @@ function* handleGetSoftSantion(): unknown {
   }
 }
 
-function* handleGetSoftSantionBnkPro(): unknown {
-  const {data, error}: Result<IsoftSanctionBankProductResponse> = yield call(
-    ClientApis.getSoftSanctionProductBank,
-  );
-  if (!error) {
-    yield put(clientActions.setSoftSanctionBnkProList(data.data));
-  } else {
+function* handleGetSoftSantionBnkPro(action: { payload: { bank: string, product: string } }): Generator<any, void, any> {
+  try {
+    const { bank, product } = action.payload;
+    const url = `${API_URL}${Endpoints.apiGetSoftSanctionBankProduct(bank, product)}`;
+    const response: any = yield call(() => Api.get(url));
+    const data = response.data;
+    if (data.statusCode === 200 && Array.isArray(data.data)) {
+      yield put(clientActions.setSoftSanctionBnkProList(data.data));
+    } else {
+      yield put(clientActions.setSoftSanctionBnkProList([]));
+    }
+  } catch (error) {
     yield put(clientActions.setSoftSanctionBnkProList([]));
   }
 }
@@ -735,7 +740,7 @@ function* handleGetSoftSanctionFields(action: any): Generator<any, void, any> {
   try {
     yield put(clientActions.setSoftSanctionFieldsLoading());
     const { bankName, productName } = action.payload;
-    const url = `${API_URL}/client-info-master/soft-sanction/inputs/${bankName}?product_name=${encodeURIComponent(productName)}`;
+    const url = `${API_URL}${Endpoints.apiGetSoftSanction(bankName)}?product_name=${encodeURIComponent(productName)}`;
     // Alert.alert('SoftSanctionFields API URL', url);
     console.log('SoftSanctionFields API URL:', url);
     const response: any = yield call(() => Api.get(url));
@@ -779,7 +784,7 @@ export default function* clientSaga() {
   yield takeLatest(getBankList.type, hnadleGetBankList);
   yield takeLatest(getKycChecked.type, handleGetKycChecked);
   yield takeLatest(getSoftSanction.type, handleGetSoftSantion);
-  yield takeLatest(getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
+  yield takeLatest(clientActions.getSoftSanctionBnkPro.type, handleGetSoftSantionBnkPro);
   yield takeLatest(FilterRequest.type, handleFilterbox);
   yield takeLatest(clientActions.getSoftSanctionRuleset.type, handleGetSoftSanctionRuleset);
   yield takeLatest(clientActions.getSoftSanctionClientList.type, handleGetSoftSanctionClientList);
