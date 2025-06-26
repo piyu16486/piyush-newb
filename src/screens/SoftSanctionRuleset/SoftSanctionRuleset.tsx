@@ -42,17 +42,35 @@ export const SoftSanctionRuleset = () => {
   const rulesetError = useSelector(clientSelector.getSoftSanctionRulesetError);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Get configRules from route params if available
+  // @ts-ignore
+  const { configRules, clientName, clientId } = route.params || {};
+
   useEffect(() => {
     // @ts-ignore
     const { bankName, product } = route.params || {};
-    if (bankName && product) {
+    if (bankName && product && !configRules) {
       dispatch(clientActions.getSoftSanctionRuleset({ bank: bankName, product }));
     }
   }, [route.params]);
 
-  const filteredRulesets = rulesetData.filter(item =>
-    item.bank_name?.toLowerCase().includes(search.toLowerCase())
-  );
+  // Transform configRules to match SoftRulestCard format
+  const transformedConfigRules = configRules ? configRules.map((rule: any) => ({
+    bankName: rule.bank_name || 'NA',
+    productName: rule.product_name || 'NA',
+    methodName: rule.method_name || 'NA',
+    rulesetId: rule.soft_sanction_ruleset_id || 'NA',
+    ruleName: 'NA',
+    rulestCondition: 'NA'
+  })) : [];
+
+  const filteredRulesets = configRules 
+    ? transformedConfigRules.filter((item: any) =>
+        item.bankName.toLowerCase().includes(search.toLowerCase())
+      )
+    : rulesetData.filter(item =>
+        item.bank_name?.toLowerCase().includes(search.toLowerCase())
+      );
 
   const handleRefresh = () => {
     // @ts-ignore
@@ -76,9 +94,11 @@ export const SoftSanctionRuleset = () => {
       <View>
         <TouchableOpacity style={styles.Content} onPress={navigation.goBack}>
           <LeftChevronCircle height={20} width={20} />
-          <Text style={styles.contentText}>Rulesets</Text>
+          <Text style={styles.contentText}>
+            {configRules ? `Rulesets for ${clientName} (${clientId})` : 'Rulesets'}
+          </Text>
           <View style={styles.countBadge}>
-            <Text style={styles.countText}>{rulesetData.length}</Text>
+            <Text style={styles.countText}>{filteredRulesets.length}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -87,31 +107,42 @@ export const SoftSanctionRuleset = () => {
           <Text>Loading...</Text>
         ) : rulesetError ? (
           <Text style={{ color: 'red' }}>{rulesetError}</Text>
+        ) : configRules ? (
+          <FlatList
+            data={filteredRulesets}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({item}) => (
+              <SoftRulestCard Ruleset={item} />
+            )}
+            contentContainerStyle={{paddingBottom: 20}}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
         ) : (
           <FlatList
             data={filteredRulesets}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({item}) => (
-              <View style={{marginBottom: 24, padding: 16, backgroundColor: '#fff', borderRadius: 8, elevation: 2}}>
-                <Text style={{fontWeight: 'bold'}}>Bank Name: <Text style={{fontWeight: 'normal'}}>{item.bank_name}</Text></Text>
-                <Text style={{fontWeight: 'bold'}}>Product Name: <Text style={{fontWeight: 'normal'}}>{item.product_name}</Text></Text>
-                <Text style={{fontWeight: 'bold'}}>Method Name: <Text style={{fontWeight: 'normal'}}>{item.method_name}</Text></Text>
-                <Text style={{fontWeight: 'bold', marginTop: 8}}>Rules:</Text>
+              <View style={styles.fallbackItem}>
+                <Text style={styles.fallbackItemHeader}>Bank Name: <Text style={styles.fallbackItemHeaderValue}>{item.bank_name}</Text></Text>
+                <Text style={styles.fallbackItemHeader}>Product Name: <Text style={styles.fallbackItemHeaderValue}>{item.product_name}</Text></Text>
+                <Text style={styles.fallbackItemHeader}>Method Name: <Text style={styles.fallbackItemHeaderValue}>{item.method_name}</Text></Text>
+                <Text style={styles.fallbackItemHeader}>Rules:</Text>
                 {item.rules && item.rules.length > 0 ? (
                   <FlatList
                     data={item.rules}
                     keyExtractor={(_, idx) => idx.toString()}
                     renderItem={({item: rule}) => (
-                      <View style={{marginLeft: 8, marginBottom: 4}}>
-                        <Text style={{fontWeight: '600'}}>{rule.label}</Text>
+                      <View style={styles.fallbackItemRule}>
+                        <Text style={styles.fallbackItemRuleLabel}>{rule.label}</Text>
                         {rule.value !== null && (
-                          <Text style={{color: '#555'}}>Value: {rule.value}</Text>
+                          <Text style={styles.fallbackItemRuleValue}>Value: {rule.value}</Text>
                         )}
                       </View>
                     )}
                   />
                 ) : (
-                  <Text style={{marginLeft: 8}}>No rules found.</Text>
+                  <Text style={styles.fallbackItemNoRules}>No rules found.</Text>
                 )}
               </View>
             )}
@@ -167,5 +198,31 @@ const styles = StyleSheet.create({
   countText: {
     color: '#d6336c',
     fontWeight: 'bold',
+  },
+  fallbackItem: {
+    marginBottom: 24,
+    padding: 16,
+    backgroundColor: '#fafafa',
+    borderRadius: 8,
+    elevation: 0,
+  },
+  fallbackItemHeader: {
+    fontWeight: 'bold',
+  },
+  fallbackItemHeaderValue: {
+    fontWeight: 'normal',
+  },
+  fallbackItemRule: {
+    marginLeft: 8,
+    marginBottom: 4,
+  },
+  fallbackItemRuleLabel: {
+    fontWeight: '600',
+  },
+  fallbackItemRuleValue: {
+    color: '#555',
+  },
+  fallbackItemNoRules: {
+    marginLeft: 8,
   },
 });

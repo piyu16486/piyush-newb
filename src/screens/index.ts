@@ -41,3 +41,4 @@ export * from './TermsOfService/TermsOfService';
 export * from './UdhyamCertificate/UdhyamCertificate';
 export * from './UGRO-PurchaseMethod/UGROPurchaseMethod';
 export * from './UGRO-TurnoverMethod/UGROTurnoverMethod';
+export * from './SoftSanctionRulesetTCPD/RulesetView';

@@ -114,6 +114,12 @@ export const SoftsanctionProcess = () => {
       turnover: lead.monthly_turnover || 'NA',
       creditPeriod: lead.credit_period_offer?.toString() || 'NA',
     }))
+    .sort((a, b) => {
+      // Sort by client ID in increasing order
+      const idA = parseInt(a.clientId) || 0;
+      const idB = parseInt(b.clientId) || 0;
+      return idA - idB;
+    })
     .filter(lead =>
       lead.clientName.toLowerCase().includes(search.toLowerCase())
     );
@@ -188,6 +194,14 @@ export const SoftsanctionProcess = () => {
             } as any);
           }}
         />
+        {/* Test Button below View Rulset */}
+        {/* <Button
+          buttonText={'Test Button'}
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('RulesetView');
+          }}
+        /> */}
         {showLeads && (
           <View style={styles.container}>
             <View style={styles.headerRow}>

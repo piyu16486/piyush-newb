@@ -355,9 +355,9 @@ const getKycChecked = async (clientID: string) => {
   };
 };
 
-const getSoftSanction = async () => {
+const getSoftSanction = async (bankName: string) => {
   const {data, error} = await tryCatch<AxiosResponse<ISoftSanctionResponse>>(
-    Api.get(Endpoints.apiGetSoftSanction),
+    Api.get(Endpoints.apiGetSoftSanction(bankName)),
   );
   if (error) {
     return {
@@ -371,10 +371,10 @@ const getSoftSanction = async () => {
   };
 };
 
-const getSoftSanctionProductBank = async () => {
+const getSoftSanctionProductBank = async (bank: string, product: string) => {
   const {data, error} = await tryCatch<
     AxiosResponse<IsoftSanctionBankProductResponse>
-  >(Api.get(Endpoints.apiGetSoftSanctionBankProduct));
+  >(Api.get(Endpoints.apiGetSoftSanctionBankProduct(bank, product)));
   if (error) {
     return {
       data: null,
@@ -403,9 +403,9 @@ const FilterBox = async (payload: IFilterPayload) => {
   };
 };
 
-const softSanctionCalculate = async (payload: any) => {
+const softSanctionCalculate = async (payload: any, clientId: string) => {
   const {data, error} = await tryCatch<AxiosResponse<any>>(
-    Api.post(Endpoints.apiSoftSanctionCalculate, payload)
+    Api.post(Endpoints.apiSoftSanctionCalculate(clientId), payload)
   );
   return {data: data?.data ?? null, error};
 };

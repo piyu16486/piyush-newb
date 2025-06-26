@@ -10,11 +10,24 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Alert,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { clientActions } from '@store/client';
 import { getSoftSanctionFields, getSoftSanctionFieldsLoading, getSoftSanctionFieldsError } from '@store/client/client.selector';
 import clientApi from '@services/api/client.api';
+import {Config} from '@config/index';
+import Endpoints from '@constants/ApiEndPoints';
+import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeNavigatorType, SoftNavigatorType } from '@type/NavigatorTypes';
+
+type SoftInfoNavigationType = CompositeNavigationProp<
+  DrawerNavigationProp<HomeNavigatorType>,
+  NativeStackNavigationProp<SoftNavigatorType>
+>;
 
 type LeadProps = {
   lead: {
@@ -32,8 +45,15 @@ type LeadProps = {
 
 export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, methodName}) => {
   const [showModal, setShowModal] = useState(false);
-  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({
+    "Existing W/C Limits": "10000000",
+    "Stock": "13207177",
+    "Debtors (upto 150 days)": "3438200",
+    "Less Creditors": "2160108",
+    "Last 12 M Purchases of brand 1": "405282552"
+  });
   const dispatch = useDispatch();
+  const navigation = useNavigation<SoftInfoNavigationType>();
   const fields = useSelector(getSoftSanctionFields) || {};
   const loading = useSelector(getSoftSanctionFieldsLoading);
   const error = useSelector(getSoftSanctionFieldsError);
@@ -50,23 +70,83 @@ export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, meth
   const handleRun = async () => {
     // Prepare payload for API
     const payload: any = {
-      bank_name: bankName,
+      "bank_name": bankName,
+      // "Existing W/C Limits": 10000000,
+      // "Stock": 13207177,
+      // "Debtors (upto 150 days)": 3438200,
+      // "Less Creditors": 2160108,
+      // "Last 12 M Purchases of brand 1": 405282552,
+      // "Dependency": 0.9884
       "Existing W/C Limits": Number(inputValues["Existing W/C Limits"] || 0),
-      Stock: Number(inputValues["Stock"] || 0),
+      "Stock": Number(inputValues["Stock"] || 0),
       "Debtors (upto 150 days)": Number(inputValues["Debtors (upto 150 days)"] || 0),
       "Less Creditors": Number(inputValues["Less Creditors"] || 0),
       "Last 12 M Purchases of brand 1": Number(inputValues["Last 12 M Purchases of brand 1"] || 0),
-      Dependency: 0.9884,
-      client_id: lead.clientId,
+      "Dependency": 0.9884
     };
+
+    // Construct the API URL
+    const apiUrl = `${Config.API_URL}${Endpoints.apiSoftSanctionCalculate(lead.clientId)}`;
+    
     try {
-      const res = await clientApi.softSanctionCalculate(payload);
+      const res = await clientApi.softSanctionCalculate(payload, lead.clientId);
       console.log('Soft sanction API response:', res);
+      
+      // Show API response alert
+      Alert.alert(
+        'API Response',
+        `Response: ${JSON.stringify(res, null, 2)}`,
+        [{ 
+          text: 'OK',
+          onPress: () => {
+            setShowModal(false);
+            dispatch(clientActions.clearSoftSanctionFields());
+            // Use offline response if API response is missing or malformed
+            const offlineResponse = {
+              statusCode: 201,
+              data: [
+                {
+                  method: 'Turnover Method Offline',
+                  final_limit: -6998428,
+                  credit_period: 60,
+                  basis: 'Monthly Turnover: 1000524',
+                },
+                {
+                  method: 'Purchase Method Offline',
+                  final_limit: 56621789.36986301,
+                  credit_period: 60,
+                  basis: 'Last 12 month purchases of brand: 405282552',
+                },
+                {
+                  method: 'WC(Stock) Method Offline',
+                  final_limit: 863951.75,
+                  credit_period: 60,
+                  basis: 'Stock: 863951.75',
+                },
+              ],
+            };
+            const rulesetData = res?.data?.data || offlineResponse.data;
+            navigation.navigate('RulesetView', { rulesetData });
+          }
+        }]
+      );
+      
     } catch (e) {
       console.log('Soft sanction API error:', e);
+      
+      // Alert the error
+      Alert.alert(
+        'API Error',
+        `Error: ${JSON.stringify(e, null, 2)}`,
+        [{ 
+          text: 'OK',
+          onPress: () => {
+            setShowModal(false);
+            dispatch(clientActions.clearSoftSanctionFields());
+          }
+        }]
+      );
     }
-    setShowModal(false);
-    dispatch(clientActions.clearSoftSanctionFields());
   };
 
   return (

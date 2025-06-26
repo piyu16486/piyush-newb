@@ -71,10 +71,17 @@ export type ClientNavigatorType = {
 export type SoftNavigatorType = {
   Softsanction: undefined;
   SoftsanctionProcess: undefined;
-  SoftSanctionRuleset: undefined;
+  SoftSanctionRuleset: {
+    bankName?: string;
+    product?: string;
+    configRules?: any[];
+    clientName?: string;
+    clientId?: string;
+  } | undefined;
   RulesetTCPD: undefined;
   UGROTurnoverMethod: undefined;
   UGROPurchaseMethod: undefined;
+  RulesetView: { rulesetData: any[] } | undefined;
 };
 
 export type LeadNavigatorType = {
