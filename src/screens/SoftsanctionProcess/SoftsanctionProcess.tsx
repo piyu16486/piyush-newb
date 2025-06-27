@@ -110,7 +110,7 @@ export const SoftsanctionProcess = () => {
       clientId: lead.id?.toString() || 'NA',
       clientName: lead.client_name || 'NA',
       location: lead.location || 'NA',
-      initiator: lead.user?.name || 'NA',
+      initiator: lead.user ? `${(lead.user.first_name || '').trim()} ${(lead.user.last_name || '').trim()}`.trim() : 'NA',
       turnover: lead.monthly_turnover || 'NA',
       creditPeriod: lead.credit_period_offer?.toString() || 'NA',
     }))
@@ -236,6 +236,7 @@ export const SoftsanctionProcess = () => {
                     bankName={bankList.find(b => b.id.toString() === selectedBank)?.bank_name.trim() || ''}
                     productName={selectedProduct || ''}
                     methodName={selectedMethod || ''}
+                    rulesetId={selectedRulesetId || ''}
                   />
                 )}
                 keyExtractor={item => item.clientId}

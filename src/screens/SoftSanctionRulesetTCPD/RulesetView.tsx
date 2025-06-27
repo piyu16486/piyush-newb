@@ -31,8 +31,11 @@ type RulesetViewArr = {
 export const RulesetView = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   const route = useRoute();
-  // @ts-ignore
-  const { rulesetData } = route.params || {};
+  const { rulesetData, location, clientName } = (route.params || {}) as {
+    rulesetData?: any[];
+    location?: string;
+    clientName?: string;
+  };
   const [search, setSearch] = useState<string>('');
 
   const staticLeads: RulesetViewArr[] = [
@@ -61,18 +64,50 @@ export const RulesetView = () => {
 
   // If rulesetData is provided, map it to the expected format
   const leads = Array.isArray(rulesetData)
-    ? rulesetData.map(item => ({
-        methodName: item.method,
-        basis: item.basis,
-        creditPeriod: String(item.credit_period),
-        finallimit: String(item.final_limit),
-        tpaAmount: item.tpaAmount || '', // fallback if not present
-      }))
+    ? rulesetData
+        .slice(1) // skip the first object (meta info)
+        .map(item => ({
+          methodName: item.method,
+          basis: item.basis,
+          creditPeriod: String(item.credit_period),
+          finallimit: String(item.final_limit),
+          tpaAmount: item.tpaAmount || '', // fallback if not present
+        }))
     : staticLeads;
 
   const filteredLeads = leads.filter(lead =>
-    lead.basis.toLowerCase().includes(search.toLowerCase()),
+    typeof lead.basis === 'string' && lead.basis.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Calculate minimum final_limit from filteredLeads
+  const minFinalLimit = filteredLeads.length > 0
+    ? Math.min(
+        ...filteredLeads.map(lead => {
+          // Remove commas and parse as number
+          const num = Number(String(lead.finallimit).replace(/,/g, ''));
+          return isNaN(num) ? Infinity : num;
+        })
+      )
+    : 0;
+
+  // Format as Indian currency string
+  const formattedMinFinalLimit = minFinalLimit > 0
+    ? minFinalLimit.toLocaleString('en-IN')
+    : '-';
+
+  // Footer component for FlatList
+  const ListFooter = () => (
+    <View style={styles.footerContainer}>
+      <Text style={styles.footerText}>
+        Final Eligibility : <Text style={styles.footerAmount}>{formattedMinFinalLimit}</Text>
+      </Text>
+    </View>
+  );
+
+  // Get bank name and product from first object in rulesetData if available
+  const metaInfo = Array.isArray(rulesetData) && rulesetData.length > 0 ? rulesetData[0] : {};
+  const displayBankName = metaInfo.bank_name || 'Bank Name';
+  const displayProductName = metaInfo.product || 'Product Name';
 
   return (
     <Container>
@@ -85,12 +120,15 @@ export const RulesetView = () => {
       <View>
         <TouchableOpacity style={styles.Content} onPress={navigation.goBack}>
           <LeftChevronCircle height={20} width={20} />
-          <Text style={styles.contentText}>Bank Name, Product Name</Text>
+          <Text style={styles.contentText}>
+            {displayBankName}
+            {displayProductName ? `  Product[${displayProductName}]` : ''}
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.subHeading}>
-        <Text style={styles.subHeadingText}>XYZ Company PVT. LTD</Text>
-        <Text style={styles.bodyText}>Ahmedabad, Gujarat</Text>
+        <Text style={styles.subHeadingText}>Client Name: {clientName}</Text>
+        <Text style={styles.subHeadingText}>Location: {location}</Text>
       </View>
       <View style={styles.container}>
         <FlatList
@@ -110,6 +148,7 @@ export const RulesetView = () => {
             </TouchableOpacity>
           )}
           contentContainerStyle={{paddingBottom: 20}}
+          ListFooterComponent={ListFooter}
         />
       </View>
     </Container>
@@ -153,5 +192,25 @@ const styles = StyleSheet.create({
     fontSize: scaleFont(12),
     fontWeight: fontWeight.Medium,
     color: Colors.gray300,
+  },
+  footerContainer: {
+    paddingVertical: 8,
+    alignItems: 'flex-start',
+    borderTopWidth: 1,
+    borderTopColor: Colors.gray200,
+    backgroundColor: '#c7c7c7',
+    paddingLeft: 20,
+    marginLeft: 8,
+  },
+  footerText: {
+    fontSize: scaleFont(16),
+    fontWeight: fontWeight.SemiBold,
+    color: Colors.gray500,
+    paddingLeft: 4,
+  },
+  footerAmount: {
+    color: Colors.gray500,
+    fontWeight: fontWeight.Bold,
+    fontSize: scaleFont(16),
   },
 });

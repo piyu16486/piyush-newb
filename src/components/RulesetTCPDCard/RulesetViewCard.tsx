@@ -27,10 +27,6 @@ export const RulesetViewCard: React.FC<RulesetViewProps> = ({RulesetView: Rulese
         <Text style={styles.label}>Credit Period :</Text> {RulesetView.creditperiod}
       </Text>
       <Text style={styles.text}>
-        <Text style={styles.label}>Turnover/Purchase/Wc Amount :</Text>
-        {RulesetView.tpwAmount}
-      </Text>
-      <Text style={styles.text}>
         <Text style={styles.label}>Final Limit :</Text>
         {RulesetView.finallimit}
       </Text>

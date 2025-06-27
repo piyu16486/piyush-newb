@@ -23,6 +23,7 @@ import { CompositeNavigationProp } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeNavigatorType, SoftNavigatorType } from '@type/NavigatorTypes';
+import {decryptUtility} from '@utils/crypto';
 
 type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -41,9 +42,10 @@ type LeadProps = {
   bankName: string;
   productName: string;
   methodName: string;
+  rulesetId: string;
 };
 
-export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, methodName}) => {
+export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, methodName, rulesetId}) => {
   const [showModal, setShowModal] = useState(false);
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>({
     "Existing W/C Limits": "10000000",
@@ -92,44 +94,13 @@ export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, meth
       const res = await clientApi.softSanctionCalculate(payload, lead.clientId);
       console.log('Soft sanction API response:', res);
       
-      // Show API response alert
-      Alert.alert(
-        'API Response',
-        `Response: ${JSON.stringify(res, null, 2)}`,
-        [{ 
-          text: 'OK',
-          onPress: () => {
-            setShowModal(false);
-            dispatch(clientActions.clearSoftSanctionFields());
-            // Use offline response if API response is missing or malformed
-            const offlineResponse = {
-              statusCode: 201,
-              data: [
-                {
-                  method: 'Turnover Method Offline',
-                  final_limit: -6998428,
-                  credit_period: 60,
-                  basis: 'Monthly Turnover: 1000524',
-                },
-                {
-                  method: 'Purchase Method Offline',
-                  final_limit: 56621789.36986301,
-                  credit_period: 60,
-                  basis: 'Last 12 month purchases of brand: 405282552',
-                },
-                {
-                  method: 'WC(Stock) Method Offline',
-                  final_limit: 863951.75,
-                  credit_period: 60,
-                  basis: 'Stock: 863951.75',
-                },
-              ],
-            };
-            const rulesetData = res?.data?.data || offlineResponse.data;
-            navigation.navigate('RulesetView', { rulesetData });
-          }
-        }]
-      );
+      setShowModal(false);
+      dispatch(clientActions.clearSoftSanctionFields());
+      navigation.navigate('RulesetView', {
+        rulesetData: res?.data?.data || [],
+        location: lead.location ? decryptUtility(lead.location) : '',
+        clientName: lead.clientName || '',
+      });
       
     } catch (e) {
       console.log('Soft sanction API error:', e);
@@ -159,7 +130,7 @@ export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, meth
           <Text style={styles.label}>Client Name :</Text> {lead.clientName}
         </Text>
         <Text style={styles.text}>
-          <Text style={styles.label}>Location :</Text> {lead.location}
+          <Text style={styles.label}>Location :</Text> {lead.location ? decryptUtility(lead.location) : ''}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.label}>Initiator :</Text> {lead.initiator}
