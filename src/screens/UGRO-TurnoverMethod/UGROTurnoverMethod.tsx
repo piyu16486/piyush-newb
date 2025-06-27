@@ -1,16 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
-import React, {useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import {LeftChevronCircle} from '@assets/Icons';
 import {Container, AppBar} from '@components/index';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {CompositeNavigationProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeNavigatorType, SoftNavigatorType} from '@type/NavigatorTypes';
 import {scaleFont} from '@utils/Scale';
 import fontWeight from '@constants/FontWeight';
 import {Colors, FontWeight} from '@constants/index';
 import {TurnoverMethodCard} from '@components/UGRO-TurnoverMethod/TurnoverMethodCard';
+import clientApi from '@services/api/client.api';
 
 type SoftInfoNavigationType = CompositeNavigationProp<
   DrawerNavigationProp<HomeNavigatorType>,
@@ -32,26 +33,72 @@ type TurnoverMethod = {
 
 export const UGROTurnoverMethod = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
-  const [search] = useState<string>('');
+  const route = useRoute();
+  const { clientId, method, bank } = (route.params || {}) as {
+    clientId: string;
+    method: string;
+    bank: string;
+  };
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<any>(null);
 
-  const leads: TurnoverMethod[] = [
-    {
-      monthlyTurnover: '40,00,000',
-      last12MTurnover: '4,80,00,000',
-      projectedTurnover: '5,76,00,000',
-      creditPeriodOffered: '45',
-      projectedTO: '1,15,20,000',
-      projectedTOforCreditPeriod: '71,01,370',
-      existingWCLimits: '21,00,000',
-      finalLimit: '50,00,000',
-      actualEligibility: '94,20,000',
-      eligibilityasperTenor: '50,01,370',
-    },
-  ];
+  useEffect(() => {
+    // let sanitizedMethod = 'Purchase'; // For testing, uncomment to hardcode
+    // Restore dynamic method logic
+    let sanitizedMethod = method || '';
+    if (/turnover/i.test(sanitizedMethod)) {
+      sanitizedMethod = 'Turnover';
+    } else if (/purchase/i.test(sanitizedMethod)) {
+      sanitizedMethod = 'Purchase';
+    } else if (/wc/i.test(sanitizedMethod)) {
+      sanitizedMethod = 'WC(Stock)';
+    }
+    const apiUrl = `/client-info-master/soft-sanction/result/${clientId}?method=${encodeURIComponent(sanitizedMethod)}&bank=${encodeURIComponent(bank || '')}`;
+    Alert.alert('API Debug', `Client ID: ${clientId}\nmethod: ${sanitizedMethod}\nbank: ${bank}\nURL: ${apiUrl}`);
+    if (clientId && sanitizedMethod && bank) {
+      setLoading(true);
+      setError(null);
+      clientApi.softSanctionResult(clientId, sanitizedMethod, bank)
+        .then(res => {
+          setResult(res.data);
+          setLoading(false);
+        })
+        .catch(e => {
+          setError('Failed to fetch result');
+          setLoading(false);
+        });
+    }
+  }, [clientId, method, bank]);
 
-  const filteredLeads = leads.filter(lead =>
-    lead.monthlyTurnover.toLowerCase().includes(search.toLowerCase()),
-  );
+  let leads: TurnoverMethod[] = [];
+  if (result && Array.isArray(result)) {
+    // Map API result to TurnoverMethod[]
+    leads = result.map((item: any) => ({
+      monthlyTurnover: item.monthlyTurnover || '',
+      last12MTurnover: item.last12MTurnover || '',
+      projectedTurnover: item.projectedTurnover || '',
+      creditPeriodOffered: item.creditPeriodOffered || '',
+      projectedTO: item.projectedTO || '',
+      projectedTOforCreditPeriod: item.projectedTOforCreditPeriod || '',
+      existingWCLimits: item.existingWCLimits || '',
+      finalLimit: item.finalLimit || '',
+      actualEligibility: item.actualEligibility || '',
+      eligibilityasperTenor: item.eligibilityasperTenor || '',
+    }));
+  }
+
+  let results: Record<string, string> | null = null;
+  if (result && result.data && result.data.results) {
+    results = result.data.results;
+  }
+
+  let bankName = '', methodName = '', productName = '';
+  if (result && result.data) {
+    bankName = result.data.bank_name || '';
+    methodName = result.data.method_name || '';
+    productName = result.data.product_name || '';
+  }
 
   return (
     <Container>
@@ -61,27 +108,39 @@ export const UGROTurnoverMethod = () => {
       <View style={styles.Subcontainer}>
         <Text style={styles.Subheader}>Soft Sanction</Text>
       </View>
-      <View>
-        <TouchableOpacity style={styles.Content} onPress={navigation.goBack}>
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.backBtn} onPress={navigation.goBack}>
           <LeftChevronCircle height={20} width={20} />
-          <Text style={styles.contentText}>
-            UGRO - Turnover Method for {'\n'}XYZ Company PVT. LTD
-          </Text>
         </TouchableOpacity>
+        {(bankName || methodName || productName) && (
+          <Text style={styles.dynamicSummary} numberOfLines={1} ellipsizeMode="tail">
+            {bankName ? `${bankName} ` : ''}
+            {bankName && methodName ? ', ' : ''}
+            {methodName ? `${methodName} ` : ''}
+            {(bankName || methodName) && productName ? ', ' : ''}
+            {productName ? `${productName} ` : ''}
+          </Text>
+        )}
       </View>
       <View style={styles.container}>
-        <FlatList
-          data={filteredLeads}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('UGROPurchaseMethod')}>
-              <TurnoverMethodCard TurnoverMethod={item} />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{paddingBottom: 20}}
-        />
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : error ? (
+          <Text style={{ color: 'red' }}>{error}</Text>
+        ) : results ? (
+          <View style={styles.dynamicCard}>
+            {Object.entries(results).map(([label, value]) => (
+              <View key={label} style={styles.resultRow}>
+                <Text>
+                  <Text style={styles.resultLabel}>{label}:</Text>
+                  <Text style={styles.resultValue}> {value}</Text>
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text>No results found.</Text>
+        )}
       </View>
     </Container>
   );
@@ -103,6 +162,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 15,
+    marginBottom: 0,
+  },
+  backBtn: {
+    marginRight: 10,
+  },
   contentText: {
     fontSize: scaleFont(16),
     fontWeight: FontWeight.SemiBold,
@@ -110,5 +178,49 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     flex: 1,
+  },
+  dynamicCard: {
+    backgroundColor: '#FAFAFA',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    borderColor: '#eee',
+    borderWidth: 1,
+  },
+  resultRow: {
+    marginBottom: 6,
+  },
+  resultLabel: {
+    fontWeight: 'bold',
+    color: '#333',
+    fontSize: scaleFont(15),
+  },
+  resultValue: {
+    color: '#555',
+    fontWeight: 'normal',
+    fontSize: scaleFont(15),
+  },
+  infoText: {
+    fontSize: scaleFont(15),
+    color: '#222',
+    marginBottom: 2,
+    fontWeight: '600',
+  },
+  infoLine: {
+    fontSize: scaleFont(15),
+    color: '#222',
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  infoLabel: {
+    fontWeight: 'bold',
+  },
+  dynamicSummary: {
+    fontSize: scaleFont(16),
+    color: '#222',
+    fontWeight: 'bold',
+    flexShrink: 1,
+    lineHeight: 22,
+    textAlign: 'center',
   },
 });

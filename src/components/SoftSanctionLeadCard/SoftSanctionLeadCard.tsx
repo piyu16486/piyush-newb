@@ -100,6 +100,7 @@ export const LeadCard: React.FC<LeadProps> = ({lead, bankName, productName, meth
         rulesetData: res?.data?.data || [],
         location: lead.location ? decryptUtility(lead.location) : '',
         clientName: lead.clientName || '',
+        clientId: lead.clientId,
       });
       
     } catch (e) {

@@ -31,10 +31,11 @@ type RulesetViewArr = {
 export const RulesetView = () => {
   const navigation = useNavigation<SoftInfoNavigationType>();
   const route = useRoute();
-  const { rulesetData, location, clientName } = (route.params || {}) as {
+  const { rulesetData, location, clientName, clientId } = (route.params || {}) as {
     rulesetData?: any[];
     location?: string;
     clientName?: string;
+    clientId?: string;
   };
   const [search, setSearch] = useState<string>('');
 
@@ -137,7 +138,11 @@ export const RulesetView = () => {
           renderItem={({item}) => (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('UGROTurnoverMethod')}>
+              onPress={() => navigation.navigate('UGROTurnoverMethod', {
+                clientId: clientId || '',
+                method: item.methodName,
+                bank: metaInfo.bank_name,
+              })}>
               <RulesetViewCard
                 RulesetView={{
                   ...item,

@@ -57,6 +57,7 @@ const Endpoints = {
   apiGetSoftSanction: (bankName: string) => `/client-info-master/soft-sanction/inputs/${bankName}`,
   apiGetSoftSanctionBankProduct: (bank: string, product: string) => `/client-info-master/soft-sanction/methods?bank=${bank}&product=${product}`,
   apiSoftSanctionCalculate: (id: string | number) => `/client-info-master/soft-sanction/calculate/${id}`,
+  apiSoftSanctionResult: (id: string | number, method: string, bank: string) => `/client-info-master/soft-sanction/result/${id}?method=${encodeURIComponent(method)}&bank=${encodeURIComponent(bank)}`,
 
   // Filter Box
   apiFilterBox: '/client-info-master/filter',

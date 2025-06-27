@@ -79,7 +79,11 @@ export type SoftNavigatorType = {
     clientId?: string;
   } | undefined;
   RulesetTCPD: undefined;
-  UGROTurnoverMethod: undefined;
+  UGROTurnoverMethod: {
+    clientId: string;
+    method: string;
+    bank: string;
+  };
   UGROPurchaseMethod: undefined;
   RulesetView: {
     rulesetData: any[];
@@ -87,6 +91,9 @@ export type SoftNavigatorType = {
     productName?: string;
     rulesetId?: string;
     methodName?: string;
+    clientId?: string;
+    clientName?: string;
+    location?: string;
   } | undefined;
 };
 
